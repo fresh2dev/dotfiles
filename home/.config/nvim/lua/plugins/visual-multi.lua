@@ -1,0 +1,26 @@
+return {}
+-- return {
+--     {
+--         "mg979/vim-visual-multi",
+--         lazy = false,
+--         config = function()
+--             vim.g.VM_default_mappings = 0
+--             -- vim.g.VM_maps = {}
+--             vim.g.VM_maps = {
+--               ["Find Under"] = "<C-d>",
+--               ["Find Subword Under"] = "<C-d>",
+--               ["Undo"] = 'u',
+--               ["Redo"] = '<C-r>',
+--               ['Find Under'] = '<C-n>',
+--               ['Find Subword Under'] = '<C-n>',
+--               ['Remove Region'] = '<C-p>',
+--               ['Seek Prev '] = '<C-p>',
+--               ["Add Cursor Down"] = '<C-Down>',
+--               ["Add Cursor Up"] = '<C-Up>',
+--               ["Visual All"] = '*',
+--               ["Visual Cursors"] = '0',
+--               ["Mouse Cursor"] = '<C-LeftMouse>',
+--             }
+--         end,
+--     },
+-- }

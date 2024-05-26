@@ -1,0 +1,12 @@
+'model': gpt-4-turbo-preview
+'dark-mode': true
+'pretty': true
+'stream': true
+'show-diffs': true
+'git': true
+'aiderignore': '.gitignore'
+'gitignore': true
+'yes': true
+'auto-commits': false
+'dirty-commits': false
+'commit': false

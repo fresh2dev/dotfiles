@@ -1,0 +1,519 @@
+[user]
+  email = hello@Fresh2.dev
+  name = Donald Mellenbruch
+[init]
+  defaultBranch = main
+  ; templatedir = /home/donald/.git_template
+[core]
+    autocrlf = false
+    fileMode = false
+    ; hooksPath = /home/donald/.githooks
+    editor = vim
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only --features=interactive
+[delta]
+    features = decorations
+    light = false
+    navigate = true
+    line-numbers = true
+    side-by-side = true
+[color]
+    ui = true
+    pager = true
+    ; diff = always
+    ; status = always
+    ; branch = always
+    ; interactive = always
+[privacy]
+    pattern = hms
+[fetch]
+    prune = true
+[pull]
+    rebase = true
+; [rebase]
+;   autosquash = true
+; [branch "main"]
+;     mergeoptions = --no-ff
+[merge]
+    conflictstyle = diff3
+    tool = vimdiff2
+    autoStash = true
+[diff]
+    prompt = false
+    tool = vimdiff3
+    colorMoved = default
+    algorithm = histogram
+[alias]
+    root = !(git is-repo && git rev-parse --show-toplevel) || pwd
+
+    is-repo = !git status --porcelain >/dev/null 2>&1
+
+    is-clean = "!f() { \
+                git is-repo && test -z \"$(git status --porcelain)\"; \
+            }; f"
+
+    find = "!f() { \
+        fd '.git' --type d --hidden \"$@\" --exec dirname | grep -v '\\.git/modules/\\?' | sort -u; \
+        }; f"
+    f = find
+    o = open
+
+    pull-template = !copier update -r dev --trust --conflict rej
+
+    redate = "!f() { \
+        git filter-repo --refs ${1:-HEAD~}..HEAD --commit-callback ' \
+            [setattr(commit, date_attr, \"{0} +0000\".format(og_ts - (og_ts % 86400)).encode(\"utf-8\")) for date_attr in [\"author_date\", \"committer_date\"] for og_ts in [int(getattr(commit, date_attr).decode(\"utf-8\").split()[0])]]'; \
+        }; f"
+    ; git filter-repo --refs ${1:-HEAD~}~..HEAD --commit-callback '
+    ;     for date_attr in 'author_date', 'committer_date':
+    ;         og_ts = int(getattr(commit, date_attr).decode("utf-8").split()[0])
+    ;         trunc_ts = og_ts - (og_ts % 86400)
+    ;         setattr(commit, date_attr, f"{trunc_ts} +0000".encode("utf-8"))
+    ;
+
+    redate-main = !git redate $(git b-default)
+    redate-origin = !git redate origin/$(git pwb)
+    rd = redate
+
+    redate-branches = "!f() { \
+        git branch --format='%(refname:short)' | sort -r | while read -r x; do \
+            git switch $x && git redate $@; \
+        done && git switch -; \
+            }; f"
+
+    aliases = "!f() { \
+                git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /; \
+            }; f"
+
+    authors = shortlog --summary --numbered --email --all
+
+    # show current version
+    ver = !bump2version patch --list --allow-dirty --dry-run | grep "^current_version" | cut -d= -f2
+    # test if current version is release-candidate
+    ver-is-rc = !git ver | grep -qv '^[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+$'
+    # show what the next rc/patch version is
+    ; ver-next = !((git ver-is-rc && bump2version rc --list --allow-dirty --dry-run) || bump2version patch --list --allow-dirty --dry-run) | grep "^new_version" | cut -d= -f2
+    ver-next = "!f() { \
+                if git ver-is-rc; then \
+                    bump2version rc --list --allow-dirty --dry-run; \
+                else \
+                    bump2version patch --list --allow-dirty --dry-run; \
+                fi | grep '^new_version' | cut -d= -f2; \
+            }; f"
+    # bump to the next rc/patch version,
+    # or to the given version,
+    # and commit.
+    ver-bump = "!f() { \
+                bump2version patch --new-version ${1:-$(git ver-next)} --commit \
+                && git show -s; \
+            }; f"
+    # tag the current version and bump to the next
+    tag-ver = !git tag $(git ver)
+
+    ##################################################
+    # List branches.
+    ##################################################
+    b = branch
+
+    track-origin = "!f() { \
+        git fetch --all --prune && \
+        git branch --format='%(refname:short)' | while read -r x; do \
+            git branch $x -u origin/$x $@; \
+        done; \
+            }; f"
+
+    ##################################################
+    # Forcefully delete branch from remotes and local.
+    # "brrm" == "branch remove"
+    # > git brrm <branch>
+    ##################################################
+    b-rm = "!f() { \
+                git remote | while read -r remote; do \
+                    git push --delete $remote ${1} || true; \
+                done \
+                && git branch -D ${1:?}; \
+            }; f"
+
+    ##################################################
+    # Print the current branch.
+    # "pwb" == "present-working branch"
+    # > git pwb
+    ##################################################
+    pwb = branch --show-current
+
+    ##################################################
+    # Print default branch as defined in .gitconfig.
+    # "b-default" == "default branch"
+    # > git b-default
+    ##################################################
+    b-default = config --global --get init.defaultBranch
+
+
+    ##################################################
+    # Revert/undo/BURN uncommitted and untracked.
+    # > git burn
+    ##################################################
+    burn = !git reset --hard && git clean -fd
+
+    ##################################################
+    # Run git pre-commit script
+    # > git pre-commit
+    ##################################################
+    ; pre-commit = "!f() { \
+    ;     sh $(git config --global --get core.hooksPath)/pre-commit; \
+    ;         }; f"
+    pre-commit = !pre-commit run --all-files
+    pc = pre-commit
+
+    ##################################################
+    # Commit
+    ##################################################
+    c = commit
+    p = push
+    po = push origin -u
+
+    squash = "!f() { \
+        git commit --no-edit --squash ${1:-HEAD} && git rbi ${1:-HEAD~}~; \
+            }; f"
+    sq = squash
+    fixup = "!f() { \
+        git commit --no-edit --fixup ${1:-HEAD} && git rbi ${1:-HEAD~}~; \
+            }; f"
+    fu = fixup
+
+    ##################################################
+    # Print latest commit SHA.
+    # "c-sha" == "commit sha"
+    # > git c-sha
+    ##################################################
+    c-sha = rev-parse --short HEAD
+
+    ##################################################
+    # Print first commit SHA.
+    # "c-sha0" == "commit sha zero"
+    # > git c-sha0
+    ##################################################
+    c-sha0 = "!f() { \
+                git rev-list --all --max-parents=0 HEAD | tail -n1 | cut -c 1-7; \
+            }; f"
+
+    ##################################################
+    # Generate changelog.
+    # > git changelog
+    ##################################################
+    changelog = "!f() { \
+                cd $(git root) \
+                && git cliff --tag $(if [ -f 'pyproject.toml' ]; then myke py version; else echo 'unreleased'; fi) $@; \
+            }; f"
+    chl = changelog
+
+    changelog-diff = changelog --unreleased
+    chl-diff = changelog-diff
+
+    changelog-diff-write = "!f() { \
+        cd $(git root) \
+        && CHANGELOG=\"CHANGELOG.md\" \
+        && touch $CHANGELOG \
+        && cat CHANGELOG.md | tail -n+2 > ${CHANGELOG}.tmp && (printf 'SLOC Analysis:\n\n'; myke py sloc) | cat - ${CHANGELOG}.tmp > CHANGELOG.md \
+        && rm ${CHANGELOG}.tmp \
+        && git changelog-diff --prepend $CHANGELOG \
+        && echo $CHANGELOG; \
+            }; f"
+
+    chl-diff-write = changelog-diff-write
+
+    ##################################################
+    # Checkout ref.
+    # "cho" == "checkout"
+    # > git cho <name>
+    ##################################################
+    cho = checkout
+
+    ##################################################
+    # Checkout new branch.
+    # "chob" == "checkout branch"
+    # > git chob <name>
+    ##################################################
+    chob = switch --create
+
+    ##################################################
+    # Checkout new branch; destroy if already exists.
+    # "chox" == "checkout branch destroy"
+    # > git chox <name>
+    ##################################################
+    chox = switch --force-create
+
+    ##################################################
+    # Alias for 'git cherry-pick'
+    # "cp" == "cherry pick"
+    # > git cp ...
+    ##################################################
+    cp = cherry-pick
+    rb = rebase
+    rbi = rebase --autosquash --interactive
+    rbom = !git fetch --all && git rebase origin/main
+
+    ##################################################
+    # Init the repo, commit all changes, and
+    # creating both 'default' and 'dev' branches.
+    # "init-commit" == "init quick"
+    # > git init-commit
+    ##################################################
+    init-commit = ![ ! -d ".git" ] && git init && git add . && (git pre-commit || true) && git commit -m 'init [skip ci]' && git chob dev
+
+    ##################################################
+    # Show compact diff.
+    # "dif" == "short diff"
+    # > git dif
+    ##################################################
+    dif = diff --compact-summary
+
+    # thanks: https://www.youtube.com/watch?v=lZehYwOfJAs
+    ibranches = "!f() { \
+        git branch --sort=-committerdate | rev | cut -d\\  -f1 | rev | fzf --header \"${1:-Branches}\" --preview 'git diff --color=always {} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}' | grep -v \"^$(git pwb)\"; \
+        }; f"
+    ib = ibranches
+
+    icho = !git ibranches "Checkout" | xargs -r git cho
+    ichox = !git ibranches "Checkout-Overwrite" | xargs -r git chox
+    img = !git ibranches "Merge" | xargs -r git mg
+    irb = !git ibranches "Rebase" | xargs -r git rbi
+
+    idiff = "!f() { \
+        git ls-files --modified --others --exclude-standard | uniq | tr -d '\"' | fzf --multi --header \"${1:-Unstaged}\" --preview '(git diff --color=always --exit-code -- "{}" 2>/dev/null || cat "{}") | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}'; \
+        }; f"
+    id = idiff
+
+    idiffstaged = "!f() { \
+        git stgls | cut -f2- | fzf --multi --header \"${1:-Staged}\" --preview '(git diff --staged --color=always --exit-code -- "{}" 2>/dev/null || cat "{}") | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}'; \
+        }; f"
+    istg = istaged
+    is = istaged
+
+    istashed = "!f() { \
+        git stash list | fzf --multi --header \"${1:-Stashed}\" --preview 'git stash show --color=always "$(echo "{}" | cut -d: -f1)" | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}' | cut -d: -f1; \
+        }; f"
+
+    ipop = !git istashed | xargs -r -d '\n' git stash pop
+
+    ilog = "!f() { \
+        git log --oneline | fzf --multi --header \"${1:-Commits}\" --preview 'git show --color=always "$(echo "{}" | cut -d\\  -f1)" | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}' | cut -d\\  -f1; \
+        }; f"
+
+    iadd = !git idiff "Stage" | xargs -r -d '\n' git add && git ls
+    ia = iadd
+
+    icommit = !git iadd && git c && git ls
+    ic = icommit
+
+    iunstage = !git istaged "Unstage" | xargs -r -d '\n' git reset -- && git ls
+    iu = iunstage
+
+    iburn = !git idiff "Destroy" | xargs -r -d '\n' -I{} sh -c 'git reset -- "{}" >/dev/null && git checkout HEAD -- "{}" 2>/dev/null || git clean -f "{}"'
+    ix = iburn
+
+    ##################################################
+    # Show diff of a single file in 2-pane difftool.
+    # "diff2" == "diff 2-pane"
+    # > git diff2 <file>
+    ##################################################
+    diff2 = "!f() { \
+                git difftool --no-prompt ${1:?}; \
+            }; f"
+
+    ##################################################
+    # Show reachable commits in a graph.
+    # "g" == "graph"
+    # > git g
+    ##################################################
+    # https://stackoverflow.com/a/34467298
+    graph = log --graph --decorate --oneline
+    g = graph
+    ga = graph --all
+    gd = "!f() { \
+        git g ${1:-$(git pwb)} --not ${2:-origin/$(git pwb)}; \
+        }; f"
+
+    l = log --graph --decorate --abbrev-commit --format=format:'%C(bold yellow)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    la = l --all
+    lv = log --pretty=fuller
+    ld = gd
+
+    ##################################################
+    # List current status, diffs, and graph of recent.
+    # "ls" == "list"
+    # > git ls
+    ##################################################
+    ls = "!f() { \
+                printf '___\nSTAGED:\n' && git stgdif \
+                && printf '___\nUNSTAGED:\n' && git dif \
+                && printf '___\nUNTRACKED:\n' && git ls-untracked \
+                && printf '___\nSTASHED:\n' && git stash list \
+                && printf '___\nRECENT:\n' && git g -n3 \
+                && printf '___\n'; \
+            }; f"
+
+    ##################################################
+    # Watch current status, diffs, and graph of recent.
+    # "w" == "watch"
+    # > git w
+    ##################################################
+    watch = !watch -n3 --color --no-title 'echo $(date +%T) && git ls && echo "GRAPH:" && git g --all -n 10'
+
+    ##################################################
+    # List untracked files.
+    # "ls-untracked" == "list untracked"
+    # > git ls-untracked
+    ##################################################
+    ls-untracked = ls-files --others --exclude-standard
+
+    ##################################################
+    # Merge branch.
+    # "mgc" == "merge"
+    # > git mg <branch>
+    ##################################################
+    mg = merge --no-ff --commit --no-edit --stat
+
+    mg-ff = merge --ff-only --commit --no-edit --stat
+
+    ##################################################
+    # Print the URL of the given remote.
+    # "rem" == "remote"
+    # > git rem <remote>
+    ##################################################
+    rem = "!f() { \
+                git config --get \"remote.${1:-origin}.url\"; \
+            }; f"
+
+    ##################################################
+    # Print the project name of this repo,
+    # according to the given remote.
+    # "proj" == "project"
+    # > git proj <remote>
+    ##################################################
+    proj = "!f() { \
+                git rem $@ | rev | cut -d'/' -f1,2 | rev; \
+            }; f"
+
+    ##################################################
+    # Push to all remotes
+    # > git up
+    ##################################################
+    push-everywhere = "!f() { \
+                git remote | while read -r remote; do \
+                    echo -n \"${remote}: \" && git push $remote $@; \
+                done; \
+            }; f"
+
+    push-releases = "!f() { \
+                git push-everywhere $(git b-default) $@ \
+                && git push-everywhere --tags $@; \
+            }; f"
+
+    ##################################################
+    # Stash all
+    # "sa" == "stash all"
+    # > git sa
+    ##################################################
+    sa = stash --include-untracked
+
+    ##################################################
+    # Stash unstaged
+    # "su" == "stash unstaged"
+    # > git su
+    ##################################################
+    su = sa --keep-index
+
+    ##################################################
+    # List stashes.
+    # "sl" == "stash list"
+    # > git sl
+    ##################################################
+    sl = stash list -p
+
+    ##################################################
+    # Stash pop
+    # "sp" == "stash pop"
+    # > git sp
+    ##################################################
+    sp = stash pop
+
+    ##################################################
+    # List removed stashes.
+    # "sr" == "stash recover"
+    # > git sr
+    ##################################################
+    sr = !git fsck --unreachable | grep commit | cut -d\\  -f3 | xargs git log --merges --no-walk --grep=WIP
+
+    ##################################################
+    # Clear/DESTROY all stashes.
+    # "sx" == "stash destroy"
+    # > git sx
+    ##################################################
+    sx = stash clear
+
+    ##################################################
+    # Interactively add modifications to stage.
+    # "stgi" == "stage interactive"
+    # > git stgi
+    ##################################################
+    stgi = stage --patch
+
+    ##################################################
+    # Show diff of files in stage.
+    # "stgdiff" == "stage diff"
+    # > git stgdiff
+    ##################################################
+    stgdiff = diff --staged
+
+    ##################################################
+    # Show short diff of files in stage.
+    # "stgdif" == "stage short diff"
+    # > git stgdif
+    ##################################################
+    stgdif = stgdiff --compact-summary
+
+    ##################################################
+    # List tags.
+    # "tag-ls" == "tag list"
+    # > git tagls
+    ##################################################
+    tag-ls = tag --list --format='%(refname:lstrip=2) -> %(objectname:short) - %(contents:lines=1)' --sort=-creatordate;
+
+    ##################################################
+    # List latest tag preceeding HEAD.
+    # "taglsl" == "tag list latest"
+    # > git taglsl
+    ##################################################
+    tag-latest = !git tag --sort=committerdate | tail -n1
+
+    ##################################################
+    # Remove a tag.
+    # "tagrm" == "tag remove"
+    # > git tagrm <tag>
+    ##################################################
+    tag-rm = "!f() { \
+                git remote | while read -r remote; do \
+                    git push --delete $remote ${1} || true; \
+                done \
+                && git tag --delete ${1:?}; \
+            }; f"
+
+    ##################################################
+    # List tags, sorted by version.
+    # > git tag-sort
+    ##################################################
+    tag-sort = tag --list --sort=-v:refname
+
+    ##################################################
+    # Rewrite author emails according to .gitmailmap.
+    # > git mailmap
+    ##################################################
+    # requires: sudo apt install git-filter-repo
+    mailmap = !([ -f "$HOME/.gitmailmap" ] || echo 'New Name <new@mail.com> <old@mail.com>' > "$HOME/.gitmailmap") && ${EDITOR:-vim} "$HOME/.gitmailmap" && git filter-repo --force --mailmap "$HOME/.gitmailmap"
+
+[push]
+    autoSetupRemote = true
+[rebase]
+    autoStash = true

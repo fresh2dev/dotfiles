@@ -1,0 +1,14 @@
+[custom0]
+binding='<Super>t'
+command='alacritty'
+name='Terminal'
+
+[custom1]
+binding='<Super>n'
+command='zsh -ic "neovide --no-fork -- ."'
+name='Vim'
+
+[custom2]
+binding='<Control><Super>t'
+command='alacritty -e bash'
+name='Terminal (bash)'

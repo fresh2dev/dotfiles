@@ -1,0 +1,177 @@
+# Get editor completions based on the config schema
+# "$schema" = 'https://starship.rs/config-schema.json'
+
+palette = "catppuccin_mocha"
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+# https://starship.rs/config/#prompt
+format = """
+$username\
+$hostname\
+$localip\
+$shlvl\
+$singularity\
+$directory\
+$vcsh\
+$fossil_branch\
+$hg_branch\
+$pijul_channel\
+$package\
+$c\
+$cmake\
+$cobol\
+$daml\
+$dart\
+$deno\
+$dotnet\
+$elixir\
+$elm\
+$erlang\
+$fennel\
+$golang\
+$guix_shell\
+$haskell\
+$haxe\
+$helm\
+$java\
+$julia\
+$kotlin\
+$gradle\
+$lua\
+$nim\
+$nodejs\
+$ocaml\
+$opa\
+$perl\
+$php\
+$pulumi\
+$purescript\
+$python\
+$raku\
+$rlang\
+$red\
+$ruby\
+$rust\
+$scala\
+$solidity\
+$swift\
+$terraform\
+$vlang\
+$vagrant\
+$zig\
+$buf\
+$conda\
+$meson\
+$spack\
+$memory_usage\
+$aws\
+$gcloud\
+$openstack\
+$azure\
+$env_var\
+$crystal\
+$custom\
+$kubernetes\
+$docker_context\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$sudo\
+$cmd_duration\
+$line_break\
+$jobs\
+$battery\
+$time\
+$status\
+$os\
+$container\
+$shell\
+$character"""
+
+[cmd_duration]
+min_time = 100
+
+[rust]
+disabled = true  # When enabled, was giving significant lag (starship v1.19.0)
+
+[directory]
+style = "purple"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+
+# [custom.project]
+# command = "basename $DEVBOX_PROJECT_ROOT"
+# symbol = "❄️ "
+# style = 'cyan bold'
+# when = true
+
+# [custom.python]
+# command = "python --version | cut -d' ' -f2-"
+# symbol = "🐍 "
+# style = 'yellow'
+# when = true
+
+# [custom.venv]
+# command = "basename ${VIRTUAL_ENV:-system}"
+# style = 'yellow'
+# format = '[$symbol\(($output)\) ]($style)'
+# when = true
+
+[nix_shell]
+disabled = true
+
+[python]
+disabled = false
+# pyenv_version_name = true
+# pyenv_prefix = ""
+# format='via [${symbol}${pyenv_prefix}(${version} )]($style)'
+# format='via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+
+# [env_var.HB_DOMAIN]
+# symbol = "爵"
+# style="gray"
+# format="[${symbol}https://$env_value]($style) "
+
+# [docker_context]
+# symbol = "🐳 "
+# style="blue"
+# format="[$symbol$context]($style) "
+# only_with_files = false
+
+# [kubernetes]
+# disabled = false
+# # detect_files = ['']
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"

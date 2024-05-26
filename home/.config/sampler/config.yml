@@ -1,0 +1,56 @@
+---
+theme: 'dark'
+runcharts:
+  - title: 'Response time'
+    position:
+      - [19, 2]
+      - [61, 25]
+    rate-ms: 10000
+    legend:
+      enabled: true
+      details: false
+    scale: 2
+    items:
+      - label: 'Fresh2.dev'
+        color: 178
+        sample: 'curl -o /dev/null -s -w ''%{time_total}''  https://fresh2.dev'
+gauges:
+  - title: 'Month progress'
+    position:
+      - [0, 31]
+      - [40, 4]
+    cur:
+      sample: 'date +%d'
+    max:
+      sample: 'echo 30'
+    min:
+      sample: 'echo 0'
+  - title: 'Week progress'
+    position:
+      - [0, 36]
+      - [40, 4]
+    cur:
+      sample: 'date +%u'
+    max:
+      sample: 'echo 7'
+    min:
+      sample: 'echo 0'
+  - title: 'Year progress'
+    position:
+      - [0, 24]
+      - [40, 4]
+    cur:
+      sample: 'date +%j'
+    max:
+      sample: 'echo 365'
+    min:
+      sample: 'echo 0'
+textboxes:
+  - title: 'Local weather'
+    position:
+      - [0, 2]
+      - [24, 24]
+    rate-ms: 10000
+    color: 178
+    sample: 'curl https://wttr.in/Plano+TX'
+    border: false

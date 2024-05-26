@@ -1,0 +1,5 @@
+[global]
+quiet = false
+show_hash = false
+upgrade_only = true
+target = "~/.local/bin"

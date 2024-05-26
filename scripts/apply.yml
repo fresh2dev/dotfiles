@@ -1,0 +1,199 @@
+---
+- hosts: 'localhost'
+  become: false
+  gather_facts: false
+  vars:
+    ansible_user_id: 1000
+    matching: '.*'
+    os_apps:
+      - alacritty
+      - zsh
+      - xclip
+      - podman
+      - flatpak
+      - syncthing
+      - gnome-tweaks
+      - gnome-shell-extension-pop-shell
+      - xprop  # required by unite-shell
+    flatpak_apps:
+      - 'com.brave.Browser'
+      - 'com.github.PintaProject.Pinta'
+      - 'com.github.tchx84.Flatseal'
+      - 'com.mattjakeman.ExtensionManager'
+      - 'com.obsproject.Studio'
+      - 'io.github.dvlv.boxbuddyrs'
+      - 'io.gitlab.librewolf-community'
+      - 'io.podman_desktop.PodmanDesktop'
+      - 'org.fedoraproject.MediaWriter'
+      - 'org.gimp.GIMP'
+      - 'org.gnome.font-viewer'
+      - 'org.gnome.SimpleScan'
+      - 'org.kde.kdenlive'
+      - 'io.github.seadve.Kooha'
+      - 'org.remmina.Remmina'
+      - 'org.sqlitebrowser.sqlitebrowser'
+      - 'io.kinvolk.Headlamp'
+      - 'com.github.qarmin.czkawka'
+    git_repos:
+      - {repo: 'https://github.com/hardpixel/unite-shell', dest: '~/.local/share/gnome-shell/extensions'}
+      # - {repo: 'https://github.com/pyenv/pyenv.git', dest: '~/.pyenv', version: 'master'}
+      # - {repo: 'https://github.com/89luca89/distrobox.git', dest: '/tmp/distrobox', version: 'main'}
+      # - {repo: 'https://www.github.com/zsh-users/zsh-autosuggestions', dest: '~/.zsh/zsh-autosuggestions', version: 'master'}
+      # - {repo: 'https://github.com/jeffreytse/zsh-vi-mode', dest: '~/.zsh/zsh-vi-mode', version: 'master'}
+      # - {repo: 'https://www.github.com/Aloxaf/fzf-tab', dest: '~/.zsh/fzf-tab', version: 'master'}
+      # - {repo: 'https://www.github.com/alacritty/alacritty-theme', dest: '~/.config/alacritty/themes', version: 'master'}
+  handlers:
+    - name: 'Reboot'
+      ansible.builtin.reboot:
+        msg: 'Rebooting'
+  tasks:
+    - name: 'Remove dead links'
+      tags: ['symlink', 'cleanup']
+      block:
+        - name: 'Find symbolic links in ~/ (depth=1)'
+          ansible.builtin.find:
+            paths: ['~/']
+            file_type: 'link'
+            hidden: true
+            depth: 1
+          register: 'home_symlinks'
+        - name: 'Find symbolic links in ~/.config (recursive)'
+          ansible.builtin.find:
+            paths: ['~/.config/']
+            file_type: 'link'
+            hidden: true
+            recurse: true
+          register: 'config_symlinks'
+        - name: 'Check symlinks status'
+          stat:
+            path: '{{ item.path }}'
+            get_checksum: false
+            get_mime: false
+            get_attributes: false
+          loop: '{{ home_symlinks.files + config_symlinks.files }}'
+          loop_control:
+            label: '{{ item.path }}'
+          register: 'all_symlinks'
+        - name: 'Remove broken symbolic links'
+          ansible.builtin.file:
+            path: '{{ item.stat.path }}'
+            state: 'absent'
+          when: 'not item.stat.readable'
+          loop: '{{ all_symlinks.results }}'
+          loop_control:
+            label: '{{ item.stat.path }}'
+
+    - name: 'install apps'
+      tags: ['apps']
+      block:
+        - name: Remove apps (rpm-ostree)
+          tags: ["rpm-ostree"]
+          community.general.rpm_ostree_pkg:
+            state: absent
+            name:
+              - firefox-langpacks
+              - firefox
+              - gnome-extensions-app
+              - gnome-software-rpm-ostree
+              - gnome-tour
+
+        - name: Install apps (rpm-ostree)
+          tags: ["rpm-ostree"]
+          community.general.rpm_ostree_pkg:
+            state: present
+            name: "{{ os_apps }}"
+        #   notify: Reboot
+
+        - name: 'Enable and start Syncthing service'
+          tags: ['syncthing']
+          ansible.builtin.systemd:
+            name: 'syncthing.service'
+            enabled: true
+            state: 'started'
+            scope: 'user'
+
+        - name: 'Add flatpak repo - flathub'
+          tags: ['flatpak']
+          ansible.builtin.shell:
+            cmd: 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+              && flatpak remote-modify --enable --user flathub'
+
+        - name: 'Remove flatpak repo - fedora'
+          tags: ['flatpak']
+          ansible.builtin.shell:
+            cmd: >
+              if flatpak remotes | grep -q "^fedora"; then
+                sudo flatpak remote-delete fedora --force;
+              fi
+
+        - name: 'Install apps (flatpak)'
+          tags: ['flatpak']
+          community.general.flatpak:
+            state: 'present'
+            method: 'user'
+            remote: 'flathub'
+            name: ['{{ item }}']
+          loop: '{{ flatpak_apps }}'
+
+        - name: 'Install nix'
+          tags: ['nix', 'devbox']
+          ansible.builtin.shell:
+            cmd: >
+              curl --proto "=https" --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sudo bash -s -- install --no-confirm
+            creates: '/nix/store'
+
+        - name: 'Update devbox'
+          tags: ['devbox']
+          command: 'devbox global update'
+
+        - name: 'Clone or pull projects'
+          tags: ['git']
+          git:
+            repo: '{{ item.repo }}'
+            dest: '{{ item.dest }}'
+            version: '{{ item.version }}'
+            clone: true
+            update: true
+          loop: '{{ git_repos }}'
+
+        # - name: 'Install distrobox'
+        #   tags: ['distrobox']
+        #   command:
+        #     cmd: 'install --target-directory ~/.local'
+        #     chdir: '/tmp/distrobox'
+        #     creates: '~/.local/bin/distrobox'
+
+        # - name: 'Create distroboxes'
+        #   tags: ['distrobox']
+        #   command: '~/.local/bin/distrobox assemble create --file ~/.config/distrobox/distrobox.ini'
+
+        # - name: Setup pyenv envs
+        #   tags: ["pyenv"]
+        #   command:
+        #     cmd: pyenv install --skip-existing 3.8 3.9 3.10 3.11 3.12
+        #     chdir: '~/.pyenv'
+
+        - name: 'Set default shell to Zsh'
+          tags: ['zsh']
+          user:
+            name: '{{ ansible_user }}'
+            shell: '/usr/bin/zsh'
+
+        - name: 'Swap CAPS <--> ESC'
+          ansible.builtin.shell:
+            cmd: >
+              gsettings set org.gnome.desktop.input-sources xkb-options "['caps:swapescape']"
+
+        - name: 'Enabled podman socket'
+          tags: ['podman']
+          ansible.builtin.systemd:
+            name: 'podman.socket'
+            enabled: true
+            state: 'started'
+            scope: 'user'
+
+        - name: 'Generate ssh key'
+          tags: ['ssh-key']
+          ansible.builtin.shell:
+            cmd: 'ssh-keygen -t ed25519 -q -f ~/.ssh/id_ed25519 -N ""'
+            creates: '~/.ssh/id_ed25519'

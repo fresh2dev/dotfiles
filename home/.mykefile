@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+
+
+import myke
+
+#  @myke.shell_task(parents=("os"))
+#  def install_pyenv():
+#      return [
+#          'export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"',
+#          '[ -d "$PYENV_ROOT" ] || git clone --depth=1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}"'
+#          '"$PYENV_ROOT/bin/pyenv" install --skip-existing 3.7 3.8 3.9 3.10 3.11 3.12',
+#      ]
+
+
+@myke.shell_task(parents=("os"))
+def install_pipx_apps():
+    return [
+        "pipx install -f --include-deps 'ansible==9.*'",
+        "pipx install -f --include-deps 'jupyterlab'",
+        "pipx install -f 'dooit==2.*'",
+        "pipx install -f 'aider-chat==0.*'",
+        "pipx install -f 'asciinema==2.*'",
+        "pipx install -f 'b2==3.*'",
+        "pipx install -f 'copier==9.*'",
+        "pipx install -f 'git-filter-repo'",
+        "pipx install -f 'grip==4.*'",
+        "pipx install -f 'pre-commit==3.*'",
+        "pipx install -f 'myke[extras]==0.4.*'",
+        "pipx install -f 'yamlfix==1.*'",
+        # Python dev tools
+        ## build
+        "pipx install -f 'setuptools>=64'",
+        "pipx install -f 'build==0.*'",
+        "pipx install -f 'wheel==0.*'",
+        "pipx install -f 'twine==4.*'",
+        ## dev
+        # "python-lsp-server[rope]==1.*",
+        # "python-lsp-ruff==2.*",
+        # "pylsp-mypy==0.6.*",
+        "pipx install -f 'pyright==1.*'",
+        "pipx install -f 'pylint==3.*'",
+        "pipx inject pylint 'pylint-venv==3.*'",
+        "pipx install -f 'ruff==0.4.*'",
+        "pipx install -f 'ruff-lsp==0.*'",
+        "pipx install -f 'isort==5.*'",
+        "pipx install -f 'docsig==0.*'",
+        "pipx install -f 'bump2version==1.*'",
+        "pipx install -f 'tox==4.*'",
+        ## docs
+        "pipx install -f 'mkdocs==1.*'",
+        "pipx inject mkdocs 'mkdocs-material>=9.5,<10'",
+        "pipx inject mkdocs 'mkdocs-jupyter==0.24.*'",
+        "pipx inject mkdocs 'mkdocstrings[python]==0.24.*'",
+        "pipx inject mkdocs 'mkdocs-autorefs==0.*'",
+        "pipx inject mkdocs 'mkdocs-include-dir-to-nav==1.*'",
+    ]
+
+
+#  @myke.shell_task(
+#      parents=("os"), env_update={"EGET_BIN": str(Path.home() / ".local" / "bin")}
+#  )
+#  def install_eget_apps():
+#      return [
+#          "eget 'neovide/neovide' --tag='0.12.2'",
+#          "eget 'BurntSushi/ripgrep' --tag='14.1.0'",
+#          "eget 'junegunn/fzf' --tag='0.48.1'",
+#          "eget 'sharkdp/fd' --tag='v9.0.0'",
+#          "eget 'sharkdp/bat' --tag='v0.24.0'",
+#          "eget 'sharkdp/pastel' --tag='0.9.0'",
+#          "eget 'dandavison/delta' --tag='0.16.5'",
+#          "eget 'eza-community/eza' --tag='v0.17.2'",
+#          "eget 'charmbracelet/gum' --tag='v0.13.0'",
+#          "eget 'charmbracelet/glow' --tag='v1.5.1'",
+#          "eget 'charmbracelet/mods' --tag='v1.1.0'",
+#          "eget 'artempyanykh/marksman' --tag='2023-12-09'",
+#          "eget 'sxyazi/yazi' --tag='v0.2.1'",
+#          "eget 'ajeetdsouza/zoxide' --tag='0.9.2'",
+#          "eget 'starship/starship' --tag='v1.17.1'",
+#          "eget 'neovim/neovim' --tag='0.9.5'",
+#          "eget 'gohugoio/hugo' --tag='v0.121.2'",
+#          "eget 'harness/drone-cli' --tag='v1.7.0'",
+#          "eget 'wfxr/code-minimap' --tag='v0.6.4'",
+#          "eget 'direnv/direnv' --tag='v2.33.0'"
+#          "eget 'openfaas/faas-cli' --tag='0.16.21'",
+#          "eget 'orhun/git-cliff' --tag='v1.4.0'",
+#          "eget 'moncho/dry' --tag='v0.11.2'",
+#          "eget 'sachaos/viddy' --tag='v0.4.0'",
+#          "eget 'nektos/act' --tag='v0.2.59'",
+#          "eget 'helmwave/helmwave' --asset='.tar.gz' --tag='v0.35.2'",
+#          "eget 'arttor/helmify' --tag='v0.4.10'",
+#          "eget 'hadolint/hadolint' --tag='v2.12.0'",
+#          "eget 'devspace-sh/devspace' --tag='v6.3.12'",
+#          "eget 'alexellis/arkade' --tag='0.11.4'",
+#          "eget 'kubernetes/kompose' --tag='v1.32.0' --asset='.tar.gz' --to=$HOME/.local/bin/kompose",
+#          "eget 'ahmetb/kubectx' --tag='v0.9.5' --asset=kubectx --to=$HOME/.local/bin/kubectl-ctx",
+#          "eget 'ahmetb/kubectx' --tag='v0.9.5' --asset=kubens --to=$HOME/.local/bin/kubectl-ns",
+#          "eget 'keisku/kubectl-explore' --tag='v0.7.2' --to=$HOME/.local/bin/kubectl-explore",
+#          "eget 'corneliusweig/ketall' --tag='v1.3.8' --asset='ketall' --file='ketall*' --to=$HOME/.local/bin/kubectl-get_all",
+#          "eget 'vladimirvivien/ktop' --tag='v0.3.5' --asset=kubectl-ktop --file=kubectl-ktop --to=$HOME/.local/bin/kubectl-ktop",
+#          "eget 'iximiuz/kexp' --tag='v0.0.5' --to=$HOME/.local/bin/kubectl-kexp",
+#          "eget 'derailed/k9s' --tag='v0.31.7' --asset='.tar.gz' --asset='^sbom' --to=$HOME/.local/bin/kubectl-ui",
+#          "eget 'kubescape/kubescape' --tag='v3.0.3' --asset='.tar.gz' --to=$HOME/.local/bin/kubectl-kubescape",
+#          "eget 'derailed/popeye' --tag='v0.11.2' --to=$HOME/.local/bin/kubectl-popeye",
+#          "eget 'tohjustin/kube-lineage' --tag='v0.5.0' --to=$HOME/.local/bin/kubectl-get_lineage",
+#          "eget 'robscott/kube-capacity' --tag='v0.7.4' --to=$HOME/.local/bin/kubectl-capacity",
+#          "eget 'zegl/kube-score' --tag='v1.17.0' --to=$HOME/.local/bin/kubectl-score",
+#          "eget 'boz/kail' --tag='v0.17.4' --asset=v3 --to=$HOME/.local/bin/kubectl-tail",
+#          "eget 'ahmetb/kubectl-tree' --tag='v0.4.3' --to=$HOME/.local/bin/kubectl-tree",
+#          "eget 'kubepug/kubepug' --tag='v1.7.1' --asset='.tar.gz' --asset='^.tar.gz.' --to=$HOME/.local/bin/kubectl-deprecations",
+#          "eget 'komodorio/helm-dashboard' --tag='v1.3.3' --to=$HOME/.local/bin/helm-dashboard",
+#      ]
+
+
+#  @myke.shell_task(parents=("os"))
+#  def install_distrobox():
+#      return [
+#          "[ -d /tmp/distrobox ] || git clone --depth=1 https://www.github.com/89luca89/distrobox.git /tmp/distrobox",
+#          "/tmp/distrobox/install --prefix ~/.local",
+#          "~/.local/bin/distrobox assemble create --file ~/.config/distrobox/distrobox.ini",
+#      ]
+
+
+#  @myke.shell_task(parents=("os"))
+#  def update():
+#      install_pyenv()
+#      return [
+#          "devbox global update",
+#      ]
+
+
+#  @myke.shell_task(parents=("os"))
+#  def hello(name):
+#      return [
+#          f"echo Hello {name}",
+#      ]
+
+
+if __name__ == "__main__":
+    myke.main(__file__)

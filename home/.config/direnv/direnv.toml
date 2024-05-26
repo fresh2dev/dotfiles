@@ -1,0 +1,8 @@
+[global]
+disable_stdin = true
+load_dotenv = false
+strict_env = true
+warn_timeout = '10s'
+
+[whitelist]
+prefix = ["~/sync/projects", "/var/home/d/sync/projects"]

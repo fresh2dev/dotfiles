@@ -1,0 +1,20 @@
+[
+    // {
+    //     "key": "ctrl+`",
+    //     "command": "workbench.action.terminal.openNativeConsole"
+    // },
+    // {
+    //     "key": "ctrl+`",
+    //     "command": "-workbench.action.terminal.toggleTerminal",
+    //     "when": "terminal.active"
+    // },
+    {
+        "key": "ctrl+w",
+        "command": "-workbench.action.closeActiveEditor"
+    },
+    {
+        "key": "ctrl+w",
+        "command": "-workbench.action.terminal.killEditor",
+        "when": "terminalEditorFocus && terminalFocus && terminalHasBeenCreated || terminalEditorFocus && terminalFocus && terminalProcessSupported"
+    },
+]

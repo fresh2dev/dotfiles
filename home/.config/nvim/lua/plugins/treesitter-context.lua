@@ -1,0 +1,21 @@
+return {}
+-- return {
+--   'nvim-treesitter/nvim-treesitter-context',
+--   event = { 'BufReadPost', 'BufWritePost', 'BufNewFile' },
+--   enabled = true,
+--   opts = {
+--     mode = 'topline',
+--     separator = '_',
+--     max_lines = 3,
+--   },
+--   keys = {
+--     {
+--       '[t',
+--       function()
+--         require('treesitter-context').go_to_context(vim.v.count1)
+--       end,
+--       desc = 'Jump Up to Treesitter Context',
+--       { silent = true },
+--     },
+--   },
+-- }

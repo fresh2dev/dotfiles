@@ -1,0 +1,25 @@
+import = ["~/.config/alacritty/themes/themes/tokyo-night.toml"]
+
+# [colors.primary]
+# background = "#000000"
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 13
+
+[font.normal]
+family = "iMWritingMono Nerd Font"
+
+[window]
+decorations = "None"
+decorations_theme_variant = "None"
+dynamic_title = true
+dynamic_padding = true
+padding = { x = 10, y = 0 }
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "`"
+mods = "Control"

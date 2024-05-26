@@ -1,0 +1,36 @@
+{
+  "packages": {
+    "cool-retro-term":  "1.2.",
+    "dnsutils":         "latest",
+    "docker-client":    "24.",
+    "ffmpeg":           "5.",
+    "figlet":           "2.",
+    "gh":               "latest",
+    "gzip":             "latest",
+    "imagemagick":      "latest",
+    "ipscan":           "latest",
+    "iputils":          "latest",
+    "kubectl":          "latest",
+    "libiconv":         "latest",
+    "lsb-release":      "latest",
+    "mimir":            "latest",
+    "moreutils":        "latest",
+    "mpv":              "latest",
+    "openssl":          "3.",
+    "pandoc":           "latest",
+    "sampler":          "1.",
+    "showmethekey":     "latest",
+    "sshpass":          "latest",
+    "universal-ctags":  "6.",
+    "vlc":              "latest",
+    "vscodium":         "1.",
+  },
+  "env": {
+    "DEVBOX_GLOBAL_ROOT":   "$HOME/.local/share/devbox/global/current"
+  },
+  "shell": {
+    "init_hook": [
+      ". \"${DEVBOX_GLOBAL_ROOT}/init.sh\""
+    ]
+  }
+}
