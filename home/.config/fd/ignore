@@ -1,0 +1,5 @@
+.git/
+.venv/
+.cache/
+.devbox/
+.local/share

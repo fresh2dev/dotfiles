@@ -39,7 +39,11 @@ alias nv="nvim"
 alias g=git
 alias G=git
 
+alias gi='$EDITOR -c "normal 1 go"'
+alias Gi=gi
+
 alias q=exit
+alias x=exit
 alias so=source
 
 alias currentmillis='date +%s%3N'
@@ -64,7 +68,7 @@ install_yapx_zsh_completion() {
 }
 
 export FZF_DEFAULT_COMMAND='rg --files'
-export FZF_DEFAULT_OPTS='--bind "alt-a:toggle-all,alt-i:toggle-preview" --layout=reverse --preview-window=bottom,40%,border-top --highlight-line'
+export FZF_DEFAULT_OPTS='--bind ctrl-a:select-all,ctrl-d:deselect-all,tab:toggle+down,shift-tab:toggle+up,ctrl-x:toggle --layout=reverse --preview-window=bottom,40%,border-top --highlight-line'
 export _ZO_FZF_OPTS="$FZF_DEFAULT_OPTS --border=none --preview-window=hidden"
 export _ZO_EXCLUDE_DIRS="$HOME:/tmp:/var/*:/mnt/*"
 export _ZO_MAXAGE=1000
@@ -160,7 +164,6 @@ if [ -d "$HOME/.zsh/zsh-vi-mode" ]; then
     zvm_after_init_commands+=('zvm_bindkey viins "^H" zsh_zellij_focus_left')
     zvm_after_init_commands+=('zvm_bindkey viins "^L" zsh_zellij_focus_right')
   fi
-
 fi
 
 # starship

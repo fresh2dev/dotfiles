@@ -1,6 +1,12 @@
 [user]
   email = hello@Fresh2.dev
   name = Donald Mellenbruch
+[credential "https://github.com"]
+	helper = 
+	helper = !/Users/donald/.local/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/Users/donald/.local/bin/gh auth git-credential
 [init]
   defaultBranch = main
   ; templatedir = /home/donald/.git_template
@@ -31,13 +37,15 @@
     prune = true
 [pull]
     rebase = true
-; [rebase]
-;   autosquash = true
+[rebase]
+    autoStash = true
 ; [branch "main"]
 ;     mergeoptions = --no-ff
+[push]
+    autoSetupRemote = true
 [merge]
-    conflictstyle = diff3
-    tool = vimdiff2
+    conflictStyle = zdiff3
+    tool = vimdiff3
     autoStash = true
 [diff]
     prompt = false
@@ -58,29 +66,6 @@
         }; f"
     f = find
     o = open
-
-    pull-template = !copier update -r dev --trust --conflict rej
-
-    redate = "!f() { \
-        git filter-repo --refs ${1:-HEAD~}..HEAD --commit-callback ' \
-            [setattr(commit, date_attr, \"{0} +0000\".format(og_ts - (og_ts % 86400)).encode(\"utf-8\")) for date_attr in [\"author_date\", \"committer_date\"] for og_ts in [int(getattr(commit, date_attr).decode(\"utf-8\").split()[0])]]'; \
-        }; f"
-    ; git filter-repo --refs ${1:-HEAD~}~..HEAD --commit-callback '
-    ;     for date_attr in 'author_date', 'committer_date':
-    ;         og_ts = int(getattr(commit, date_attr).decode("utf-8").split()[0])
-    ;         trunc_ts = og_ts - (og_ts % 86400)
-    ;         setattr(commit, date_attr, f"{trunc_ts} +0000".encode("utf-8"))
-    ;
-
-    redate-main = !git redate $(git b-default)
-    redate-origin = !git redate origin/$(git pwb)
-    rd = redate
-
-    redate-branches = "!f() { \
-        git branch --format='%(refname:short)' | sort -r | while read -r x; do \
-            git switch $x && git redate $@; \
-        done && git switch -; \
-            }; f"
 
     aliases = "!f() { \
                 git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /; \
@@ -187,7 +172,7 @@
     # "c-sha" == "commit sha"
     # > git c-sha
     ##################################################
-    c-sha = rev-parse --short HEAD
+    c-sha = rev-parse --short=8 HEAD
 
     ##################################################
     # Print first commit SHA.
@@ -197,31 +182,6 @@
     c-sha0 = "!f() { \
                 git rev-list --all --max-parents=0 HEAD | tail -n1 | cut -c 1-7; \
             }; f"
-
-    ##################################################
-    # Generate changelog.
-    # > git changelog
-    ##################################################
-    changelog = "!f() { \
-                cd $(git root) \
-                && git cliff --tag $(if [ -f 'pyproject.toml' ]; then myke py version; else echo 'unreleased'; fi) $@; \
-            }; f"
-    chl = changelog
-
-    changelog-diff = changelog --unreleased
-    chl-diff = changelog-diff
-
-    changelog-diff-write = "!f() { \
-        cd $(git root) \
-        && CHANGELOG=\"CHANGELOG.md\" \
-        && touch $CHANGELOG \
-        && cat CHANGELOG.md | tail -n+2 > ${CHANGELOG}.tmp && (printf 'SLOC Analysis:\n\n'; myke py sloc) | cat - ${CHANGELOG}.tmp > CHANGELOG.md \
-        && rm ${CHANGELOG}.tmp \
-        && git changelog-diff --prepend $CHANGELOG \
-        && echo $CHANGELOG; \
-            }; f"
-
-    chl-diff-write = changelog-diff-write
 
     ##################################################
     # Checkout ref.
@@ -513,7 +473,22 @@
     # requires: sudo apt install git-filter-repo
     mailmap = !([ -f "$HOME/.gitmailmap" ] || echo 'New Name <new@mail.com> <old@mail.com>' > "$HOME/.gitmailmap") && ${EDITOR:-vim} "$HOME/.gitmailmap" && git filter-repo --force --mailmap "$HOME/.gitmailmap"
 
-[push]
-    autoSetupRemote = true
-[rebase]
-    autoStash = true
+
+    # `git merge-repo FlyLikeAPenguin:fix-function-as-type git@github.com:FlyLikeAPenguin/argparse-tui.git`
+    # `git rebase-repo FlyLikeAPenguin:fix-function-as-type git@github.com:FlyLikeAPenguin/argparse-tui.git`
+    repo-operation = "!f() { \
+        operation=$1; \
+        user_branch=$2; \
+        remote_url=$3; \
+        shift 3; \
+        remote_name=$(echo $user_branch | cut -d\":\" -f1); \
+        branch_name=$(echo $user_branch | cut -d\":\" -f2); \
+        git remote remove $remote_name 2>/dev/null; \
+        git remote add $remote_name $remote_url && \
+        git fetch $remote_name $branch_name && \
+        git $operation $@ $remote_name/$branch_name; \
+        git remote remove $remote_name; \
+        }; f"
+    
+    merge-repo = "!git repo-operation merge"
+    rebase-repo = "!git repo-operation rebase"

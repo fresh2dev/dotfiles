@@ -1,0 +1,85 @@
+return {}
+-- local function get_diagnostic_label(props)
+--   local icons = {
+--     Error = '',
+--     Warn = '',
+--     Info = '',
+--     Hint = '',
+--   }
+--
+--   local label = {}
+--   for severity, icon in pairs(icons) do
+--     local n = #vim.diagnostic.get(props.buf, { severity = vim.diagnostic.severity[string.upper(severity)] })
+--     if n > 0 then
+--       local fg = '#' .. string.format('%06x', vim.api.nvim_get_hl_by_name('DiagnosticSign' .. severity, true)['foreground'])
+--       table.insert(label, { icon .. ' ' .. n .. ' ', guifg = fg, guibg = '#2e2e2d' })
+--     end
+--   end
+--   return label
+-- end
+--
+-- return {
+--   'https://github.com/b0o/incline.nvim',
+--   enabled = true,
+--   config = function()
+--     require('incline').setup {
+--       debounce_threshold = { falling = 500, rising = 250 },
+--       window = {
+--         placement = {
+--           vertical = 'bottom',
+--           horizontal = 'center',
+--         },
+--         padding = 0,
+--         padding_char = ' ',
+--         margin = { vertical = 0, horizontal = 0 },
+--         overlap = {
+--           tabline = false,
+--           winbar = false,
+--           borders = false,
+--           statusline = false,
+--         },
+--       },
+--       render = function(props)
+--         local bufname = vim.api.nvim_buf_get_name(props.buf)
+--         -- Get the relative path of the file from the full buffer name.
+--         local filename = vim.fn.fnamemodify(bufname, ':.')
+--         local modified = vim.api.nvim_buf_get_option(props.buf, 'modified') and 'bold,italic' or 'None'
+--         -- theme = require "nvim-web-devicons.icons-light"
+--         -- theme = require "nvim-web-devicons.icons-default"
+--         local filetype_icon, color = require('nvim-web-devicons').get_icon_color(filename)
+--
+--         local buffer = {
+--           {
+--             filetype_icon,
+--             guibg = '#2e2e2e',
+--             guifg = color,
+--           },
+--           { ' ', guibg = '#2e2e2d' },
+--           {
+--             filename,
+--             gui = modified,
+--             guibg = '#2e2e2e',
+--             guifg = props.focused == true and 'cyan' or 'lightgray',
+--           },
+--         }
+--
+--         -- If focused, don't show LSP diags.
+--         if props.focused == true then
+--           local diagnostics = get_diagnostic_label(props)
+--           if #diagnostics > 0 then
+--             table.insert(diagnostics, { '| ', guifg = 'black', guibg = '#2e2e2e' })
+--           end
+--           for _, buffer_ in ipairs(buffer) do
+--             table.insert(diagnostics, buffer_)
+--           end
+--           buffer = diagnostics
+--         end
+--
+--         table.insert(buffer, 1, { '', guifg = '#2e2e2d' })
+--         table.insert(buffer, { '', guifg = '#2e2e2e' })
+--
+--         return buffer
+--       end,
+--     }
+--   end,
+-- }

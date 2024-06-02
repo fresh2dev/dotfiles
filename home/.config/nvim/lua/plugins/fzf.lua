@@ -1,27 +1,32 @@
 return {
-  'ibhagwan/fzf-lua',
+  'https://github.com/ibhagwan/fzf-lua',
   -- optional for icon support
-  dependencies = { 'nvim-tree/nvim-web-devicons' },
+  dependencies = { 'https://github.com/nvim-tree/nvim-web-devicons' },
   cmd = 'FzfLua',
   keys = {
-    { '<leader>fz', ':FzfLua<CR>', mode = 'n', desc = '[FZ]F Menu' },
+    { '<C-p>', ':FzfLua<CR>', mode = 'n', desc = '[FZ]F Menu' },
     { '<leader>fa', ':FzfLua args<CR>', mode = 'n', desc = '[F]ZF [A]rgument List' },
     { '<leader>fh', ':FzfLua helptags<CR>', mode = 'n', desc = '[F]ZF [H]elptags' },
     { '<leader>fk', ':FzfLua keymaps<CR>', mode = 'n', desc = '[F]ZF [K]eymaps' },
     { '<leader>ff', ':FzfLua files<CR>', mode = 'n', desc = '[F]ZF [F]iles' },
     { '<leader>fl', ':FzfLua blines<CR>', mode = 'n', desc = '[F]ZF [L]ines in Buffer' },
-    { '<leader>fg', ':FzfLua git_status<CR>', mode = 'n', desc = '[F]ZF [G]it Status' },
-    { '<leader>fs', ':FzfLua live_grep<CR>', mode = 'n', desc = '[F]ZF Grep [S]earch' },
-    { '<leader>fc', ':FzfLua commands<CR>', mode = 'n', desc = '[F]ZF [C]ommands' },
+    { '<leader>fg', ':FzfLua git_bcommit<CR>', mode = 'n', desc = '[F]ZF [G]it Commits for Buffer' },
+    { '<leader>fs', ':FzfLua live_grep_glob<CR>', mode = 'n', desc = '[F]ZF Grep [S]earch' },
+    { '<leader>fS', ':FzfLua live_grep_glob resume=true<CR>', mode = 'n', desc = '[F]ZF Resume Grep [S]earch' },
+    { '<leader>fc', ':FzfLua changes<CR>', mode = 'n', desc = '[F]ZF File [C]hanges' },
     { '<leader>fo', ':FzfLua oldfiles<CR>', mode = 'n', desc = '[F]ZF [O]ldfiles' },
-    { '<leader>fb', ':FzfLua buffers<CR>', mode = 'n', desc = '[F]ZF [B]uffers' },
-    { '<leader>ft', ':FzfLua tabs<CR>', mode = 'n', desc = '[F]ZF [T]abs' },
+    { '<leader>fb', ':FzfLua buffers sort_mru=true sort_lastused=true<CR>', mode = 'n', desc = '[F]ZF [B]uffers' },
+    -- Use `ft` for `:TodoFzfLua`
+    -- { '<leader>ft', ':FzfLua tabs<CR>', mode = 'n', desc = '[F]ZF [T]abs' },
     { '<leader>fm', ':FzfLua marks<CR>', mode = 'n', desc = '[F]ZF [M]arks' },
     { '<leader>fj', ':FzfLua jumps<CR>', mode = 'n', desc = '[F]ZF [J]umps' },
-    -- { '<leader>fv', ':FzfLua lsp_document_symbols<CR>', mode = 'n', { desc = '[F]ZF Document Symbols' } },
-    -- { '<leader>fV', ':FzfLua lsp_live_workspace_symbols<CR>', mode = 'n', { desc = '[F]ZF Workspace Symbols' } },
-    -- { '<leader>fe', ':FzfLua diagnostics_document<CR>', mode = 'n', { desc = '[F]ZF Document Diagnostics ([E]rrors)' } },
-    -- { '<leader>fE', ':FzfLua diagnostics_workspace<CR>', mode = 'n', { desc = '[F]ZF Workspace Diagnostics ([E]rrors)' } },
+    { '<leader>f<C-o>', ':FzfLua jumps<CR>', mode = 'n', desc = '[F]ZF [J]umps' },
+    { '<leader>fv', ':FzfLua lsp_document_symbols<CR>', mode = 'n', { desc = '[F]ZF Document Symbols' } },
+    { '<leader>fV', ':FzfLua lsp_live_workspace_symbols<CR>', mode = 'n', { desc = '[F]ZF Workspace Symbols' } },
+    { '<leader>fd', ':FzfLua diagnostics_document<CR>', mode = 'n', { desc = '[F]ZF Document [D]iagnostics' } },
+    { '<leader>fD', ':FzfLua diagnostics_workspace<CR>', mode = 'n', { desc = '[F]ZF Workspace [D]iagnostics' } },
+    { '<leader>fq', ':FzfLua quickfix<CR>', mode = 'n', { desc = '[F]ZF [Q]uickfix' } },
+    { '<leader>fQ', ':FzfLua loclist<CR>', mode = 'n', { desc = '[F]ZF [Q]uickfix Stack' } },
   },
   config = function()
     local fzf = require 'fzf-lua'
@@ -62,19 +67,20 @@ return {
           ['<S-left>'] = 'preview-page-reset',
         },
         fzf = {
-          -- fzf '--bind=' options
-          ['ctrl-z'] = 'abort',
-          -- ['ctrl-u'] = 'unix-line-discard',
-          ['ctrl-d'] = 'half-page-down',
-          ['ctrl-u'] = 'half-page-up',
-          ['ctrl-a'] = 'beginning-of-line',
-          ['ctrl-e'] = 'end-of-line',
-          ['alt-a'] = 'toggle-all',
-          -- Only valid with fzf previewers (bat/cat/git/etc)
-          ['f3'] = 'toggle-preview-wrap',
-          ['f4'] = 'toggle-preview',
-          ['shift-down'] = 'preview-page-down',
-          ['shift-up'] = 'preview-page-up',
+          -- This should be set in environment variable $FZF_DEFAULT_OPTS
+          -- -- fzf '--bind=' options
+          -- ['ctrl-z'] = 'abort',
+          -- -- ['ctrl-u'] = 'unix-line-discard',
+          -- ['ctrl-d'] = 'half-page-down',
+          -- ['ctrl-u'] = 'half-page-up',
+          -- -- ['ctrl-a'] = 'beginning-of-line',
+          -- -- ['ctrl-e'] = 'end-of-line',
+          -- ['ctrl-a'] = 'toggle-all',
+          -- -- Only valid with fzf previewers (bat/cat/git/etc)
+          -- ['f3'] = 'toggle-preview-wrap',
+          -- ['f4'] = 'toggle-preview',
+          -- ['shift-down'] = 'preview-page-down',
+          -- ['shift-up'] = 'preview-page-up',
         },
       },
       actions = {
@@ -95,8 +101,8 @@ return {
           ['ctrl-o'] = actions.file_split,
           ['ctrl-v'] = actions.file_vsplit,
           ['ctrl-t'] = actions.file_tabedit,
-          ['alt-q'] = actions.file_sel_to_qf,
-          ['alt-l'] = actions.file_sel_to_ll,
+          -- ['alt-q'] = actions.file_sel_to_qf,
+          -- ['alt-l'] = actions.file_sel_to_ll,
         },
         buffers = {
           -- providers that inherit these actions:
@@ -126,9 +132,7 @@ return {
       --     copen        = "topleft copen",
       --   },
       files = {
-        -- previewer      = "bat",          -- uncomment to override previewer
-        -- (name from 'previewers' table)
-        -- set to 'false' to disable
+        previewer = 'bat',
         prompt = 'Files❯ ',
         multiprocess = true, -- run command in a separate process
         git_icons = true, -- show git icons?
@@ -155,11 +159,12 @@ return {
         cwd_prompt_shorten_len = 32, -- shorten prompt beyond this length
         cwd_prompt_shorten_val = 1, -- shortened path parts length
         toggle_ignore_flag = '--no-ignore', -- flag toggled in `actions.toggle_ignore`
+        toggle_hidden_flag = '--hidden', -- flag toggled in `actions.toggle_ignore`
         actions = {
           -- inherits from 'actions.files', here we can override
           -- or set bind to 'false' to disable a default action
           -- action to toggle `--no-ignore`, requires fd or rg installed
-          ['ctrl-g'] = { actions.toggle_ignore },
+          ['ctrl-r'] = { actions.toggle_ignore },
           -- uncomment to override `actions.file_edit_or_qf`
           --   ["default"]   = actions.file_edit,
           -- custom actions are available too
@@ -294,7 +299,10 @@ return {
         -- default options are controlled by 'rg|grep_opts'
         -- cmd            = "rg --vimgrep",
         grep_opts = '--binary-files=without-match --line-number --recursive --color=auto --perl-regexp -e',
-        rg_opts = '--column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e',
+        rg_opts = '--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --hidden --glob="!.git" --sort=path -e',
+        -- Uncomment to use the rg config file `$RIPGREP_CONFIG_PATH`
+        RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
+        --
         -- set to 'true' to always parse globs in both 'grep' and 'live_grep'
         -- search strings will be split using the 'glob_separator' and translated
         -- to '--iglob=' arguments, requires 'rg'
@@ -315,7 +323,7 @@ return {
           -- this action toggles between 'grep' and 'live_grep'
           ['ctrl-g'] = { actions.grep_lgrep },
           -- uncomment to enable '.gitignore' toggle for grep
-          -- ["ctrl-r"]   = { actions.toggle_ignore }
+          -- ['ctrl-r'] = { actions.toggle_ignore },
         },
         no_header = false, -- hide grep|cwd header?
         no_header_i = false, -- hide interactive header?
@@ -524,7 +532,8 @@ return {
           -- when git-delta is installed use "codeaction_native" for beautiful diffs
           -- try it out with `:FzfLua lsp_code_actions previewer=codeaction_native`
           -- scroll up to `previewers.codeaction{_native}` for more previewer options
-          previewer = 'codeaction',
+          -- previewer = 'codeaction',
+          previewer = 'codeaction_native',
         },
         finder = {
           prompt = 'LSP Finder> ',
@@ -587,11 +596,11 @@ return {
         -- or if you want to show only numbers you would set the pattern to %d (0-9).
       },
       complete_path = {
-        cmd = nil, -- default: auto detect fd|rg|find
+        cmd = 'rg', -- default: auto detect fd|rg|find
         complete = { ['default'] = actions.complete },
       },
       complete_file = {
-        cmd = nil, -- default: auto detect rg|fd|find
+        cmd = 'rg', -- default: auto detect rg|fd|find
         file_icons = true,
         color_icons = true,
         git_icons = false,

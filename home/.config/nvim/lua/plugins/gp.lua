@@ -1,109 +1,125 @@
 return { -- ChatGPT plugin
-  'robitx/gp.nvim',
-  config = function()
-    local config = {
-      chat_topic_gen_model = 'gpt-4-turbo-preview',
-      chat_confirm_delete = false,
-      chat_shortcut_respond = { modes = { 'n', 'i', 'v', 'x' }, shortcut = 'gpg' },
-      chat_shortcut_delete = { modes = { 'n', 'i', 'v', 'x' }, shortcut = 'gpd' },
-      chat_shortcut_stop = { modes = { 'n', 'i', 'v', 'x' }, shortcut = 'gpx' },
-      chat_shortcut_new = { modes = { 'n', 'i', 'v', 'x' }, shortcut = 'gpn' },
-    }
-    require('gp').setup(config)
-
-    -- local function keymapOptions(desc)
-    --   return {
-    --     noremap = true,
-    --     silent = true,
-    --     nowait = true,
-    --     desc = 'GPT prompt ' .. desc,
-    --   }
-    -- end
-
-    -- -- Chat commands
-    -- vim.keymap.set({ 'n' }, 'gpn', '<cmd>GpChatNew vsplit<cr>', keymapOptions 'New Chat')
-    -- vim.keymap.set({ 'n' }, 'gpt', '<cmd>GpChatToggle vsplit<cr>', keymapOptions 'Toggle Chat')
-    -- vim.keymap.set({ 'n' }, 'gpf', '<cmd>GpChatFinder<cr>', keymapOptions 'Chat Finder')
-    --
-    -- vim.keymap.set('v', 'gpn', ":<C-u>'<,'>GpChatNew<cr>", keymapOptions 'Visual Chat New')
-    -- vim.keymap.set('v', 'gpp', ":<C-u>'<,'>GpChatPaste<cr>", keymapOptions 'Visual Chat Paste')
-    --
-    -- -- Prompt commands
-    -- vim.keymap.set({ 'n' }, 'gpr', '<cmd>GpRewrite<cr>', keymapOptions 'Inline Rewrite')
-    -- -- vim.keymap.set({ 'n' }, '<C-g>o', '<cmd>GpAppend<cr>', keymapOptions 'Append (after)')
-    -- -- vim.keymap.set({ 'n' }, '<C-g>O', '<cmd>GpPrepend<cr>', keymapOptions 'Prepend (before)')
-    --
-    -- vim.keymap.set('v', 'gpr', ":<C-u>'<,'>GpRewrite<cr>", keymapOptions 'Visual Rewrite')
-    -- -- vim.keymap.set('v', '<C-g>o', ":<C-u>'<,'>GpAppend<cr>", keymapOptions 'Visual Append (after)')
-    -- -- vim.keymap.set('v', '<C-g>O', ":<C-u>'<,'>GpPrepend<cr>", keymapOptions 'Visual Prepend (before)')
-    -- -- vim.keymap.set('v', 'gpi', ":<C-u>'<,'>GpImplement<cr>", keymapOptions 'Implement selection')
-    --
-    -- vim.keymap.set({ 'n' }, 'gpi', '<cmd>GpNew<cr>', keymapOptions 'GpNew')
-    -- -- vim.keymap.set({ 'n' }, '<C-g>gp', '<cmd>GpPopup<cr>', keymapOptions 'Popup')
-    -- -- vim.keymap.set({ 'n' }, '<C-g>ge', '<cmd>GpEnew<cr>', keymapOptions 'GpEnew')
-    -- -- vim.keymap.set({ 'n' }, '<C-g>gv', '<cmd>GpVnew<cr>', keymapOptions 'GpVnew')
-    -- -- vim.keymap.set({ 'n' }, '<C-g>gt', '<cmd>GpTabnew<cr>', keymapOptions 'GpTabnew')
-    --
-    -- vim.keymap.set('v', 'gpi', ":<C-u>'<,'>GpNew<cr>", keymapOptions 'Visual GpNew')
-    -- -- vim.keymap.set('v', '<C-g>gp', ":<C-u>'<,'>GpPopup<cr>", keymapOptions 'Visual Popup')
-    -- -- vim.keymap.set('v', '<C-g>ge', ":<C-u>'<,'>GpEnew<cr>", keymapOptions 'Visual GpEnew')
-    -- -- vim.keymap.set('v', '<C-g>gv', ":<C-u>'<,'>GpVnew<cr>", keymapOptions 'Visual GpVnew')
-    -- -- vim.keymap.set('v', '<C-g>gt', ":<C-u>'<,'>GpTabnew<cr>", keymapOptions 'Visual GpTabnew')
-    --
-    -- vim.keymap.set({ 'n' }, 'gpc', '<cmd>GpContext<cr>', keymapOptions 'Toggle Context')
-    -- vim.keymap.set('v', 'gpc', ":<C-u>'<,'>GpContext<cr>", keymapOptions 'Visual Toggle Context')
-    --
-    -- vim.keymap.set({ 'n', 'v' }, 'gpx', '<cmd>GpStop<cr>', keymapOptions 'Stop')
-    --
-
-    -- VISUAL mode mappings
-    -- s, x, v modes are handled the same way by which_key
-    require('which-key').register({
-      -- ...
-      ['gp'] = {
-        n = { ":<C-u>'<,'>GpChatNew vsplit<cr>", 'Visual Chat New' },
-        t = { ":<C-u>'<,'>GpChatToggle vsplit<cr>", 'Visual Toggle Chat' },
-
-        p = { ":<C-u>'<,'>GpChatPaste vsplit<cr>", 'Visual Chat Paste' },
-
-        r = { ":<C-u>'<,'>GpRewrite<cr>", 'Visual Rewrite' },
-
-        o = { ":<C-u>'<,'>GpNew<cr>", 'Visual GpNew' },
-
-        x = { '<cmd>GpStop<cr>', 'GpStop' },
-        c = { ":<C-u>'<,'>GpContext<cr>", 'Visual GpContext' },
-      },
-    }, {
-      mode = 'v', -- VISUAL mode
-      prefix = '',
-      buffer = nil,
-      silent = true,
-      noremap = true,
-      nowait = true,
+  'https://github.com/robitx/gp.nvim',
+  init = function()
+    -- vim.api.nvim_create_autocmd('BufWinEnter', {
+    vim.api.nvim_create_autocmd('BufWinEnter', {
+      pattern = '*',
+      callback = function()
+        if vim.bo.buftype == 'prompt' and vim.bo.filetype == 'markdown' then
+          vim.cmd 'wincmd L' -- Show on right-hand side.
+          vim.cmd 'normal G' -- Put cursor at bottom.
+        end
+      end,
     })
+  end,
+  config = function()
+    require('gp').setup {
+      chat_template = [[
+# topic: ?
+- file: {{filename}}
+---
+
+{{user_prefix}}
+]],
+      chat_confirm_delete = false,
+      -- conceal model parameters in chat
+      chat_conceal_model_params = false,
+      -- local shortcuts bound to the chat buffer
+      -- (be careful to choose something which will work across specified modes)
+      chat_shortcut_respond = { modes = { 'n', 'i', 'v', 'x' }, shortcut = '<leader>gpg' },
+      chat_shortcut_delete = { modes = { 'n', 'i', 'v', 'x' }, shortcut = '<leader>gpd' },
+      chat_shortcut_stop = { modes = { 'n', 'i', 'v', 'x' }, shortcut = '<leader>gpx' },
+      chat_shortcut_new = { modes = { 'n', 'i', 'v', 'x' }, shortcut = '<leader>gpn' },
+      -- -- if true, finished ChatResponder won't move the cursor to the end of the buffer
+      -- chat_free_cursor = false,
+      -- use prompt buftype for chats (:h prompt-buffer)
+      chat_prompt_buf_type = true,
+
+      -- -- templates
+      -- template_selection = 'I have the following from {{filename}}:' .. '\n\n```{{filetype}}\n{{selection}}\n```\n\n{{command}}',
+      -- template_rewrite = 'I have the following from {{filename}}:'
+      --   .. '\n\n```{{filetype}}\n{{selection}}\n```\n\n{{command}}'
+      --   .. '\n\nRespond exclusively with the snippet that should replace the selection above.',
+      -- template_append = 'I have the following from {{filename}}:'
+      --   .. '\n\n```{{filetype}}\n{{selection}}\n```\n\n{{command}}'
+      --   .. '\n\nRespond exclusively with the snippet that should be appended after the selection above.',
+      -- template_prepend = 'I have the following from {{filename}}:'
+      --   .. '\n\n```{{filetype}}\n{{selection}}\n```\n\n{{command}}'
+      --   .. '\n\nRespond exclusively with the snippet that should be prepended before the selection above.',
+      -- template_command = '{{command}}',
+
+      whisper = {
+        -- you can disable whisper completely by whisper = {disable = true}
+        disable = true,
+      },
+
+      -- image generation settings
+      image = {
+        -- you can disable image generation logic completely by image = {disable = true}
+        disable = true,
+      },
+      -- default agent names set during startup, if nil last used agent is used
+      default_chat_agent = 'ChatGPT4o',
+      default_command_agent = 'CodeGPT4o',
+      agents = {
+        {
+          name = 'ChatGPT4o',
+          chat = true,
+          command = false,
+          -- string with model name or table with model name and parameters
+          model = { model = 'gpt-4o', temperature = 1.1, top_p = 1 },
+          -- system prompt (use this to specify the persona/role of the AI)
+          system_prompt = 'You are a general AI assistant.\n\n'
+            .. 'The user provided the additional info about how they would like you to respond:\n\n'
+            .. "- If you're unsure don't guess and say you don't know instead.\n"
+            .. '- Ask question if you need clarification to provide better answer.\n'
+            .. '- Think deeply and carefully from first principles step by step.\n'
+            .. '- Zoom out first to see the big picture and then zoom in to details.\n'
+            .. '- Use Socratic method to improve your thinking and coding skills.\n'
+            .. "- Don't elide any code from your output if the answer requires coding.\n"
+            .. "- Take a deep breath; You've got this!\n",
+        },
+        {
+          name = 'CodeGPT4o',
+          chat = false,
+          command = true,
+          -- string with model name or table with model name and parameters
+          model = { model = 'gpt-4o', temperature = 1.1, top_p = 1 },
+          -- system prompt (use this to specify the persona/role of the AI)
+          system_prompt = 'You are an AI working as a code editor.\n\n'
+            .. 'Please AVOID COMMENTARY OUTSIDE OF THE SNIPPET RESPONSE.\n'
+            .. 'START AND END YOUR ANSWER WITH:\n\n```',
+        },
+      },
+    }
+
+    -- example hook functions (see Extend functionality section in the README)
+    require('which-key').add {
+      {
+        mode = { 'v' },
+        { '<leader>ai', ":<C-u>'<,'>GpRewrite<cr>", desc = 'Visual Rewrite', nowait = true, remap = false },
+        { '<leader>aI', ":<C-u>'<,'>GpImplement<cr>", desc = 'Visual Rewrite', nowait = true, remap = false },
+        { '<leader>ax', '<cmd>GpStop<cr>', desc = 'GpStop', nowait = true, remap = false },
+        -- { '<leader>gpc', ":<C-u>'<,'>GpContext<cr>", desc = 'Visual GpContext', nowait = true, remap = false },
+        -- { '<leader>gpn', ":<C-u>'<,'>GpChatNew vsplit<cr>", desc = 'Visual Chat New', nowait = true, remap = false },
+        -- { '<leader>gpo', ":<C-u>'<,'>GpNew<cr>", desc = 'Visual GpNew', nowait = true, remap = false },
+        -- { '<leader>gpp', ":<C-u>'<,'>GpChatPaste vsplit<cr>", desc = 'Visual Chat Paste', nowait = true, remap = false },
+        -- { '<leader>gpt', ":<C-u>'<,'>GpChatToggle vsplit<cr>", desc = 'Visual Toggle Chat', nowait = true, remap = false },
+      },
+    }
 
     -- NORMAL mode mappings
-    require('which-key').register({
-      -- ...
-      ['gp'] = {
-        n = { '<cmd>GpChatNew vsplit<cr>', 'New Chat' },
-        t = { '<cmd>GpChatToggle vsplit<cr>', 'Toggle Chat' },
-        f = { '<cmd>GpChatFinder<cr>', 'Chat Finder' },
-
-        r = { '<cmd>GpRewrite<cr>', 'Inline Rewrite' },
-
-        o = { '<cmd>GpNew<cr>', 'GpNew' },
-
-        x = { '<cmd>GpStop<cr>', 'GpStop' },
-        c = { '<cmd>GpContext<cr>', 'Toggle GpContext' },
+    require('which-key').add {
+      {
+        mode = { 'n' },
+        { '<leader>ai', '<cmd>GpRewrite<cr>', desc = 'Inline Rewrite', nowait = true, remap = false },
+        { '<leader>ax', '<cmd>GpStop<cr>', desc = 'GpStop', nowait = true, remap = false },
+        -- { '<leader>gpc', '<cmd>GpContext<cr>', desc = 'Toggle GpContext', nowait = true, remap = false },
+        -- { '<leader>gpf', '<cmd>GpChatFinder<cr>', desc = 'Chat Finder', nowait = true, remap = false },
+        -- { '<leader>gpn', '<cmd>GpChatNew vsplit<cr>', desc = 'New Chat', nowait = true, remap = false },
+        -- { '<leader>gpo', '<cmd>GpNew<cr>', desc = 'GpNew', nowait = true, remap = false },
+        -- { '<leader>gpt', '<cmd>GpChatToggle vsplit<cr>', desc = 'Toggle Chat', nowait = true, remap = false },
       },
-    }, {
-      mode = 'n', -- NORMAL mode
-      prefix = '',
-      buffer = nil,
-      silent = true,
-      noremap = true,
-      nowait = true,
-    })
+    }
   end,
 }

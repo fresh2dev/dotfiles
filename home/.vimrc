@@ -1,33 +1,4 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Maintainer:
-"       Amir Salihefendic - @amix3k
-"
-" Awesome_version:
-"       Get this config, nice color schemes and lots of plugins!
-"
-"       Install the awesome version from:
-"
-"           https://github.com/amix/vimrc
-"
-" Sections:
-"    -> General
-"    -> VIM user interface
-"    -> Colors and Fonts
-"    -> Files and backups
-"    -> Text, tab and indent related
-"    -> Visual mode related
-"    -> Moving around, tabs and buffers
-"    -> Status line
-"    -> Editing mappings
-"    -> vimgrep searching and cope displaying
-"    -> Spell checking
-"    -> Misc
-"    -> Helper functions
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
@@ -43,17 +14,8 @@ au FocusGained,BufEnter * silent! checktime
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = " "
-let maplocalleader = " "
-map , <leader>
-
-" Fast saving
-nmap <leader>w :w!<cr>
-
-" :W sudo saves the file
-" (useful for handling the permission-denied error)
-command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
-
+let mapleader=" "
+let maplocalleader=" "
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -61,21 +23,15 @@ command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
 " Set 7 lines to the cursor - when moving vertically using j/k
 set scrolloff=10
 
-" " Avoid garbled characters in Chinese language windows OS
-" let $LANG='en'
-" set langmenu=en
-" source $VIMRUNTIME/delmenu.vim
-" source $VIMRUNTIME/menu.vim
-
 " Turn on the Wild menu
 set wildmenu
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
 if has("win16") || has("win32")
-    set wildignore+=.git\*,.hg\*,.svn\*
+  set wildignore+=.git\*,.hg\*,.svn\*
 else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
 
 " Always show current position
@@ -123,7 +79,7 @@ set tm=500
 
 " Properly disable sound on errors on MacVim
 if has("gui_macvim")
-    autocmd GUIEnter * set vb t_vb=
+  autocmd GUIEnter * set vb t_vb=
 endif
 
 " Add a bit extra margin to the left
@@ -139,24 +95,12 @@ syntax enable
 " Set regular expression engine automatically
 set regexpengine=0
 
-" " Enable 256 colors palette in Gnome Terminal
-" if $COLORTERM == 'gnome-terminal'
-"     set t_Co=256
-" endif
-
-" try
-"     colorscheme desert
-" catch
-" endtry
-
-" set background=dark
-
 " Set extra options when running in GUI mode
 if has("gui_running")
-    set guioptions-=T
-    set guioptions-=e
-    set t_Co=256
-    set guitablabel=%M\ %t
+  set guioptions-=T
+  set guioptions-=e
+  set t_Co=256
+  set guitablabel=%M\ %t
 endif
 
 " Set utf8 as standard encoding and en_US as the standard language
@@ -196,196 +140,40 @@ set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
-
-" """"""""""""""""""""""""""""""
-" " => Visual mode related
-" """"""""""""""""""""""""""""""
-" " Visual mode pressing * or # searches for the current selection
-" " Super useful! From an idea by Michael Naumann
-" vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
-" vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-" map <space> /
-" map <C-space> ?
+" Smart way to move between windows.
+nmap <C-j> <C-W>j
+nmap <C-k> <C-W>k
+nmap <C-h> <C-W>h
+nmap <C-l> <C-W>l
 
-" " Disable highlight when <leader><cr> is pressed
-" map <silent> <leader><cr> :noh<cr>
+" Better up/down nav for wrapped lines.
+nnoremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+xnoremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+nnoremap <silent> <expr> <Down> (v:count == 0 ? 'gj' : 'j')
+xnoremap <silent> <expr> <Down> (v:count == 0 ? 'gj' : 'j')
+nnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+xnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+nnoremap <silent> <expr> <Up> (v:count == 0 ? 'gk' : 'k')
+xnoremap <silent> <expr> <Up> (v:count == 0 ? 'gk' : 'k')
 
-" Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
+" " Smart way to resize windows.
+nmap <C-Up> :resize +2<CR>
+nmap <C-Down> :resize -2<CR>
+nmap <C-Left> :vertical resize -2<CR>
+nmap <C-Right> :vertical resize +2<CR>
 
-" " Close the current buffer
-" map <leader>bd :Bclose<cr>:tabclose<cr>gT
-"
-" " Close all the buffers
-" map <leader>ba :bufdo bd<cr>
-"
-" map <leader>l :bnext<cr>
-" map <leader>h :bprevious<cr>
-
-" Useful mappings for managing tabs
-" map <leader>tn :tabnew<cr>
-" map <leader>to :tabonly<cr>
-" map <leader>tc :tabclose<cr>
-" map <leader>tm :tabmove
-" map <leader>t<leader> :tabnext<cr>
-
-" " Let 'tl' toggle between this and the last accessed tab
-" let g:lasttab = 1
-" nmap <leader>tl :exe "tabn ".g:lasttab<CR>
-" au TabLeave * let g:lasttab = tabpagenr()
-
+" Search inside visual selection
+xnoremap g/ <esc>/\%V
 
 " " Opens a new tab with the current buffer's path
 " " Super useful when editing files in the same directory
 " map <leader>te :tabedit <C-r>=escape(expand("%:p:h"), " ")<cr>/
 
-" " Switch CWD to the directory of the open buffer
-" map <leader>cd :cd %:p:h<cr>:pwd<cr>
-
-" " Specify the behavior when switching between buffers
-" try
-"   set switchbuf=useopen,usetab,newtab
-"   set stal=2
-" catch
-" endtry
-
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-
-
-" """"""""""""""""""""""""""""""
-" " => Status line
-" """"""""""""""""""""""""""""""
-" " Always show the status line
-" set laststatus=2
-"
-" " Format the status line
-" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
-"
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editing mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" " Remap VIM 0 to first non-blank character
-" map 0 ^
-
-" " Move a line of text using ALT+[jk] or Command+[jk] on mac
-" nmap <M-j> mz:m+<cr>`z
-" nmap <M-k> mz:m-2<cr>`z
-" vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-" vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
-" if has("mac") || has("macunix")
-"   nmap <D-j> <M-j>
-"   nmap <D-k> <M-k>
-"   vmap <D-j> <M-j>
-"   vmap <D-k> <M-k>
-" endif
-
-" " Delete trailing white space on save, useful for some filetypes ;)
-" fun! CleanExtraSpaces()
-"     let save_cursor = getpos(".")
-"     let old_query = getreg('/')
-"     silent! %s/\s\+$//e
-"     call setpos('.', save_cursor)
-"     call setreg('/', old_query)
-" endfun
-"
-" if has("autocmd")
-"     autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
-" endif
-"
-"
-" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" " => Spell checking
-" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" " Pressing ,ss will toggle and untoggle spell checking
-" map <leader>ss :setlocal spell!<cr>
-"
-" " Shortcuts using <leader>
-" map <leader>sn ]s
-" map <leader>sp [s
-" map <leader>sa zg
-" map <leader>s? z=
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Misc
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Remove the Windows ^M - when the encodings gets messed up
-" noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
-" " Quickly open a buffer for scribble
-" map <leader>q :e ~/buffer<cr>
-"
-" " Quickly open a markdown buffer for scribble
-" map <leader>x :e ~/buffer.md<cr>
-"
-" " Toggle paste mode on and off
-" map <leader>pp :setlocal paste!<cr>
-
-
-" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" " => Helper functions
-" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" " Returns true if paste mode is enabled
-" function! HasPaste()
-"     if &paste
-"         return 'PASTE MODE  '
-"     endif
-"     return ''
-" endfunction
-
-" " Don't close window, when deleting a buffer
-" command! Bclose call <SID>BufcloseCloseIt()
-" function! <SID>BufcloseCloseIt()
-"     let l:currentBufNum = bufnr("%")
-"     let l:alternateBufNum = bufnr("#")
-"
-"     if buflisted(l:alternateBufNum)
-"         buffer #
-"     else
-"         bnext
-"     endif
-"
-"     if bufnr("%") == l:currentBufNum
-"         new
-"     endif
-"
-"     if buflisted(l:currentBufNum)
-"         execute("bdelete! ".l:currentBufNum)
-"     endif
-" endfunction
-
-" function! CmdLine(str)
-"     call feedkeys(":" . a:str)
-" endfunction
-
-" function! VisualSelection(direction, extra_filter) range
-"     let l:saved_reg = @"
-"     execute "normal! vgvy"
-"
-"     let l:pattern = escape(@", "\\/.*'$^~[]")
-"     let l:pattern = substitute(l:pattern, "\n$", "", "")
-"
-"     if a:direction == 'gv'
-"         call CmdLine("Ack '" . l:pattern . "' " )
-"     elseif a:direction == 'replace'
-"         call CmdLine("%s" . '/'. l:pattern . '/')
-"     endif
-"
-"     let @/ = l:pattern
-"     let @" = l:saved_reg
-" endfunction
 
 " f2dv.vim
 
@@ -395,7 +183,7 @@ set titlestring=%F\ (%{expand('%:p:h')}) titlelen=80
 set diffopt+=internal,algorithm:histogram
 
 " Don't continue comment char on newline
-set formatoptions-=cro
+autocmd BufWinEnter,BufNewFile * setlocal formatoptions-=cro
 
 " never linebreak
 set textwidth=0
@@ -409,36 +197,6 @@ set foldlevel=99
 " show search result counts
 " ref: https://vi.stackexchange.com/a/23296
 set shortmess-=S
-
-" Use `Q` to run quick macro, like Neovim.
-nmap Q @q
-
-" Confirm exit when closing last window.
-function! ConfirmExit()
-    let resp = confirm("", "&Quit All\n&Buffer Close\n&Window Close\n&Tab Close\n&Restart", 99)
-    if resp == 1
-        quitall
-    elseif resp == 2
-        Bdelete
-    elseif resp == 3
-        close
-    elseif resp == 4
-        tabclose
-    elseif resp == 5
-        silent! %bd | enew
-    endif
-endfunction
-
-function! CloseOrConfirmExit()
-  if winnr('$') > 1 || tabpagenr('$') > 1
-      quit
-  else
-      call ConfirmExit()
-  endif
-endfunction
-
-command! ConfirmExit call ConfirmExit()
-command! CloseOrConfirmExit call CloseOrConfirmExit()
 
 if $TERM == "xterm-256color"
   set t_Co=256
@@ -471,44 +229,37 @@ autocmd FileType netrw silent! unmap <buffer> <C-l>
 "                                                                              |
 " -----------------------------------------------------------------------------|
 if exists("g:neovide")
-    " Put anything you want to happen only in Neovide here
-    set linespace=0
+  " Put anything you want to happen only in Neovide here
+  set linespace=0
 
-    let g:neovide_padding_top = 0
-    let g:neovide_padding_bottom = 0
-    let g:neovide_padding_right = 0
-    let g:neovide_padding_left = 0
+  let g:neovide_padding_top = 0
+  let g:neovide_padding_bottom = 0
+  let g:neovide_padding_right = 0
+  let g:neovide_padding_left = 0
 
-    let g:neovide_scroll_animation_length = 0.15
-    let g:neovide_cursor_animation_length = 0.03
-    let g:neovide_cursor_trail_size = 0.8
-    let g:neovide_cursor_antialiasing = v:true
-    let g:neovide_cursor_animate_in_insert_mode = v:false
-    let g:neovide_cursor_animate_command_line = v:false
+  let g:neovide_scroll_animation_length = 0.15
+  let g:neovide_cursor_animation_length = 0.03
+  let g:neovide_cursor_trail_size = 0.8
+  let g:neovide_cursor_antialiasing = v:true
+  let g:neovide_cursor_animate_in_insert_mode = v:false
+  let g:neovide_cursor_animate_command_line = v:false
 
-    let g:neovide_hide_mouse_when_typing = v:true
-    let g:neovide_confirm_quit = v:true
+  let g:neovide_hide_mouse_when_typing = v:true
+  let g:neovide_confirm_quit = v:true
 
-    let g:neovide_fullscreen = v:false
-    let g:neovide_remember_window_size = v:false
-    let g:neovide_profiler = v:false
+  let g:neovide_fullscreen = v:false
+  let g:neovide_remember_window_size = v:false
+  let g:neovide_profiler = v:false
 
-    let g:neovide_scale_factor=0.85
+  let g:neovide_scale_factor=0.85
 
-    function! ChangeScaleFactor(delta)
-      let g:neovide_scale_factor = g:neovide_scale_factor * a:delta
-    endfunction
+  function! ChangeScaleFactor(delta)
+    let g:neovide_scale_factor = g:neovide_scale_factor * a:delta
+  endfunction
 
-    nnoremap <expr><C-=> ChangeScaleFactor(1.15)
-    nnoremap <expr><C--> ChangeScaleFactor(1/1.15)
+  nnoremap <expr><C-=> ChangeScaleFactor(1.15)
+  nnoremap <expr><C--> ChangeScaleFactor(1/1.15)
 endif
-
-" quick write
-nmap <leader>w :w<cr>
-nmap <leader>W :wa<cr>
-" quick quit
-nmap <silent> <leader>q :CloseOrConfirmExit<cr>
-nmap <silent> <leader>Q :ConfirmExit<cr>
 
 " Shortcut [window] save and close window
 "     \ nmap <silent> <leader>x :w \| CloseOrConfirmExit<cr>
@@ -525,35 +276,85 @@ nmap <silent> <leader>Q :ConfirmExit<cr>
 "autosize panes after window resize
 autocmd VimResized * wincmd =
 
-" disable vim Ex mode
-nnoremap Q <Nop>
-
-" jump to first non-blank character
-nnoremap H ^
-vnoremap H ^
-" jump to end of line
-nnoremap L g_
-vnoremap L g_
-
-" grep uses `ripgrep`
+" Better grep using `ripgrep` and Grep
+" https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
 set grepprg=rg\ --vimgrep\ --no-heading
 set grepformat+=%f:%l:%c:%m
 
-" "line" text-objects
-" https://vi.stackexchange.com/a/6102
-xnoremap il g_o^
-onoremap il :normal vil<cr>
-xnoremap al $o^
-onoremap al :normal val<cr>
+function! Grep(...)
+  return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
+endfunction
 
-xnoremap iL g_o0
-onoremap iL :normal viL<cr>
-xnoremap aL $o0
-onoremap aL :normal vaL<cr>
+command -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
+command -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
 
-" paste and retain original value
+cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() ==# 'grep')  ? 'Grep'  : 'grep'
+cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'LGrep' : 'lgrep'
+
+" Open quickfix / loclist when it changes.
+augroup quickfix
+  autocmd!
+  autocmd QuickFixCmdPost [^l]* cwindow
+  autocmd QuickFixCmdPost l* lwindow
+augroup END
+
+" " 'line' text-objects
+" " https://vi.stackexchange.com/a/6102
+" xnoremap il g_o^
+" onoremap il :normal vil<cr>
+" xnoremap al $o^
+" onoremap al :normal val<cr>
+"
+" xnoremap iL g_o0
+" onoremap iL :normal viL<cr>
+" xnoremap aL $o0
+" onoremap aL :normal vaL<cr>
+
+" paste while retain original value and cursor position
 " https://stackoverflow.com/a/7164121
-xnoremap p pgvy
+noremap p p`[
+noremap P P`[
+xnoremap p pgvy`[
+
+" dot-repeat and restore cursor position
+nnoremap . m`.``
+
+" Paste linewise above/below with optional reindentation.
+" Copied from tpope/vim-unimpaired.
+function! s:putline(how, map) abort
+  let [body, type] = [getreg(v:register), getregtype(v:register)]
+  if type ==# 'V'
+    exe 'normal! "'.v:register.a:how
+  else
+    call setreg(v:register, body, 'l')
+    exe 'normal! "'.v:register.a:how
+    call setreg(v:register, body, type)
+  endif
+  silent! call repeat#set("\<Plug>(unimpaired-put-".a:map.")")
+endfunction
+
+nnoremap <silent> <Plug>(unimpaired-put-above) :call <SID>putline('[p', 'above')<CR>
+nnoremap <silent> <Plug>(unimpaired-put-below) :call <SID>putline(']p', 'below')<CR>
+nnoremap <silent> <Plug>(unimpaired-put-above-rightward) :<C-U>call <SID>putline(v:count1 . '[p', 'Above')<CR>>']
+nnoremap <silent> <Plug>(unimpaired-put-below-rightward) :<C-U>call <SID>putline(v:count1 . ']p', 'Below')<CR>>']
+nnoremap <silent> <Plug>(unimpaired-put-above-leftward)  :<C-U>call <SID>putline(v:count1 . '[p', 'Above')<CR><']
+nnoremap <silent> <Plug>(unimpaired-put-below-leftward)  :<C-U>call <SID>putline(v:count1 . ']p', 'Below')<CR><']
+nnoremap <silent> <Plug>(unimpaired-put-above-reformat)  :<C-U>call <SID>putline(v:count1 . '[p', 'Above')<CR>=']
+nnoremap <silent> <Plug>(unimpaired-put-below-reformat)  :<C-U>call <SID>putline(v:count1 . ']p', 'Below')<CR>=']
+nnoremap <silent> <Plug>unimpairedPutAbove :call <SID>putline('[p', 'above')<CR>
+nnoremap <silent> <Plug>unimpairedPutBelow :call <SID>putline(']p', 'below')<CR>
+
+nnoremap [p <Plug>(unimpaired-put-above)
+nnoremap ]p <Plug>(unimpaired-put-below)
+nnoremap [P <Plug>(unimpaired-put-above)
+nnoremap ]P <Plug>(unimpaired-put-below)
+nnoremap >P <Plug>(unimpaired-put-above-rightward)
+nnoremap >p <Plug>(unimpaired-put-below-rightward)
+nnoremap <P <Plug>(unimpaired-put-above-leftward)
+nnoremap <p <Plug>(unimpaired-put-below-leftward)
+nnoremap =P <Plug>(unimpaired-put-above-reformat)
+nnoremap =p <Plug>(unimpaired-put-below-reformat)
+
 
 " make Y act like D and C (yank to EOL)
 nmap Y y$
@@ -562,28 +363,26 @@ nmap Y y$
 set splitright
 set splitbelow
 
-" Show which line your cursor is on
-set cursorline
-hi CursorLine cterm=none
-
 " Display line numbers
 set number
-" Display relative numbers for the active pane
-augroup BgHighlight
-    autocmd!
-    autocmd WinEnter * setlocal cursorline "relativenumber
-    autocmd WinLeave * setlocal nocursorline "norelativenumber
-augroup END
+
+" Show which line your cursor is on
+set cursorline
+
+" smarter-cursorline
+" https://github.com/mhinz/vim-galore?tab=readme-ov-file#smarter-cursorline
+autocmd InsertLeave,WinEnter * set cursorline
+autocmd InsertEnter,WinLeave * set nocursorline
 
 " In Visual mode the size of the selected area is shown
 set showcmd
 
 " faster updates
-set updatetime=333
+set updatetime=1000
 
 " share vim with system clipboard
 " https://stackoverflow.com/a/30691754
-set clipboard^=unnamedplus
+set clipboard^=unnamed,unnamedplus
 
 set breakindent
 
@@ -591,8 +390,8 @@ set breakindent
 set nosmartindent
 set cindent
 
-" duration to respect key combinations
-set timeout timeoutlen=300 ttimeoutlen=300
+" Wait indefinitely for next key.
+set notimeout ttimeout ttimeoutlen=50
 
 " enable mouse support in normal mode
 set mouse=n
@@ -605,20 +404,22 @@ tnoremap <C-u> <C-\><C-n>
 " Shortcut! :.!figbox surround line in ascii box (figbox)
 
 " open file at position in new split
-nmap <leader>gf :wincmd F<CR>
-"
-" diff this, diff off
-nmap <leader>dft :windo diffthis<CR>
-nmap <leader>dfo :diffoff!<CR>
+" Natively, `gs` is for the useless `sleep` command.
+" With this mapping, `gsp` is for "Go to file under cursor in new split"
+nnoremap gsp :wincmd F<CR>
 
-" open window in new tab
-nnoremap <leader><CR> :tab split<CR>
 
-" clear highlight on pressing <Esc> in normal mode
-nnoremap <Esc><Esc> :nohlsearch<CR>
+" Account for my common typo when quitting
+command Q :q
+command Qa :qa
+command Wq :wq
+command Wqa :wqa
 
-" Quickly open a markdown buffer for scribble
-command! Scratch :tabedit ~/.scratch.md
+" Toggle background
+set background=dark
+nnoremap <leader>tb :execute 'set background=' . (&background == 'dark' ? 'light' : 'dark')<CR>
+" Toggle wrap
+nnoremap <leader>tw :setlocal wrap! wrap?<CR>
 
 " Filetype configs
 autocmd BufNewFile,BufRead *.yml.tpl,*.yaml.tpl setlocal filetype=yaml
@@ -632,6 +433,205 @@ autocmd FileType python,markdown,vim,json setlocal ts=4 sts=4 sw=4 expandtab
 
 autocmd filetype text,markdown setlocal wrap
 
+
+" Revert to previous buffer and open existing buffer in vertical split.
+nnoremap <leader><C-o> :bprev \| vsplit \| bnext \| wincmd p<CR>
+
+" Quick buffer switching
+nnoremap gb :ls<CR>:b<Space>
+"""
+nnoremap <silent> <leader>w :w<CR>
+nnoremap <silent> <leader>W :wa<CR>
+" See :help cmdline-special
+nnoremap <silent> <leader>qu :edit#<CR>
+nnoremap <silent> <leader>qs :close<CR>
+nnoremap <silent> <leader>qS :only<CR>
+nnoremap <silent> <leader>qa :%bdelete<CR>
+nnoremap <silent> <leader>qt :tabclose<CR>
+nnoremap <silent> <leader>qc :bdelete<CR>
+
+" Common bracket mappings
+" Next / prev arg
+nnoremap ]a :next<CR>
+nnoremap [a :prev<CR>
+nnoremap ]A :last<CR>
+nnoremap [A :first<CR>
+" Next / prev buffer
+nnoremap ]b :bnext<CR>
+nnoremap [b :bprev<CR>
+nnoremap ]B :blast<CR>
+nnoremap [B :bfirst<CR>
+nnoremap <S-h> :bprev<CR>
+nnoremap <S-l> :bnext<CR>
+" Next / prev quickfix entry
+nnoremap ]q :cnext<CR>
+nnoremap [q :cprev<CR>
+nnoremap ]Q :clast<CR>
+nnoremap [Q :cfirst<CR>
+" Next / prev loclist entry
+nnoremap ]l :lnext<CR>
+nnoremap [l :lprev<CR>
+nnoremap ]L :llast<CR>
+nnoremap [L :lfirst<CR>
+" quickly-move-current-line
+" https://github.com/mhinz/vim-galore?tab=readme-ov-file#quickly-move-current-line
+nnoremap [e  :<c-u>execute 'move -1-'. v:count1<cr>
+nnoremap ]e  :<c-u>execute 'move +'. v:count1<cr>
+" quickly-add-empty-lines
+" https://github.com/mhinz/vim-galore?tab=readme-ov-file#quickly-add-empty-lines
+" nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
+" nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
+nnoremap ]<space> :set paste<CR>m`o<Esc>``:set nopaste<CR>
+nnoremap [<space> :set paste<CR>m`O<Esc>``:set nopaste<CR>
+
+" Like <C-w>T, Open buffer in new tab, but preserve original window.
+nnoremap <C-w>t :tab sp<CR>
+
+" saner-behavior-of-n-and-n
+" https://github.com/mhinz/vim-galore?tab=readme-ov-file#saner-behavior-of-n-and-n
+nnoremap <expr> n  'Nn'[v:searchforward]
+xnoremap <expr> n  'Nn'[v:searchforward]
+onoremap <expr> n  'Nn'[v:searchforward]
+
+nnoremap <expr> N  'nN'[v:searchforward]
+xnoremap <expr> N  'nN'[v:searchforward]
+onoremap <expr> N  'nN'[v:searchforward]
+
+" saner-command-line-history
+" https://github.com/mhinz/vim-galore?tab=readme-ov-file#saner-command-line-history
+cnoremap <expr> <c-n> wildmenumode() ? "\<c-n>" : "\<down>"
+cnoremap <expr> <c-p> wildmenumode() ? "\<c-p>" : "\<up>"
+
+" clear highlight, etc. when pressing `Esc` in normal mode
+" https://github.com/mhinz/vim-galore?tab=readme-ov-file#saner-ctrl-l
+nnoremap <silent> <esc> :nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr><esc>
+
+" " dont-lose-selection-when-shifting-sidewards
+" " https://github.com/mhinz/vim-galore?tab=readme-ov-file#dont-lose-selection-when-shifting-sidewards
+" vnoremap <silent> < <gv
+" vnoremap <silent> > >gv
+
+"""
+
+source ~/.vim/vimrc.d/plugins.vimrc
+
+" Add comment above / below current line
+nnoremap gco o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>
+nnoremap gcO O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>
+
 if !has('nvim')
-    exec 'source ~/.vim/vimrc.d/plugins.vimrc'
+  " Vim only
+  " Easier macro repeat (like neovim)
+  nmap Q @q
+  xmap Q :normal @q<CR>
+else
+  " Neovim only
+
+  " Sets how neovim will display certain whitespace characters in the editor.
+  set list
+  set listchars=multispace:·,lead:·,trail:·,tab:»·,extends:→,precedes:←,nbsp:␣
+  " ,eol:↲
+
+  " Require 24-bit colors (required by "fancy" UI plugins)
+  set termguicolors
+
+  " Preview substitutions live, as you type!
+  set inccommand=split
+
+  " Stabilize text on split
+  set splitkeep=screen
+
+  " Global status bar
+  set laststatus=3
+
+  " Don't show the mode, since it's already in the status line
+  set noshowmode
+
+  " Keep signcolumn on by default
+  set signcolumn=yes
+
+  " Disable nvim "editorconfig" feature to resolve this issue
+  " that it introduces with `vim-symlink`.
+  " ref: https://github.com/aymericbeaumet/vim-symlink/issues/14
+  let g:editorconfig = 0
+
+  " Open terminal in insert-mode.
+  augroup TermOpenInsert
+    autocmd!
+    autocmd TermOpen term://* if &buftype ==# 'terminal' | startinsert | endif
+  augroup END
+
+  let pythonpath = stdpath('data') . '/python'
+  let g:python3_host_prog = pythonpath . '/bin/python'
+
+  if !isdirectory(pythonpath)
+    echo 'Setting up Python environment...'
+    call system(['python', '-m', 'venv', pythonpath])
+    echo 'Installing Python packages...'
+    call system([g:python3_host_prog, '-m', 'pip', 'install', 'pynvim'])
+  endif
 endif
+
+" Command to delete all hidden buffers
+function! HiddenBdelete() abort
+  let buffers = range(1, bufnr('$'))
+  for buf in buffers
+    if bufloaded(buf) && bufwinnr(buf) == -1
+      execute 'bdelete ' . buf
+    endif
+  endfor
+endfunction
+
+function! OtherBdelete()
+  execute 'silent! tabonly'
+  execute 'only'
+  execute 'HiddenBdelete'
+endfunction
+
+" Command to conditionally close window or delete buffer
+function! QuitSmart() abort
+  let current_win = win_getid()
+  let current_bufnr = winbufnr(current_win)
+  let current_buftype = getbufvar(current_bufnr, '&buftype')
+
+  " Count the number of non-special windows and those with the current buffer.
+  let window_count = 0
+  let buffer_window_count = 0
+  let windows = range(1, winnr('$'))
+
+  for win in windows
+    let bufnr = winbufnr(win)
+    if bufnr == current_bufnr
+      let buffer_window_count += 1
+    endif
+
+    let buftype = getbufvar(bufnr, '&buftype')
+    if buftype == ''
+      let window_count += 1
+    endif
+  endfor
+
+  " If current buffer is a special type,
+  " or, if this buffer exists in more than one window,
+  " close the window.
+  if current_buftype != '' || buffer_window_count > 1
+    execute 'close'
+  " If only one window, delete the buffer and keep the window.
+  elseif window_count == 1
+    execute 'Bdelete'
+  elseif buffer_window_count <= 1
+    execute 'bdelete'
+  endif
+endfunction
+
+command HiddenBdelete call HiddenBdelete()
+command OtherBdelete call OtherBdelete()
+command QuitSmart call QuitSmart()
+
+nnoremap <silent> <leader>x  :QuitSmart<CR>
+nnoremap <silent> <leader>qq :QuitSmart<CR>
+" Bdelete is supplied by vim-bbye
+nnoremap <silent> <leader>qe :Bdelete<CR>
+nnoremap <silent> <leader>qo :HiddenBdelete<CR>
+nnoremap <silent> <leader>qO :OtherBdelete<CR>
+

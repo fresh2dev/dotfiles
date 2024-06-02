@@ -1,11 +1,11 @@
 plugins {
     tab-bar location="zellij:tab-bar"
-    tab-finder location="https://github.com/rvcas/room/releases/download/v1.0.0/room.wasm" {
+    tab-finder location="file:~/.config/zellij/plugins/room.wasm" {
         floating true
         ignore_case true
     }
     // status-bar location="zellij:status-bar"
-    status-bar location="https://github.com/dj95/zjstatus/releases/download/v0.14.1/zjstatus.wasm" {
+    status-bar location="file:~/.config/zellij/plugins/zjstatus.wasm" {
         format_left "{tabs}"
         format_right  "#[fg=#89B4FA,bold]{session} | {mode} "
         // format_center "{tabs}"
@@ -59,11 +59,11 @@ plugins {
     filepicker location="zellij:strider" {
         cwd "/"
     }
-    forgot-plugin location="https://github.com/karimould/zellij-forgot/releases/download/0.4.0/zellij_forgot.wasm" {
+    forgot-plugin location="file:~/.config/zellij/plugins/zellij_forgot.wasm" {
         "LOAD_ZELLIJ_BINDINGS" "true"
         floating true
     }
-    // autolock location="https://github.com/fresh2dev/zellij-autolock/releases/download/0.1.0.a5/zellij-autolock.wasm" {
+    // autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
     autolock location="file:$HOME/sync/projects/zellij-autolock/target/wasm32-wasi/release/zellij-autolock.wasm" {
         triggers "nvim"  // Lock when any open these programs open. They are expected to unlock themselves when closed (e.g., using zellij.vim plugin).
         watch_triggers "vim|fzf|zoxide|atuin"  // Lock when any of these open and monitor until closed. I haven't assessed how "expensive" this is.
@@ -130,7 +130,8 @@ keybinds clear-defaults=true {
     shared {
         bind "Alt r" { SwitchToMode "Resize"; }
 
-        bind "Alt o" { NextSwapLayout; }
+        bind "Alt Right" { NextSwapLayout; }
+        bind "Alt Left" { PreviousSwapLayout; }
 
         bind "Alt p" {
             LaunchOrFocusPlugin "forgot-plugin"
@@ -155,8 +156,8 @@ keybinds clear-defaults=true {
         bind "Alt 7" { GoToTab 7; SwitchToMode "Normal"; }
         bind "Alt 8" { GoToTab 8; SwitchToMode "Normal"; }
         bind "Alt 9" { GoToTab 9; SwitchToMode "Normal"; }
-        bind "Alt h" "Alt Left" "PageUp" { GoToPreviousTab; }
-        bind "Alt l" "Alt Right" "PageDown" { GoToNextTab; }
+        bind "Alt h" "Alt j" "PageUp" { GoToPreviousTab; }
+        bind "Alt l" "Alt k" "PageDown" { GoToNextTab; }
 
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt =" "Alt +" { Resize "Increase"; }
@@ -168,11 +169,11 @@ keybinds clear-defaults=true {
         bind "Alt [" { MoveTab "Left"; }
         bind "Alt ]" { MoveTab "Right"; }
 
-        bind "Alt j" { BreakPaneLeft; SwitchToMode "Normal"; }  // "Inside"
-        bind "Alt k" { BreakPane; SwitchToMode "Normal"; }  // "Outside"
+        bind "Alt m" { BreakPaneLeft; SwitchToMode "Normal"; }  // "Merge in"
+        bind "Alt b" { BreakPane; SwitchToMode "Normal"; }  // "Break out"
 
         bind "Alt Up" "Alt Down" { TogglePaneEmbedOrFloating; }
-        bind "Alt m" { ToggleFocusFullscreen; }
+        bind "Alt f" { ToggleFocusFullscreen; }
         bind "Alt e" { EditScrollback; }
 
         bind "Alt /" { SwitchToMode "EnterSearch"; SearchInput 0; }
@@ -188,7 +189,6 @@ keybinds clear-defaults=true {
             };
             SwitchToMode "Normal"
         }
-
     }
     // shared_among "normal" "locked" {
     //     bind "Enter" {
@@ -205,8 +205,10 @@ keybinds clear-defaults=true {
 
         bind "Alt z" { SwitchToMode "Locked"; }
 
-        bind "Alt f" { ToggleFloatingPanes; }
-        bind "Alt t" { NewPane "Down"; }
+        // These same mappings are defined in the Vim config.
+        // When used from within Vim, they preserve Vim's `pwd`.
+        bind "Alt t" { ToggleFloatingPanes; }
+        bind "Alt o" { NewPane "Down"; }
         bind "Alt v" { NewPane "Right"; }
 
         bind "Ctrl h" { MoveFocus "Left"; }

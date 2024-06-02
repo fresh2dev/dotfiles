@@ -24,8 +24,8 @@ def _derive_destination_path(src: Union[str, Path], is_secret: bool = False) -> 
     return Path(host.get_fact(Home)) / src
 
 
-def git_clone_or_pull(dest: Union[str, Path], **kwargs) -> None:
-    git.repo(dest=str(_derive_destination_path(dest)), **kwargs)
+def git_clone_or_pull(dest: Union[str, Path], pull: bool = False, **kwargs) -> None:
+    git.repo(dest=str(_derive_destination_path(dest)), pull=pull, **kwargs)
 
 
 def _link(

@@ -1,1 +1,3 @@
 /home-secrets/
+/.aider*
+.DS_Store

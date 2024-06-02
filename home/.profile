@@ -1,15 +1,16 @@
-DEVBOX_GLOBAL_PREFIX="${HOME}/.local/share/devbox/global/default/.devbox/nix/profile/default"
+export DEVBOX_GLOBAL_PREFIX="${HOME}/.local/share/devbox/global/default/.devbox/nix/profile/default"
 
-XDG_DATA_DIRS="${DEVBOX_GLOBAL_PREFIX}/share:${HOME}/.nix-profile/share:/nix/var/nix/profiles/default/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+export XDG_DATA_DIRS="${DEVBOX_GLOBAL_PREFIX}/share:${HOME}/.nix-profile/share:/nix/var/nix/profiles/default/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 
-PIPX_BIN_DIR="${HOME}/.local/bin"
-EGET_BIN="$PIPX_BIN_DIR"
+export MY_TOOL_DIR="${HOME}/.local/bin"
+export UV_TOOL_BIN_DIR="$MY_TOOL_DIR"
+export PIPX_BIN_DIR="$MY_TOOL_DIR"
+export EGET_BIN="$MY_TOOL_DIR"
 
-PATH="${PIPX_BIN_DIR}:${HOME}/.cargo/bin:${DEVBOX_GLOBAL_PREFIX}/bin:${PATH}"
-
-MAMBA_ROOT_PREFIX=$HOME/.python
-if [ -d "$MAMBA_ROOT_PREFIX" ]; then
-  for x in $(find "$MAMBA_ROOT_PREFIX/envs" -mindepth 1 -maxdepth 1 -type d); do
-    PATH="$x/bin:$PATH"
-  done
+if [ -e '/opt/homebrew/bin/brew' ]; then
+  eval $(/opt/homebrew/bin/brew shellenv)
 fi
+
+export PATH="${MY_TOOL_DIR}:${HOME}/.cargo/bin:${DEVBOX_GLOBAL_PREFIX}/bin:${PATH}"
+
+export ZELLIJ_AUTO_START="true"

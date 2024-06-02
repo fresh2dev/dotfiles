@@ -7,6 +7,7 @@ for component in [
     "bat",
     "devbox",
     "direnv",
+    "fd",
     "git",
     "ripgrep",
     "starship",

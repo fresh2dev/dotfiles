@@ -2,17 +2,21 @@ if &compatible
   set nocompatible
 endif
 
-" https://stackoverflow.com/a/18734557
-" let $THIS_DIR = fnamemodify(resolve(expand('<sfile>:p')), ':h')
-if empty($VIM_HOME) | let $VIM_HOME = $HOME."/.vim"      | endif
-exec 'set runtimepath+=' . $VIM_HOME
-
+if empty($MYVIMRC)
+  let $MYVIMRC = $HOME . "/.vimrc"
+endif
 
 if has('nvim')
-    let g:python3_host_prog = $VIM_HOME . '/.venv/bin/python3'
+  " Neovim can have distinct configurations using $NVIM_APPNAME
+  " Using vim-plug, install plugins into Neovim's native plugin dir.
+  let $VIM_HOME = stdpath('data')
+  " let g:plug_home = $VIM_HOME.'/site/pack/plugged/start'
 else
-    let $PYTHONPATH = join(glob($VIM_HOME . '/.venv/lib/python*/site-packages', 1, 1), ":") . ':' . $PYTHONPATH
+  " If using Vim, set VIM_HOME to "$MYVIMRC.parent / .vim"
+  let $VIM_HOME = fnamemodify(resolve(expand($MYVIMRC.':p')), ':h') . "/.vim"
 endif
+exec 'set runtimepath+=' . $VIM_HOME
+let g:plug_home = $VIM_HOME.'/plugged'
 
 " -----------------------------------------------------------------------------|
 "                                      __             __                       |
@@ -27,6 +31,7 @@ endif
 "                                                                              |
 "                                                                              |
 " -----------------------------------------------------------------------------|
+" Install https://github.com/junegunn/vim-plug
 if !filereadable(expand($VIM_HOME.'/autoload/plug.vim'))
   if has('win32')
     !powershell -NoProfile -c "Invoke-WebRequest https://raw.githubusercontent.com/junegunn/vim-plug/0.13.0/plug.vim -UseBasicParsing | New-Item -Force $env:VIM_HOME/autoload/plug.vim"
@@ -38,9 +43,15 @@ endif
 
 let g:plug_window = 'enew'
 
-call plug#begin($VIM_HOME.'/plugged')
+call plug#begin(g:plug_home)
 
-command! PlugSync :PlugClean!|PlugInstall
+" Lazy.nvim
+if has("nvim")
+  Plug 'https://github.com/folke/lazy.nvim', { 'commit': '48b52b5cfcf8f88ed0aff8fde573a5cc20b1306d' }
+  command! PlugSync :PlugClean!|PlugInstall|silent! Lazy sync
+else
+  command! PlugSync :PlugClean!|PlugInstall
+endif
 
 " -----------------------------------------------------------------------------|
 "                                ___       __    ___         ___               |
@@ -49,48 +60,85 @@ command! PlugSync :PlugClean!|PlugInstall
 "               - - - - - - - - - - - - - - - - - - - - - - - - -              |
 "                                                                              |
 " -----------------------------------------------------------------------------|
-Plug 'https://github.com/tpope/vim-fugitive', { 'commit': 'a83135b55b018a891e0803199c3d418010a404d8' }
+Plug 'https://github.com/tpope/vim-fugitive', { 'commit': '0444df68cd1cdabc7453d6bd84099458327e5513' }
+
+" automatically `cd` to git root.
+autocmd VimEnter * silent! Gcd
+
+" Quit fugitive with `q`:
+autocmd FileType fugitive,fugitiveblame nmap <buffer> q gq
+" `<CR>` opens blame in new split:
+autocmd FileType fugitiveblame nmap <buffer> <CR> o
+" `O` opens a vsplit in Fugitive (overrides opening in tab)
+autocmd FileType fugitive nmap <buffer> O gO
 
 let g:fugitive_no_maps = 1
 let g:fugitive_legacy_commands = 0
 
-" -----------------------------------------------------------------------------|
-"                                      ___       __   __                       |
-"                     \  / |  |\/| __ |__  |    /  \ / _`                      |
-"                      \/  |  |  |    |    |___ \__/ \__>                      |
-"                     - - - - - - - - - - - - - - - - - -                      |
-"                                                                              |
-" -----------------------------------------------------------------------------|
-" Plug 'https://github.com/rbong/vim-flog', { 'commit': 'bb1fda0cac110aef3f1c0ac00be813377b2b9bf0' }
+cnoreabbrev <expr> g  (getcmdtype() ==# ':' && getcmdline() ==# 'g')  ? 'G'  : 'g'
+cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
 
-"gv.vim
-Plug 'https://github.com/junegunn/gv.vim', { 'commit': 'b6bb6664e2c95aa584059f195eb3a9f3cb133994' }
+" Git-related mappings
+" Open Fugitive with git log split right.
+nnoremap <leader>gg :Git \| vertical Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+" Open new tab containing Fugitive with git log split bottom.
+nnoremap <leader>gt :tabnew \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+" Close all windows and open Fugitive with git log split bottom.
+nnoremap <leader>go :%bd \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+" nnoremap <leader>gE :bd1 \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+nnoremap <leader>gb :Git blame -s<CR>
+nnoremap <leader>gl :0Git log --graph --oneline --decorate<CR>
+nnoremap <leader>gL :0Git log --graph --oneline --decorate --all<CR>
+nnoremap <leader>ge :Gedit<CR>
+nnoremap <leader>gw :Gwrite<CR>
+nnoremap <leader>gd :Gvdiffsplit<CR>
+" "Git Revisions" Populate quickfix with past revisions of current file.
+nnoremap <leader>gr :1,$GcLog!<CR>
+xnoremap <leader>gr :GcLog!<CR>
+nnoremap <leader>gss :Git stash save<CR>
+nnoremap <leader>gsp :Git stash pop<CR>
+nnoremap <leader>gsa :Git stash apply<CR>
+nnoremap <leader>gsx :Git stash clear<CR>
+nnoremap <leader>gS :Git fetch --all \| Git pull --rebase=true \| Git fetch origin main:main \| Git rebase main<CR>
+nnoremap <leader>gp :Git push -u origin<CR>
+nnoremap <leader>gP :Git push -fu origin<CR>
 
-" Shortcut [git] view log of visual selection
-" Shortcut! :GV!<CR> [git] show commits for the current file
-" Shortcut! :GV?<CR> [git] fill loclist with commits for the current file or line
+" Heuristically set buffer options
+Plug 'https://github.com/tpope/vim-sleuth', { 'commit': '1cc4557420f215d02c4d2645a748a816c220e99b' }
 
-" -----------------------------------------------------------------------------|
-"                                  __   __   __  ___  ___  __                  |
-"                 \  / |  |\/| __ |__) /  \ /  \  |  |__  |__)                 |
-"                  \/  |  |  |    |  \ \__/ \__/  |  |___ |  \                 |
-"                 - - - - - - - - - - - - - - - - - - - - - - -                |
-"                                                                              |
-" -----------------------------------------------------------------------------|
-Plug 'https://github.com/airblade/vim-rooter', { 'commit': '1353fa47ee3a81083c284e28ff4f7d92655d7c9e' }
-
-" Shortcut! :RooterToggle<cr> toggle vim-rooter
-
-let g:rooter_patterns = ['.git']
-let g:rooter_cd_cmd = 'lcd'
-let g:rooter_buftypes = ['']
-let g:rooter_silent_chdir = 0
-let g:rooter_resolve_links = 0
-
-"vim-bbye
+"vim-bbye (provides :Bdelete)
 Plug 'https://github.com/moll/vim-bbye', { 'commit': '25ef93ac5a87526111f43e5110675032dbcacf56' }
-"vim-symlink
+
+"vim-symlink (follow symlinks)
 Plug 'https://github.com/aymericbeaumet/vim-symlink', { 'commit': 'fec2d1a72c6875557109ce6113f26d3140b64374' }
+
+"vim-qf
+" Slightly better quickfix behavior (auto-open, auto-resize, auto-quit, allow `dd`, etc.)
+Plug 'https://github.com/romainl/vim-qf', { 'commit': '7e65325651ff5a0b06af8df3980d2ee54cf10e14' }
+
+nnoremap <leader>tqf <Plug>(qf_qf_toggle_stay)
+nnoremap <leader>tll <Plug>(qf_loc_toggle_stay)
+nnoremap gq <Plug>(qf_qf_switch)
+
+let g:qf_mapping_ack_style = 0
+let g:qf_window_bottom = 1
+let g:qf_loclist_window_bottom = 1
+let g:qf_auto_open_quickfix = 1
+let g:qf_auto_open_loclist = 1
+let g:qf_auto_resize = 1
+let g:qf_max_height = 10
+let g:qf_auto_quit = 1
+let g:qf_save_win_view = 1
+let g:qf_nowrap = 1
+let g:qf_shorten_path = 0
+
+autocmd FileType qf nnoremap <buffer> dd :.Reject<CR>
+autocmd FileType qf xnoremap <buffer> dd :Reject<CR>
+autocmd FileType qf nnoremap <buffer> D :Reject<CR>
+
+" Enable cfilter (https://neovim.io/doc/user/quickfix.html#%3ACfilter)
+packadd cfilter
+cnoreabbrev <expr> cfilter  (getcmdtype() ==# ':' && getcmdline() ==# 'cfilter')  ? 'Cfilter'  : 'cfilter'
 
 " -----------------------------------------------------------------------------|
 "                          __   ___      ___     __   __        ___  __  ___   |
@@ -101,8 +149,12 @@ Plug 'https://github.com/aymericbeaumet/vim-symlink', { 'commit': 'fec2d1a72c687
 " -----------------------------------------------------------------------------|
 Plug 'https://github.com/michaeljsmith/vim-indent-object', { 'commit': '5c5b24c959478929b54a9e831a8e2e651a465965' }
 
-""vim-commentary
-Plug 'https://github.com/tpope/vim-commentary', { 'commit': 'f67e3e67ea516755005e6cccb178bc8439c6d402' }
+" Easy-align
+Plug 'https://github.com/junegunn/vim-easy-align', { 'commit': '9815a55dbcd817784458df7a18acacc6f82b1241' }
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 
 " -----------------------------------------------------------------------------|
 "                               __   __  ___  __   ___  ___                    |
@@ -115,17 +167,6 @@ Plug 'https://github.com/mbbill/undotree', { 'commit': '0e11ba7325efbbb3f3bebe06
 
 nnoremap U :UndotreeToggle<CR>
 
-" -----------------------------------------------------------------------------------|
-"                         __               __       ___  ___  __                     |
-" \  / |  |\/| __ |__| | / _` |__| |    | / _` |__|  |  |__  |  \ \ /  /\  |\ | |__/ |
-"  \/  |  |  |    |  | | \__> |  | |___ | \__> |  |  |  |___ |__/  |  /~~\ | \| |  \ |
-" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-"                                                                                    |
-" -----------------------------------------------------------------------------------|
-Plug 'https://github.com/machakann/vim-highlightedyank', { 'commit': 'fa3f57b097e9521ce41a66b6c7cf5d9adea70ea3' }
-
-let g:highlightedyank_highlight_duration = 333
-
 " -----------------------------------------------------------------------------|
 "                            __        __   __   __             __             |
 "           \  / |  |\/| __ /__` |  | |__) |__) /  \ |  | |\ | |  \            |
@@ -134,21 +175,6 @@ let g:highlightedyank_highlight_duration = 333
 "                                                                              |
 " -----------------------------------------------------------------------------|
 " Plug 'https://github.com/tpope/vim-surround', { 'commit': '3d188ed2113431cf8dac77be61b842acb64433d9' }
-
-" vim-sandwich
-Plug 'https://github.com/machakann/vim-sandwich', { 'commit': '74cf93d58ccc567d8e2310a69860f1b93af19403' }
-
-" Text objects to select a text surrounded by brackets or user-specified characters.
-xmap is <Plug>(textobj-sandwich-literal-query-i)
-xmap as <Plug>(textobj-sandwich-literal-query-a)
-omap is <Plug>(textobj-sandwich-literal-query-i)
-omap as <Plug>(textobj-sandwich-literal-query-a)
-
-" Text objects to select the nearest surrounded text automatically.
-xmap ib <Plug>(textobj-sandwich-auto-i)
-xmap ab <Plug>(textobj-sandwich-auto-a)
-omap ib <Plug>(textobj-sandwich-auto-i)
-omap ab <Plug>(textobj-sandwich-auto-a)
 
 " -----------------------------------------------------------------------------|
 "                                  __   ___  __   ___      ___                 |
@@ -169,7 +195,7 @@ Plug 'https://github.com/tpope/vim-repeat', { 'commit': '24afe922e6a05891756ecf3
 Plug 'https://github.com/tpope/vim-sensible', { 'commit': '3e878abfd6ddc6fb5dba48b41f2b72c3a2f8249f' }
 
 "unimpaired
-Plug 'https://github.com/tpope/vim-unimpaired', { 'commit': '6d44a6dc2ec34607c41ec78acf81657248580bf1' }
+" Plug 'https://github.com/tpope/vim-unimpaired', { 'commit': '6d44a6dc2ec34607c41ec78acf81657248580bf1' }
 
 " -----------------------------------------------------------------------------|
 "                                 ___                 __                       |
@@ -179,15 +205,6 @@ Plug 'https://github.com/tpope/vim-unimpaired', { 'commit': '6d44a6dc2ec34607c41
 "                                                                              |
 " -----------------------------------------------------------------------------|
 Plug 'https://github.com/tpope/vim-eunuch', { 'commit': '67f3dd32b4dcd1c427085f42ff5f29c7adc645c6' }
-
-" -----------------------------------------------------------------------------|
-"                __        ___  __        __                                   |
-"               /  \ |\ | |__  |  \  /\  |__) |__/  \  / |  |\/|               |
-"               \__/ | \| |___ |__/ /~~\ |  \ |  \ . \/  |  |  |               |
-"               - - - - - - - - - - - - - - - - - - - - - - - - -              |
-"                                                                              |
-" -----------------------------------------------------------------------------|
-Plug 'https://github.com/catppuccin/nvim', { 'commit': '5e36ca599f4aa41bdd87fbf2c5aae4397ac55074', 'as': 'catppuccin' }
 
 " -----------------------------------------------------------------------------|
 "                               __       ___            __   __                |
@@ -214,73 +231,96 @@ nnoremap M D
 " -----------------------------------------------------------------------------|
 Plug 'https://github.com/svermeulen/vim-subversive', { 'commit': '6286cda3f9222bfd490fe34a00a2d8cd4925adec' }
 
-nmap - <plug>(SubversiveSubstitute)
-nmap -- <plug>(SubversiveSubstituteLine)
-nmap _ <plug>(SubversiveSubstituteToEndOfLine)
-
-"is.vim
-Plug 'https://github.com/haya14busa/is.vim', { 'commit': 'd393cb346dcdf733fecd7bbfc45b70b8c05e9eb4' }
-
-"targets.vim
-"
-Plug 'https://github.com/wellle/targets.vim', { 'commit': '642d3a4ce306264b05ea3219920b13ea80931767' }
-
-" TODO: migrate this to neovim
-"jpalardy/vim-slime
-Plug 'https://github.com/jpalardy/vim-slime', { 'commit': '87988b173b7642e6a5124f9e5559148c4159d076' }
-
-let g:slime_target = !empty($ZELLIJ) ? "zellij" : (has('nvim') ? "neovim" : "vimterminal")
-
-let g:slime_default_config = {"session_id": "current", "relative_pane": "down"}
-
-"disables default bindings
-let g:slime_no_mappings = 1
-
-" Shortcut [Slime] Send selection (or motion) to Terminal
-xmap <leader>s <Plug>SlimeRegionSend
-nmap <leader>s <Plug>SlimeMotionSend
-" Shortcut [Slime] Send line to Terminal
-nmap <leader>ss <Plug>SlimeLineSend
-
-" Shortcut [Slime] Send Code to Terminal
-" xmap <c-c><c-c> <Plug>SlimeRegionSend
-" nmap <c-c><c-c> <Plug>SlimeParagraphSend
-
-" vim-zellij-navigator
-Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim.git'
-
-nnoremap <leader>tt :ZellijNewPane<CR>
-
-execute "set <M-f>=\ef"
-noremap <M-f> :ZellijNewPane<CR>
-
-execute "set <M-t>=\et"
-noremap <M-t> :ZellijNewPaneSplit<CR>
-
-execute "set <M-v>=\ev"
-noremap <M-v> :ZellijNewPaneVSplit<CR>
-
-autocmd DirChanged,WinEnter,BufEnter * call system('zellij action rename-tab "' . fnamemodify(getcwd(), ':t') . '"')
+" nmap - <plug>(SubversiveSubstitute)
+" nmap -- <plug>(SubversiveSubstituteLine)
+" nmap _ <plug>(SubversiveSubstituteToEndOfLine)
+nmap s <plug>(SubversiveSubstitute)
+nmap ss <plug>(SubversiveSubstituteLine)
+nmap S <plug>(SubversiveSubstituteToEndOfLine)
 
 "vim-exchange
 Plug 'https://github.com/tommcdo/vim-exchange', { 'commit': 'd6c1e9790bcb8df27c483a37167459bbebe0112e' }
 
+"vim-asterisk
+Plug 'https://github.com/haya14busa/vim-asterisk', { 'commit': '77e97061d6691637a034258cc415d98670698459' }
+
+map *   <Plug>(asterisk-*)
+map #   <Plug>(asterisk-#)
+map g*  <Plug>(asterisk-g*)
+map g#  <Plug>(asterisk-g#)
+map z*  <Plug>(asterisk-z*)
+map gz* <Plug>(asterisk-gz*)
+map z#  <Plug>(asterisk-z#)
+map gz# <Plug>(asterisk-gz#)
+
+"targets.vim
+Plug 'https://github.com/wellle/targets.vim', { 'commit': '642d3a4ce306264b05ea3219920b13ea80931767' }
+
+" vim-zellij-navigator
+Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': '09c21b8ae429bbab575b003e9c750019f2c6d1f7' }
+
+let g:zelli_navigator_move_focus_or_tab = 0
+let g:zellij_navigator_disable_autolock = 0
+
+" Open ZelliJ floating pane.
+nnoremap <leader>zjf :ZellijNewPane<CR>
+" Open ZelliJ pane below.
+nnoremap <leader>zjo :ZellijNewPaneSplit<CR>
+" Open ZelliJ pane to the right.
+nnoremap <leader>zjv :ZellijNewPaneVSplit<CR>
+
+" Open floating Zellij pane with `Alt+f`.
+execute "set <M-t>=\ef"
+noremap <M-t> :ZellijNewPane<CR>
+" Open Zellij pane below with `Alt+t`.
+execute "set <M-o>=\et"
+noremap <M-o> :ZellijNewPaneSplit<CR>
+" Open Zellij pane to the right with `Alt+v`.
+execute "set <M-v>=\ev"
+noremap <M-v> :ZellijNewPaneVSplit<CR>
+
+" Run command in new ZelliJ floating pane.
+nnoremap <leader>zjrf :execute 'ZellijNewPane ' . input('Command: ')<CR>
+" Run command in new ZelliJ pane below.
+nnoremap <leader>zjro :execute 'ZellijNewPaneSplit ' . input('Command: ')<CR>
+" Run command in new ZelliJ pane to the right.
+nnoremap <leader>zjrv :execute 'ZellijNewPaneVSplit ' . input('Command: ')<CR>
+
+" Run `ruff` Python linter in new ZelliJ pane below.
+nnoremap <leader>zjrr :execute 'ZellijNewPaneSplit ruff check "' . expand('%') . '"'<CR>
+nnoremap <leader>zjrR :ZellijNewPaneSplit ruff check<CR>
+
+autocmd DirChanged,BufEnter *
+      \ if &buftype == '' |
+      \ call system('zellij action rename-tab "' . fnamemodify(getcwd(), ':t') . '"') |
+      \ endif
+
+if !has("nvim")
+  " This plugins are only enabled for vanilla Vim.
+  Plug 'https://github.com/tpope/vim-commentary', { 'commit': 'f67e3e67ea516755005e6cccb178bc8439c6d402' }
+  " Plug 'https://github.com/machakann/vim-sandwich', { 'commit': '74cf93d58ccc567d8e2310a69860f1b93af19403' }
+
+  Plug 'https://github.com/machakann/vim-highlightedyank', { 'commit': 'fa3f57b097e9521ce41a66b6c7cf5d9adea70ea3' }
+  let g:highlightedyank_highlight_duration = 333
+
+  " "auto-pairs
+  " Plug 'https://github.com/jiangmiao/auto-pairs', { 'commit': '39f06b873a8449af8ff6a3eee716d3da14d63a76' }
+  " let g:AutoPairsShortcutToggle = ''
+else
+  augroup highlight_yank
+    autocmd!
+    autocmd TextYankPost * lua require'vim.highlight'.on_yank { { higroup = 'Visual', timeout = 333 } }
+  augroup END
+endif
+
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
 call plug#end()
+
 " You can revert the settings after the call like so:
 "   filetype indent off   `Disable file-type-specific indentation`
 "   syntax off            `Disable syntax highlighting`
 
-" Configure vim-sandwich to use vim-surround mappings.
-runtime macros/sandwich/keymap/surround.vim
-
-" -----------------------------------------------------------------------------|
-"            __   __        __   __   __   __        ___        ___            |
-"           /  ` /  \ |    /  \ |__) /__` /  ` |__| |__   |\/| |__             |
-"           \__, \__/ |___ \__/ |  \ .__/ \__, |  | |___  |  | |___            |
-"           - - - - - - - - - - - - - - - - - - - - - - - - - - - -            |
-"                                                                              |
-" -----------------------------------------------------------------------------|
-silent! colorscheme catppuccin-mocha
-
-set background=dark
+" if !has("nvim")
+"   " Configure vim-sandwich to use vim-surround mappings.
+"   runtime macros/sandwich/keymap/surround.vim
+" endif

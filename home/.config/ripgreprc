@@ -1,3 +1,6 @@
+# Assume case-insensitive unless a search term contains a capital letter.
+--smart-case
+
 # Search hidden files and directories.
 --hidden
 

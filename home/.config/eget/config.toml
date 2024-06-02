@@ -1,5 +1,387 @@
 [global]
-quiet = false
-show_hash = false
+quiet        = false
+show_hash    = false
 upgrade_only = true
-target = "~/.local/bin"
+target       = "~/.local/bin"
+
+["zyedidia/eget"]
+tag           = "v1.3.4"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+# ["jetpack-io/devbox"]
+# tag           = "0.10.7"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+# ["neovide/neovide"]
+# tag           = "0.13.3"
+# # asset_filters = [".tar.gz", "^.zip"]
+# # file          = "*"
+# # target        = "~/.local/bin/"
+
+["BurntSushi/ripgrep"]
+tag           = "14.1.0"
+# asset_filters = [".tar.gz", "^.zip"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["junegunn/fzf"]
+tag           = "v0.54.3"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["sharkdp/fd"]
+tag           = "v10.1.0"
+# asset_filters = ["musl"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["sharkdp/bat"]
+tag           = "v0.24.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["sharkdp/pastel"]
+tag           = "v0.9.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["dandavison/delta"]
+tag           = "0.18.0"
+# asset_filters = ["musl"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["eza-community/eza"]
+tag           = "v0.19.0"
+# asset_filters = ["musl.tar.gz"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["koalaman/shellcheck"]
+tag           = "v0.10.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["mvdan/sh"]
+tag           = "v3.8.0"
+# asset_filters = []
+# file          = "*"
+target        = "~/.local/bin/shfmt"
+
+["crate-ci/typos"]
+tag           = "v1.24.1"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["JohnnyMorganz/StyLua"]
+tag           = "v0.20.0"
+# asset_filters = ["musl"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["atuinsh/atuin"]
+tag           = "v18.3.0"
+# asset_filters = ["musl.tar.gz"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["aristocratos/btop"]
+tag           = "v1.3.2"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["orf/gping"]
+tag           = "gping-v1.16.1"
+# asset_filters = ["musl"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["jqlang/jq"]
+tag           = "jq-1.7.1"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["charmbracelet/gum"]
+tag           = "v0.13.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["charmbracelet/glow"]
+tag           = "v1.5.1"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["charmbracelet/mods"]
+tag           = "v1.6.0"
+# asset_filters = [".tar.gz", "^sbom"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["artempyanykh/marksman"]
+tag           = "2023-12-09"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["sxyazi/yazi"]
+tag           = "v0.3.1"
+# asset_filters = ["musl"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["ajeetdsouza/zoxide"]
+tag           = "v0.9.4"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["starship/starship"]
+tag           = "v1.20.1"
+# asset_filters = ["musl"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+# ["neovim/neovim"]
+# tag           = "v0.10.1"
+# # asset_filters = []
+# # file          = "*"
+# # target        = "~/.local/bin/"
+
+["gohugoio/hugo"]
+tag           = "v0.125.5"
+# asset_filters = ["_extended_", ".tar.gz"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["wfxr/code-minimap"]
+tag           = "v0.6.7"
+# asset_filters = ["musl"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["direnv/direnv"]
+tag           = "v2.34.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["openfaas/faas-cli"]
+tag           = "0.16.21"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["orhun/git-cliff"]
+tag           = "v2.2.1"
+# asset_filters = ["musl", "^.sha512", "^.sig"]
+# file          = "*"
+target        = "~/.local/bin/git-cliff"
+
+["moncho/dry"]
+tag           = "v0.11.2"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["sachaos/viddy"]
+tag           = "v0.4.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["nektos/act"]
+tag           = "v0.2.65"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["zellij-org/zellij"]
+tag           = "v0.40.1"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["helmwave/helmwave"]
+tag           = "v0.38.0"
+# asset_filters = [".tar.gz"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["hairyhenderson/gomplate"]
+tag           = "v4.1.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["arttor/helmify"]
+tag           = "v0.4.10"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["hadolint/hadolint"]
+tag           = "v2.12.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["devspace-sh/devspace"]
+tag           = "v6.3.12"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["marp-team/marp-cli"]
+tag           = "v3.4.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["mikefarah/yq"]
+tag           = "v4.43.1"
+# asset_filters = [".tar.gz"]
+file          = "yq_*"
+target        = "~/.local/bin/yq"
+
+["astral-sh/uv"]
+tag           = "0.4.11"
+# asset_filters = ["musl"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["kubernetes/kompose"]
+tag           = "v1.32.0"
+# asset_filters = [".tar.gz", "^.tar.gz.tar.gz"]
+# file          = "*"
+target        = "~/.local/bin/kompose"
+
+["hetznercloud/cli"]
+tag           = "v1.47.0"
+# asset_filters = [".tar.gz", "^.tar.gz.tar.gz"]
+file          = "hcloud"
+# target        = "~/.local/bin/hcloud"
+
+["cli/cli"]
+tag           = "v2.55.0"
+# asset_filters = [".tar.gz", "^.tar.gz.tar.gz"]
+file          = "gh"
+# target        = "~/.local/bin/gh"
+
+# ["ahmetb/kubectx"]
+# tag           = "v0.9.5"
+# asset_filters = ["kubectx"]
+# # file          = "*"
+# target        = "~/.local/bin/kubectl-ctx"
+#
+# ["ahmetb/kubectx"]
+# tag           = "v0.9.5"
+# asset_filters = ["kubens"]
+# # file          = "*"
+# target        = "~/.local/bin/kubectl-ns"
+
+["keisku/kubectl-explore"]
+tag           = "v0.7.2"
+# asset_filters = []
+# file          = "*"
+target        = "~/.local/bin/kubectl-explore"
+
+["corneliusweig/ketall"]
+tag           = "v1.3.8"
+# asset_filters = ["ketall"]
+file          = "ketall*"
+target        = "~/.local/bin/kubectl-get_all"
+
+["vladimirvivien/ktop"]
+tag           = "v0.3.5"
+# asset_filters = ["kubectl-ktop"]
+file          = "kubectl-ktop"
+target        = "~/.local/bin/kubectl-ktop"
+
+["iximiuz/kexp"]
+tag           = "v0.0.5"
+# asset_filters = []
+# file          = "*"
+target        = "~/.local/bin/kubectl-kexp"
+
+["derailed/k9s"]
+tag           = "v0.32.5"
+# asset_filters = [".tar.gz", "^sbom"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["kubescape/kubescape"]
+tag           = "v3.0.3"
+# asset_filters = [".tar.gz"]
+# file          = "*"
+target        = "~/.local/bin/kubectl-kubescape"
+
+["derailed/popeye"]
+tag           = "v0.11.2"
+# asset_filters = []
+# file          = "*"
+target        = "~/.local/bin/kubectl-popeye"
+
+["tohjustin/kube-lineage"]
+tag           = "v0.5.0"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/kubectl-get_lineage"
+
+["robscott/kube-capacity"]
+tag           = "v0.7.4"
+# asset_filters = []
+# file          = "*"
+target        = "~/.local/bin/kubectl-capacity"
+
+["zegl/kube-score"]
+tag           = "v1.18.0"
+# asset_filters = [".tar.gz"]
+# file          = "*"
+target        = "~/.local/bin/kubectl-score"
+
+["boz/kail"]
+tag           = "v0.17.4"
+# asset_filters = ["v3"]
+# file          = "*"
+target        = "~/.local/bin/kubectl-tail"
+
+["ahmetb/kubectl-tree"]
+tag           = "v0.4.3"
+# asset_filters = []
+# file          = "*"
+target        = "~/.local/bin/kubectl-tree"
+
+["kubepug/kubepug"]
+tag           = "v1.7.1"
+# asset_filters = [".tar.gz", "^.tar.gz."]
+# file          = "*"
+target        = "~/.local/bin/kubectl-deprecations"
+
+["komodorio/helm-dashboard"]
+tag           = "v1.3.3"
+# asset_filters = []
+# file          = "*"
+target        = "~/.local/bin/helm-dashboard"
+
+# ["https://get.helm.sh/helm-v3.14.4-linux-amd64.tar.gz"]
+# # asset_filters = []
+# file          = "helm"
+# # target        = "~/.local/bin/"
+
+["https://releases.hashicorp.com/vault/1.16.0/vault_1.16.0_linux_amd64.zip"]
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"

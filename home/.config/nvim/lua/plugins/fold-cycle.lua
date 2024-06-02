@@ -1,6 +1,6 @@
 return {
   {
-    'jghauser/fold-cycle.nvim',
+    'https://github.com/jghauser/fold-cycle.nvim',
     event = 'BufEnter',
     keys = {
       { 'zl', "<cmd>lua require('fold-cycle').open()<CR>", mode = 'n', { silent = true } },
@@ -14,20 +14,60 @@ return {
     },
   },
   {
-    'kevinhwang91/nvim-ufo',
+    'https://github.com/kevinhwang91/nvim-ufo',
+    version = 'v1',
     lazy = false,
-    dependencies = {
-      { 'kevinhwang91/promise-async' },
+    keys = {
+      { 'zc' },
+      { 'zo' },
+      { 'zC' },
+      { 'zO' },
+      { 'za' },
+      { 'zA' },
+      {
+        'zr',
+        function()
+          require('ufo').openFoldsExceptKinds()
+        end,
+        desc = 'Open Folds Except Kinds',
+      },
+      {
+        'zR',
+        function()
+          require('ufo').openAllFolds()
+        end,
+        desc = 'Open All Folds',
+      },
+      {
+        'zM',
+        function()
+          require('ufo').closeAllFolds()
+        end,
+        desc = 'Close All Folds',
+      },
+      {
+        'zm',
+        function()
+          require('ufo').closeFoldsWith()
+        end,
+        desc = 'Close Folds With',
+      },
+      {
+        'zp',
+        function()
+          local winid = require('ufo').peekFoldedLinesUnderCursor()
+          if not winid then
+            vim.lsp.buf.hover()
+          end
+        end,
+        desc = 'Peek Fold',
+      },
     },
     config = function()
-      vim.o.foldcolumn = '3' -- '0' is not bad
+      vim.o.foldcolumn = '1' -- '0' is not bad
       vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
       vim.o.foldlevelstart = 99
       vim.o.foldenable = true
-
-      -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
-      vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-      vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
 
       require('ufo').setup {
         provider_selector = function(bufnr, filetype, buftype)
@@ -35,5 +75,25 @@ return {
         end,
       }
     end,
+    dependencies = {
+      { 'https://github.com/kevinhwang91/promise-async' },
+      {
+        'https://github.com/luukvbaal/statuscol.nvim',
+        lazy = false,
+        opts = function()
+          local builtin = require 'statuscol.builtin'
+          return {
+            ft_ignore = { 'help', 'vim', 'alpha', 'dashboard', 'neo-tree', 'Trouble', 'lazy', 'fugitive', 'toggleterm' },
+            bt_ignore = nil, -- lua table with 'buftype' values for which 'statuscolumn' will be unset
+            -- Default segments (fold -> sign -> line number + separator), explained below
+            segments = {
+              { text = { builtin.foldfunc }, click = 'v:lua.ScFa' },
+              { text = { '%s' }, click = 'v:lua.ScSa' },
+              { text = { builtin.lnumfunc, ' ' }, click = 'v:lua.ScLa' },
+            },
+          }
+        end,
+      },
+    },
   },
 }

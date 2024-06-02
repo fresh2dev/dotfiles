@@ -4,11 +4,11 @@ test_command("alacritty")
 
 app_config_root = ".config/alacritty"
 
+link(app_config_root)
+
 git_clone_or_pull(
     src="https://github.com/alacritty/alacritty-theme.git",
     dest=f"{app_config_root}/themes",
-    branch="94e1dc0b9511969a426208fbba24bd7448493785",
-    pull=False,
+    # branch="4091fddff8da892d5594e94116927c7445620867",
+    # pull=False,
 )
-
-link(f"{app_config_root}/alacritty.toml")

@@ -13,46 +13,33 @@ import myke
 
 
 @myke.shell_task(parents=("os"))
-def install_pipx_apps():
+def upgrade():
     return [
-        "pipx install -f --include-deps 'ansible==9.*'",
-        "pipx install -f --include-deps 'jupyterlab'",
-        "pipx install -f 'dooit==2.*'",
-        "pipx install -f 'aider-chat==0.*'",
-        "pipx install -f 'asciinema==2.*'",
-        "pipx install -f 'b2==3.*'",
-        "pipx install -f 'copier==9.*'",
-        "pipx install -f 'git-filter-repo'",
-        "pipx install -f 'grip==4.*'",
-        "pipx install -f 'pre-commit==3.*'",
-        "pipx install -f 'myke[extras]==0.4.*'",
-        "pipx install -f 'yamlfix==1.*'",
-        # Python dev tools
-        ## build
-        "pipx install -f 'setuptools>=64'",
-        "pipx install -f 'build==0.*'",
-        "pipx install -f 'wheel==0.*'",
-        "pipx install -f 'twine==4.*'",
-        ## dev
-        # "python-lsp-server[rope]==1.*",
-        # "python-lsp-ruff==2.*",
-        # "pylsp-mypy==0.6.*",
-        "pipx install -f 'pyright==1.*'",
-        "pipx install -f 'pylint==3.*'",
-        "pipx inject pylint 'pylint-venv==3.*'",
-        "pipx install -f 'ruff==0.4.*'",
-        "pipx install -f 'ruff-lsp==0.*'",
-        "pipx install -f 'isort==5.*'",
-        "pipx install -f 'docsig==0.*'",
-        "pipx install -f 'bump2version==1.*'",
-        "pipx install -f 'tox==4.*'",
-        ## docs
-        "pipx install -f 'mkdocs==1.*'",
-        "pipx inject mkdocs 'mkdocs-material>=9.5,<10'",
-        "pipx inject mkdocs 'mkdocs-jupyter==0.24.*'",
-        "pipx inject mkdocs 'mkdocstrings[python]==0.24.*'",
-        "pipx inject mkdocs 'mkdocs-autorefs==0.*'",
-        "pipx inject mkdocs 'mkdocs-include-dir-to-nav==1.*'",
+        "brew bundle --file ~/.Brewfile",
+        "uv tool install --upgrade aider-chat",
+        # General Tools
+        "uv tool install --upgrade --force asciinema",
+        "uv tool install --upgrade --force b2",
+        "uv tool install --upgrade --force copier",
+        "uv tool install --upgrade --force grip",
+        # pipx upgrade --install figbox
+        "uv tool install --upgrade --force git-filter-repo",
+        # pipx upgrade --install gnome-extensions-cli
+        # pipx upgrade --install hostbutter
+        "uv tool install --upgrade --force jupyterlab",
+        "uv tool install --upgrade --force --with mkdocs-material --with mkdocs-jupyter --with 'mkdocstrings[python]' --with mkdocs-include-dir-to-nav mkdocs",
+        "uv tool install --upgrade --force pyinfra",
+        "uv tool install --upgrade --force pre-commit",
+        # pipx upgrade --install myke
+        # uv tool install --upgrade yamlfix
+        "uv tool install --upgrade --force yamllint",
+        # Python Dev Tools
+        "uv tool install --upgrade --force basedpyright",
+        "uv tool install --upgrade --force ruff",
+        "uv tool install --upgrade --force tox",
+        "uv tool install --upgrade --force docsig",
+        # "pipx install -f --include-deps 'ansible==9.*'",
+        # "pipx install -f --include-deps 'jupyterlab'",
     ]
 
 
@@ -133,6 +120,278 @@ def install_pipx_apps():
 #      return [
 #          f"echo Hello {name}",
 #      ]
+
+
+@myke.task(name="fix", parents=("py"))
+def py_fix(*args: str):
+    import json
+    import subprocess
+    import sys
+    import os
+    from collections import defaultdict
+    from dataclasses import dataclass
+    from pathlib import Path
+    from shutil import which
+    from typing import Any, Dict, List, Optional, Sequence, Tuple
+
+    RUFF_EXE: List[str] = (
+        [ruff] if (ruff := which("ruff")) else [sys.executable, "-m", "ruff"]
+    )
+    DELTA_EXE: Optional[str] = which("delta")
+
+    def run_ruff(args: Sequence[str], **kwargs: Any) -> subprocess.CalledProcessError:
+        return subprocess.run([*RUFF_EXE, *args], check=True, **kwargs)
+
+    def input_from_options(options: Dict[str, str]):
+        while True:
+            print("\nProvide the key corresponding to the desired option:\n")
+            for key, option in options.items():
+                print(f"[{key}] {option}")
+            choice: str = input("\nChoice: ")
+            if options.get(choice):
+                return choice
+            print("Invalid choice.")
+
+    @dataclass
+    class RuffViolation:
+        code: str
+        count: int
+        fixable: bool
+        name: str
+        summary: Optional[str] = None
+        explanation: Optional[str] = None
+
+        def __post_init__(self):
+            rule_details: Dict[str, Any] = json.loads(
+                run_ruff(
+                    ["rule", "--output-format=json", self.code],
+                    capture_output=True,
+                ).stdout,
+            )
+            self.summary = rule_details.get("summary")
+            self.explanation = rule_details.get("explanation")
+
+        @classmethod
+        def from_dict(cls, kv: Dict[str, Any], /):
+            return cls(**{k: v for k, v in kv.items() if k in cls.__dataclass_fields__})
+
+    def get_fixable_violations(args: Sequence[str]) -> Tuple[RuffViolation, ...]:
+        p = run_ruff(
+            [
+                "check",
+                *args,
+                "--fixable=ALL",
+                "--statistics",
+                "--output-format=json",
+                "--quiet",
+                "--no-fix",
+                "--exit-zero",
+            ],
+            capture_output=True,
+        )
+
+        return tuple(
+            sorted(
+                (
+                    RuffViolation.from_dict(rule)
+                    for rule in json.loads(p.stdout)
+                    if rule.get("fixable")
+                ),
+                key=lambda x: x.code,
+            ),
+        )
+
+    def ruff_review(args):
+        first_pass: bool = True
+        while True:
+            fixable_violations: Tuple[RuffViolation, ...] = get_fixable_violations(args)
+            if not fixable_violations:
+                print("No fixable violations remain.")
+                return
+
+            if not first_pass:
+                print("Fixable violations remain.")
+                options: Dict[str, str] = {
+                    "": "Run Again.",
+                    "q": "Quit.",
+                }
+
+                selection = input_from_options(options)
+
+                if selection == "q":
+                    return
+
+            first_pass = False
+
+            for i, rule in enumerate(fixable_violations):
+                rule_violations_by_file: Dict[str, int] = defaultdict(int)
+
+                for x in json.loads(
+                    run_ruff(
+                        [
+                            "check",
+                            f"--select={rule.code}",
+                            f"--fixable={rule.code}",
+                            "--quiet",
+                            "--no-fix",
+                            "--exit-zero",
+                            "--output-format=json",
+                        ],
+                        capture_output=True,
+                    ).stdout,
+                ):
+                    if f := x.get("filename"):
+                        rule_violations_by_file[
+                            str(Path(f).relative_to(Path.cwd()))
+                        ] += 1
+
+                while rule_violations_by_file:
+                    while True:
+                        file = next(iter(rule_violations_by_file))
+                        n_violations: int = rule_violations_by_file[file]
+                        p = run_ruff(
+                            [
+                                "check",
+                                f"--select={rule.code}",
+                                f"--fixable={rule.code}",
+                                "--quiet",
+                                "--diff",
+                                "--no-fix",
+                                "--exit-zero",
+                                file,
+                            ],
+                            capture_output=bool(DELTA_EXE),
+                        )
+                        if DELTA_EXE:
+                            subprocess.run(
+                                [DELTA_EXE, "--paging=never"],
+                                check=False,
+                                input=p.stdout,
+                            )
+
+                        file_diff = run_ruff(
+                            [
+                                "check",
+                                f"--select={rule.code}",
+                                f"--fixable={rule.code}",
+                                "--quiet",
+                                "--diff",
+                                "--no-fix",
+                                "--exit-zero",
+                                file,
+                            ],
+                            capture_output=True,
+                        ).stdout
+
+                        print(
+                            f"{sum(rule_violations_by_file.values())} total violation(s) of rule [{i + 1}/{len(fixable_violations)}]: [{rule.code}] {rule.summary}"
+                        )
+                        print()
+                        print(f"{n_violations} reported violation(s) in file: {file}")
+                        if len(rule_violations_by_file) > 1:
+                            print()
+                            print(
+                                f"This rule is violated in {len(rule_violations_by_file)-1} other file(s)."
+                            )
+
+                        options: Dict[str, str] = {
+                            "h": f"View full help for rule {rule.code}.",
+                            "f": f"Fix {rule.code} violations in this file.",
+                            "F": f"Fix {rule.code} violations in all remaining files.",
+                            "i": f"Ignore {rule.code} violations in this file.",
+                            "I": f"Ignore {rule.code} violations in all remaining files.",
+                            "v": "View proposed edits to this file.",
+                            "r": "Refresh.",
+                            "s": "Skip to next.",
+                            "q": "Quit.",
+                        }
+
+                        selection = input_from_options(options)
+
+                        if selection == "q":
+                            return
+
+                        if selection == "r":
+                            continue
+
+                        if selection == "h":
+                            subprocess.run(
+                                [
+                                    os.getenv("EDITOR", "vim"),
+                                    "-",
+                                    "-c",
+                                    "set ft=markdown",
+                                ],
+                                check=False,
+                                input=run_ruff(
+                                    ["rule", rule.code],
+                                    capture_output=True,
+                                ).stdout,
+                            )
+
+                            continue
+
+                        if selection == "v":
+                            if DELTA_EXE:
+                                subprocess.run(
+                                    [DELTA_EXE, "--paging=always"],
+                                    check=False,
+                                    input=file_diff,
+                                )
+                            continue
+
+                        if selection == "s":
+                            pass
+                        elif selection == "f":
+                            run_ruff(
+                                [
+                                    "check",
+                                    f"--select={rule.code}",
+                                    f"--fixable={rule.code}",
+                                    "--fix",
+                                    file,
+                                ],
+                            )
+                            rule_violations_by_file.pop(file)
+                        elif selection == "F":
+                            run_ruff(
+                                [
+                                    "check",
+                                    f"--select={rule.code}",
+                                    f"--fixable={rule.code}",
+                                    "--fix",
+                                    *list(rule_violations_by_file),
+                                ],
+                            )
+                            rule_violations_by_file.clear()
+                        elif selection == "i":
+                            run_ruff(
+                                [
+                                    "check",
+                                    f"--select={rule.code}",
+                                    f"--fixable={rule.code}",
+                                    "--add-noqa",
+                                    file,
+                                ],
+                            )
+                        elif selection == "I":
+                            run_ruff(
+                                [
+                                    "check",
+                                    f"--select={rule.code}",
+                                    f"--fixable={rule.code}",
+                                    "--add-noqa",
+                                    *list(rule_violations_by_file),
+                                ],
+                            )
+                            rule_violations_by_file.clear()
+
+                        rule_violations_by_file.pop(file, None)
+                        break
+
+            print("\nFin!\n")
+
+    ruff_review(args)
 
 
 if __name__ == "__main__":

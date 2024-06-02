@@ -1,12 +1,20 @@
-'model': gpt-4-turbo-preview
-'dark-mode': true
-'pretty': true
-'stream': true
-'show-diffs': true
-'git': true
-'aiderignore': '.gitignore'
-'gitignore': true
-'yes': true
-'auto-commits': false
-'dirty-commits': false
-'commit': false
+---
+model: gpt-4o
+4o: true
+dark-mode: true
+pretty: true
+stream: false
+show-diffs: false
+git: false
+aiderignore: '.gitignore'
+gitignore: true
+yes-always: true
+auto-commits: false
+dirty-commits: false
+commit: false
+restore-chat-history: false
+lint: false
+# 'lint-cmd': 'python:ruff check --exit-zero'
+# 'test-cmd': 'python:pytest'
+vim: true
+check-update: false

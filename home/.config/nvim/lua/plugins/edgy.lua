@@ -1,0 +1,57 @@
+return {}
+-- {
+--   'https://github.com/folke/edgy.nvim',
+--   event = 'VeryLazy',
+--   init = function()
+--     vim.opt.laststatus = 3
+--     vim.opt.splitkeep = 'screen'
+--   end,
+--   -- keys = {
+--   --   -- increase width
+--   --   ['<c-Right>'] = function(win)
+--   --     win:resize('width', 2)
+--   --   end,
+--   --   -- decrease width
+--   --   ['<c-Left>'] = function(win)
+--   --     win:resize('width', -2)
+--   --   end,
+--   --   -- increase height
+--   --   ['<c-Up>'] = function(win)
+--   --     win:resize('height', 2)
+--   --   end,
+--   --   -- decrease height
+--   --   ['<c-Down>'] = function(win)
+--   --     win:resize('height', -2)
+--   --   end,
+--   -- },
+--   opts = {
+--     animate = {
+--       enabled = false,
+--     },
+--     left = {
+--       -- Neo-tree filesystem always takes half the screen height
+--       {
+--         title = 'Neo-Tree',
+--         ft = 'neo-tree',
+--         filter = function(buf)
+--           return vim.b[buf].neo_tree_source == 'filesystem'
+--         end,
+--         size = { height = 0.5 },
+--       },
+--       {
+--         title = function()
+--           local buf_name = vim.api.nvim_buf_get_name(0) or '[No Name]'
+--           return vim.fn.fnamemodify(buf_name, ':t')
+--         end,
+--         ft = 'Outline',
+--         pinned = true,
+--         open = 'OutlineOpen',
+--       },
+--       -- -- any other neo-tree windows
+--       -- 'neo-tree',
+--     },
+--     right = {
+--       { title = 'Grug Far', ft = 'grug-far', size = { width = 0.4 } },
+--     },
+--   },
+-- },

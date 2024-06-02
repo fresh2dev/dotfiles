@@ -1,10 +1,15 @@
 # configuration file for git-cliff
 # see https://www.github.com/orhun/git-cliff#configuration-file
+[bump]
+breaking_always_bump_major = false
+initial_tag = "0.1.0"
 
 [changelog]
 # changelog header
 header = """
-# Changelog\n
+# Changelog
+
+All notable changes to this project will be documented in this file.\n
 """
 # template for the changelog body
 # https://tera.netlify.app/docs/#introduction
@@ -14,12 +19,18 @@ body = """
 {% else %}\
     ## [unreleased]
 {% endif %}\
+{% if version %}\
+    {% if previous.version %}
+      **Full Changelog**: https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}/compare/{{ previous.version }}...{{ version }}
+    {% endif %}\
+{% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits %}
-        - {% if commit.breaking %}*Breaking:* {% endif %}{{ commit.message | upper_first }}\
+        - {% if commit.breaking %}*Breaking* - {% endif %}{{ commit.message | split(pat="\n") | first | upper_first }}\
     {% endfor %}
-{% endfor %}\n
+{% endfor %}
+
 """
 
 # remove the leading and trailing whitespace from the template
@@ -53,17 +64,15 @@ commit_parsers = [
     # group these
     # https://www.github.com/orhun/git-cliff/issues/9#issuecomment-914521594
     # https://gist.github.com/rxaviers/7360908
-    { message = "^feat\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 0 -->:clap: Features"},
-    { message = "^fix\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 1 -->:fist: Fixes"},
-    { message = "^change\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 2 -->:point_right: Changes"},
-    { message = "^remove\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 2 -->:point_right: Changes"},
-    { message = "^refactor\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 2 -->:point_right: Changes"},
-    { message = "^[a-z]+\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other"},
-    { message = ".*", group = "<!-- 4 -->:shit: Unconventional"},
-    #{ message = "^perf", group = "Performance"},
-    #{ message = "^refactor", group = "Refactor"},
+    { message = "^feat\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 0 -->:clap: Features", keep_prefix = false},
+    { message = "^fix\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 1 -->:fist: Fixes", keep_prefix = false},
+    { message = "^change\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 2 -->:point_right: Changes", keep_prefix = false},
+    { message = "^remove\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 2 -->:point_right: Changes", keep_prefix = true},
+    { message = "^refactor?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other", keep_prefix = true},
+    { message = "^bump\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other", keep_prefix = true},
+    # { message = "^[a-z]+\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other", keep_prefix = true},
+    { message = ".*", group = "<!-- 4 -->:shit: Unconventional", keep_prefix = true},
     #{ message = "^revert", group = "Reverts"},
-    # removes, build, ci
 ]
 # protect breaking changes from being skipped due to matching a skipping commit_parser
 protect_breaking_commits = true
