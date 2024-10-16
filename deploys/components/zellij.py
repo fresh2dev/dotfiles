@@ -9,6 +9,7 @@ from deploys.utils import link, test_command
 test_command("zellij")
 
 link(".config/zellij")
+link(".local/bin/zellij-smart-sessionizer")
 
 dest_dir: Path = Path(f"{host.get_fact(Home)}/.config/zellij/plugins")
 
@@ -21,3 +22,4 @@ for url in (
     "https://github.com/fresh2dev/zellij-autolock/releases/download/0.1.0/zellij-autolock.wasm",
 ):
     files.download(url, str(dest_dir / Path(url).name))
+

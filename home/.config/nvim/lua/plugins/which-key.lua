@@ -41,8 +41,6 @@ return {
       { '<leader>qh', desc = 'Delete Hidden Buffers' },
       { '<leader>qo', desc = 'Close other Windows and Delete other Buffers' },
       { '<leader>qt', desc = 'Close Tab' },
-      { '<S-h>', desc = 'Prev Buffer' },
-      { '<S-l>', desc = 'Next Buffer' },
     },
   },
 }

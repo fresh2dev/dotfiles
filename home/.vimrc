@@ -461,8 +461,6 @@ nnoremap ]b :bnext<CR>
 nnoremap [b :bprev<CR>
 nnoremap ]B :blast<CR>
 nnoremap [B :bfirst<CR>
-nnoremap <S-h> :bprev<CR>
-nnoremap <S-l> :bnext<CR>
 " Next / prev quickfix entry
 nnoremap ]q :cnext<CR>
 nnoremap [q :cprev<CR>

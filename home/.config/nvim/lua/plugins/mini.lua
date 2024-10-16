@@ -16,6 +16,149 @@ return {
       silent = true,
     },
   },
+  {
+    'https://github.com/echasnovski/mini.files',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'https://github.com/nvim-tree/nvim-web-devicons', -- optional dependency
+    },
+    keys = {
+      {
+        '\\',
+        function()
+          local MiniFiles = require 'mini.files'
+          if not MiniFiles.close() then
+            MiniFiles.open(nul, false)
+          end
+        end,
+        mode = 'n',
+        desc = 'Show File Explorer',
+      },
+      {
+        '|',
+        function()
+          local MiniFiles = require 'mini.files'
+          if not MiniFiles.close() then
+            MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+            MiniFiles.reveal_cwd()
+          end
+        end,
+        mode = 'n',
+        desc = 'Show File Explorer',
+      },
+    },
+    config = function()
+      local MiniFiles = require 'mini.files'
+      MiniFiles.setup {
+        -- Customization of shown content
+        content = {
+          -- Predicate for which file system entries to show
+          filter = nil,
+          -- What prefix to show to the left of file system entry
+          prefix = nil,
+          -- In which order to show file system entries
+          sort = nil,
+        },
+
+        -- Module mappings created only inside explorer.
+        -- Use `''` (empty string) to not create one.
+        mappings = {
+          close = 'q',
+          go_in = 'L',
+          go_in_plus = '<CR>',
+          go_out = '<BS>',
+          go_out_plus = '',
+          mark_goto = '',
+          mark_set = '',
+          reset = '<F5>',
+          reveal_cwd = '@',
+          show_help = 'g?',
+          synchronize = '<leader>w',
+          trim_left = '<',
+          trim_right = '>',
+        },
+
+        -- General options
+        options = {
+          -- Whether to delete permanently or move into module-specific trash
+          permanent_delete = true,
+          -- Whether to use for editing directories
+          use_as_default_explorer = true,
+        },
+
+        -- Customization of explorer windows
+        windows = {
+          -- Maximum number of windows to show side by side
+          max_number = math.huge,
+          -- Whether to show preview of file/directory under cursor
+          preview = false,
+          -- Width of focused window
+          width_focus = 50,
+          -- Width of non-focused window
+          width_nofocus = 15,
+          -- Width of preview window
+          width_preview = 25,
+        },
+      }
+
+      -- local map_split = function(buf_id, lhs, direction)
+      --   local rhs = function()
+      --     -- Make new window and set it as target
+      --     local cur_target = MiniFiles.get_explorer_state().target_window
+      --     local new_target = vim.api.nvim_win_call(cur_target, function()
+      --       vim.cmd(direction .. ' split')
+      --       return vim.api.nvim_get_current_win()
+      --     end)
+      --
+      --     MiniFiles.set_target_window(new_target)
+      --   end
+      --
+      --   -- Adding `desc` will result into `show_help` entries
+      --   local desc = 'Split ' .. direction
+      --   vim.keymap.set('n', lhs, rhs, { buffer = buf_id, desc = desc })
+      -- end
+      --
+      -- vim.api.nvim_create_autocmd('User', {
+      --   pattern = 'MiniFilesBufferCreate',
+      --   callback = function(args)
+      --     local buf_id = args.data.buf_id
+      --     -- Tweak keys to your liking
+      --     map_split(buf_id, '<C-s>', 'belowright horizontal')
+      --     map_split(buf_id, '<C-v>', 'belowright vertical')
+      --   end,
+      -- })
+
+      local files_grug_far_replace = function(path)
+        -- works only if cursor is on the valid file system entry
+        local cur_entry_path = MiniFiles.get_fs_entry().path
+        local prefills = { paths = vim.fs.dirname(cur_entry_path) }
+
+        local grug_far = require 'grug-far'
+
+        -- instance check
+        if not grug_far.has_instance 'explorer' then
+          grug_far.open {
+            instanceName = 'explorer',
+            prefills = prefills,
+            staticTitle = 'Find and Replace from Explorer',
+          }
+        else
+          grug_far.open_instance 'explorer'
+          -- updating the prefills without crealing the search and other fields
+          grug_far.update_instance_prefills('explorer', prefills, false)
+        end
+      end
+
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'MiniFilesBufferCreate',
+        callback = function(args)
+          vim.keymap.set('n', '<leader>fs', files_grug_far_replace, { buffer = args.data.buf_id, desc = 'Search in directory' })
+          vim.keymap.set('n', '<leader>fr', files_grug_far_replace, { buffer = args.data.buf_id, desc = 'Search in directory' })
+        end,
+      })
+    end,
+  },
   -- {
   --   'https://github.com/echasnovski/mini.ai',
   --   version = '*',

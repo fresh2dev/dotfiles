@@ -3,8 +3,6 @@ return {
   version = 'v4',
   lazy = false,
   keys = {
-    { '<S-h>', ':BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
-    { '<S-l>', ':BufferLineCycleNext<cr>', desc = 'Next Buffer' },
     { '[b', ':BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
     { ']b', ':BufferLineCycleNext<cr>', desc = 'Next Buffer' },
     -- { 'gT', ':BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
