@@ -4,7 +4,7 @@ return {
   keys = {
     { '<leader>gD', ':DiffviewOpen<CR>', mode = 'n', desc = '[G]it [D]iff View' },
     -- { '<leader>gR', ':DiffviewFileHistory %<CR>', mode = 'n', desc = '[G]it [F]ile History for File or Selection' },
-    { '<leader>gR', ':DiffviewFileHistory<CR>', mode = 'n', desc = '[G]it [F]ile History' },
+    { '<leader>gR', ':DiffviewFileHistory %<CR>', mode = 'n', desc = '[G]it [F]ile History' },
   },
   opts = {
     keymaps = {

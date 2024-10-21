@@ -66,7 +66,9 @@ Plug 'https://github.com/tpope/vim-fugitive', { 'commit': '0444df68cd1cdabc7453d
 autocmd VimEnter * silent! Gcd
 
 " Quit fugitive with `q`:
-autocmd FileType fugitive,fugitiveblame nmap <buffer> q gq
+" autocmd FileType fugitive,fugitiveblame nmap <buffer> q gq
+autocmd FileType fugitive,fugitiveblame,floggraph nmap <buffer> q gq
+autocmd FileType git nmap <buffer> q :close<CR>
 " `<CR>` opens blame in new split:
 autocmd FileType fugitiveblame nmap <buffer> <CR> o
 " `O` opens a vsplit in Fugitive (overrides opening in tab)
@@ -84,7 +86,8 @@ nnoremap <leader>gg :Git \| vertical Git log --graph --oneline --decorate \| win
 " Open new tab containing Fugitive with git log split bottom.
 nnoremap <leader>gt :tabnew \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
 " Close all windows and open Fugitive with git log split bottom.
-nnoremap <leader>go :%bd \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+nnoremap <leader>go :only \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+nnoremap <leader>gO :%bd \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
 " nnoremap <leader>gE :bd1 \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
 nnoremap <leader>gb :Git blame -s<CR>
 nnoremap <leader>gl :0Git log --graph --oneline --decorate<CR>
@@ -99,7 +102,7 @@ nnoremap <leader>gss :Git stash save<CR>
 nnoremap <leader>gsp :Git stash pop<CR>
 nnoremap <leader>gsa :Git stash apply<CR>
 nnoremap <leader>gsx :Git stash clear<CR>
-nnoremap <leader>gS :Git fetch --all \| Git pull --rebase=true \| Git fetch origin main:main \| Git rebase main<CR>
+nnoremap <leader>gS :Git fetch --all \| Git pull \| Git fetch origin main:main \| Git rebase main<CR>
 nnoremap <leader>gp :Git push -u origin<CR>
 nnoremap <leader>gP :Git push -fu origin<CR>
 

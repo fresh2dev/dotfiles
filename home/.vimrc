@@ -570,8 +570,19 @@ else
   endif
 endif
 
+" Command to delete all git-related buffers
+function! QuitGit() abort
+  let buffers = range(1, bufnr('$'))
+  for buf in buffers
+    let filetype = getbufvar(buf, '&filetype')
+    if filetype ==# 'git' || filetype ==# 'fugitive' || filetype ==# 'fugitiveblame' || filetype ==# 'floggraph'
+      execute 'bdelete ' . buf
+    endif
+  endfor
+endfunction
+
 " Command to delete all hidden buffers
-function! HiddenBdelete() abort
+function! QuitHidden() abort
   let buffers = range(1, bufnr('$'))
   for buf in buffers
     if bufloaded(buf) && bufwinnr(buf) == -1
@@ -580,10 +591,10 @@ function! HiddenBdelete() abort
   endfor
 endfunction
 
-function! OtherBdelete()
+function! QuitOther()
   execute 'silent! tabonly'
   execute 'only'
-  execute 'HiddenBdelete'
+  execute 'QuitHidden'
 endfunction
 
 " Command to conditionally close window or delete buffer
@@ -622,14 +633,16 @@ function! QuitSmart() abort
   endif
 endfunction
 
-command HiddenBdelete call HiddenBdelete()
-command OtherBdelete call OtherBdelete()
+command QuitGit call QuitGit()
+command QuitHidden call QuitHidden()
+command QuitOther call QuitOther()
 command QuitSmart call QuitSmart()
 
 nnoremap <silent> <leader>x  :QuitSmart<CR>
 nnoremap <silent> <leader>qq :QuitSmart<CR>
 " Bdelete is supplied by vim-bbye
 nnoremap <silent> <leader>qe :Bdelete<CR>
-nnoremap <silent> <leader>qo :HiddenBdelete<CR>
-nnoremap <silent> <leader>qO :OtherBdelete<CR>
+nnoremap <silent> <leader>qo :QuitHidden<CR>
+nnoremap <silent> <leader>qO :QuitOther<CR>
+nnoremap <silent> <leader>qg :QuitGit<CR>
 
