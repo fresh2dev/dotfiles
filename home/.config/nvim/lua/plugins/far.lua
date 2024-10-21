@@ -35,16 +35,16 @@ return {
     },
   },
   init = function()
-    vim.api.nvim_create_autocmd('FileType', {
-      group = vim.api.nvim_create_augroup('grug-far-keybindings', { clear = true }),
-      pattern = { 'grug-far' },
-      callback = function()
-        -- Go to entry and close Grug.
-        vim.api.nvim_buf_set_keymap(0, 'n', 'gf', 'H<localleader>qq', {})
-        -- Populate quickfix and close Grug.
-        vim.api.nvim_buf_set_keymap(0, 'n', '<localleader>l', '<localleader>L<localleader>qq', {})
-      end,
-    })
+    -- vim.api.nvim_create_autocmd('FileType', {
+    --   group = vim.api.nvim_create_augroup('grug-far-keybindings', { clear = true }),
+    --   pattern = { 'grug-far' },
+    --   callback = function()
+    --     -- Go to entry and close Grug.
+    --     vim.api.nvim_buf_set_keymap(0, 'n', 'gf', 'H<localleader>qq', {})
+    --     -- Populate quickfix and close Grug.
+    --     vim.api.nvim_buf_set_keymap(0, 'n', '<localleader>L', '<localleader>l<cmd>wincmd p<cr><localleader>qq', {})
+    --   end,
+    -- })
 
     -- -- Always move to bottom
     -- vim.api.nvim_create_autocmd('WinEnter', {
@@ -74,16 +74,16 @@ return {
     },
     keymaps = {
       replace = { n = '<localleader>R' },
-      qflist = { n = '<localleader>L' },
+      qflist = { n = '<localleader>l' },
       syncLocations = false,
       syncLine = false,
       close = { n = '<localleader>qq' },
       historyOpen = { n = '<localleader>h' },
       historyAdd = { n = '<localleader>H' },
       refresh = { n = '<F5>' },
-      openLocation = { n = 'H' },
-      openNextLocation = { n = ']q' },
-      openPrevLocation = { n = '[q' },
+      -- openLocation = { n = '<enter>' },
+      openNextLocation = false,
+      openPrevLocation = false,
       gotoLocation = { n = '<enter>' },
       pickHistoryEntry = { n = '<enter>' },
       abort = { n = '<localleader>A' },

@@ -36,7 +36,7 @@ def upgrade():
         # Python Dev Tools
         "uv tool install --upgrade --force basedpyright",
         "uv tool install --upgrade --force ruff",
-        "uv tool install --upgrade --force tox",
+        "uv tool install --with tox-uv --upgrade --force tox",
         "uv tool install --upgrade --force docsig",
         # "pipx install -f --include-deps 'ansible==9.*'",
         # "pipx install -f --include-deps 'jupyterlab'",

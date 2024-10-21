@@ -161,7 +161,7 @@ tag           = "v1.20.1"
 # # target        = "~/.local/bin/"
 
 ["gohugoio/hugo"]
-tag           = "v0.125.5"
+tag           = "v0.136.2"
 # asset_filters = ["_extended_", ".tar.gz"]
 # file          = "*"
 # target        = "~/.local/bin/"

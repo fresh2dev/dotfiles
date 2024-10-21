@@ -1,11 +1,5 @@
-import = ["~/.config/alacritty/themes/themes/tokyo-night.toml"]
-
-[shell]
-program = "zsh"
-args = ["-lic", 'eval "$(zellij setup --generate-auto-start zsh)"']
-
-# [colors.primary]
-# background = "#000000"
+[general]
+import = ["~/.config/alacritty/themes/themes/catppuccin_macchiato.toml"]
 
 [env]
 TERM = "xterm-256color"
@@ -21,12 +15,12 @@ family = "iMWritingMono Nerd Font"
 decorations_theme_variant = "None"
 title = "Terminal"
 dynamic_title = true
-dynamic_padding = true
-padding = { x = 10, y = 0 }
+# dynamic_padding = true
+# padding = { x = 0, y = 0 }
 # startup_mode = "Fullscreen"
 option_as_alt = "both"
 
-[[keyboard.bindings]]
-action = "SpawnNewInstance"
-key = "a"
-mods = "Alt"
+# [[keyboard.bindings]]
+# action = "SpawnNewInstance"
+# key = "a"
+# mods = "Alt"

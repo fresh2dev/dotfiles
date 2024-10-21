@@ -15,7 +15,7 @@ return {
   dependencies = { 'https://github.com/nvim-tree/nvim-web-devicons' },
   opts = {
     options = {
-      theme = 'tokyonight',
+      theme = 'catppuccin',
       component_separators = { left = '|', right = '|' },
       section_separators = { left = '', right = '' },
       ignore_focus = { 'dashboard', 'neo-tree' },

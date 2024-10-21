@@ -29,18 +29,6 @@ return {
       { '<leader>gh', group = '[G]it [H]unk' },
       { '<leader>q', group = '[Q]uit' },
       { '<leader>t', group = '[T]oggle' },
-      ---
-      { '<leader>w', desc = '[W]rite Buffer' },
-      { '<leader>W', desc = '[W]rite [A]ll Buffers' },
-      { '<leader>x', desc = 'IntelliQuit' },
-      { '<leader>qq', desc = 'IntelliQuit' },
-      { '<leader>qs', desc = 'Close Window' },
-      { '<leader>qS', desc = 'Close Splits' },
-      { '<leader>qe', desc = 'Delete Buffer ([Q]uit [E]diting)' },
-      { '<leader>qc', desc = 'Close Window and Delete Buffer' },
-      { '<leader>qh', desc = 'Delete Hidden Buffers' },
-      { '<leader>qo', desc = 'Close other Windows and Delete other Buffers' },
-      { '<leader>qt', desc = 'Close Tab' },
     },
   },
 }

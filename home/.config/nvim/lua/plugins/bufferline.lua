@@ -3,8 +3,8 @@ return {
   version = 'v4',
   lazy = false,
   keys = {
-    { '[b', ':BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
-    { ']b', ':BufferLineCycleNext<cr>', desc = 'Next Buffer' },
+    -- { '[b', ':BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
+    -- { ']b', ':BufferLineCycleNext<cr>', desc = 'Next Buffer' },
     -- { 'gT', ':BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
     -- { 'gt', ':BufferLineCycleNext<cr>', desc = 'Next Buffer' },
     -- { '<leader>bp', '<Cmd>BufferLineTogglePin<CR>', desc = 'Toggle Pin' },

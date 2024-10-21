@@ -593,7 +593,7 @@ endfunction
 
 function! QuitOther()
   execute 'silent! tabonly'
-  execute 'only'
+  execute 'silent! only'
   execute 'QuitHidden'
 endfunction
 
@@ -604,7 +604,7 @@ function! QuitSmart() abort
   let current_buftype = getbufvar(current_bufnr, '&buftype')
 
   " Count the number of non-special windows and those with the current buffer.
-  let window_count = 0
+  let normal_window_count = 0
   let buffer_window_count = 0
   let windows = range(1, winnr('$'))
 
@@ -616,20 +616,20 @@ function! QuitSmart() abort
 
     let buftype = getbufvar(bufnr, '&buftype')
     if buftype == ''
-      let window_count += 1
+      let normal_window_count += 1
     endif
   endfor
 
-  " If current buffer is a special type,
-  " or, if this buffer exists in more than one window,
-  " close the window.
-  if current_buftype != '' || buffer_window_count > 1
-    execute 'close'
-  " If only one window, delete the buffer and keep the window.
-  elseif window_count == 1
-    execute 'Bdelete'
-  elseif buffer_window_count <= 1
-    execute 'bdelete'
+  if buffer_window_count > 1
+    " if this buffer exists in more than one window, close the window.
+    close
+  elseif len(windows) > 1 || current_buftype != ''
+    bdelete
+  " elseif expand('%:p') == ''
+  "   " if this is an empty buffer
+  "   quit
+  else
+    Bdelete
   endif
 endfunction
 
@@ -645,4 +645,5 @@ nnoremap <silent> <leader>qe :Bdelete<CR>
 nnoremap <silent> <leader>qo :QuitHidden<CR>
 nnoremap <silent> <leader>qO :QuitOther<CR>
 nnoremap <silent> <leader>qg :QuitGit<CR>
+nnoremap <silent> <leader>gq :QuitGit<CR>
 

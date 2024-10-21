@@ -36,6 +36,7 @@ cask "neovide"
 cask "gitup"
 
 cask "angry-ip-scanner"
+cask "db-browser-for-sqlite"
 cask "pinta"
 cask "obs"
 cask "ticktick"

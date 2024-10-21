@@ -58,7 +58,8 @@ alias nv="nvim"
 
 alias g=git
 alias G=git
-alias gg='$EDITOR -c "normal 1 go"'
+alias vg='$EDITOR -c "normal 1 go"'
+alias vf='$EDITOR -c "normal 1 fR"'
 
 alias q=exit
 alias x=exit
@@ -70,14 +71,16 @@ alias tolower="tr '[:upper:]' '[:lower:]'"
 alias toupper="tr '[:lower:]' '[:upper:]'"
 alias randint='echo $((RANDOM % 10))'
 
-alias ls='eza --classify --group-directories-first --git --git-repos'
+if command -v eza &>/dev/null; then
+  alias ls='eza --classify --group-directories-first --git --git-repos'
+fi
 alias ll='ls -lA'
 alias lt='ls --tree'
 
-alias cat=bat
-alias less=bat
-
-alias kc='kubectl'
+if command -v bat &>/dev/null; then
+  alias cat=bat
+  alias less=bat
+fi
 
 command -v code &>/dev/null || alias code='codium'
 
@@ -207,6 +210,11 @@ eval "$(zoxide init zsh)"
 eval "$(direnv hook zsh)"
 # # pipx
 # eval "$(register-python-argcomplete pipx)"
+
+if command -v kubectl &>/dev/null; then
+  alias kc='kubectl'
+  source <(kubectl completion zsh)
+fi
 
 if [ -n "$ZELLIJ" ]; then
   # If in a Zellij instance...

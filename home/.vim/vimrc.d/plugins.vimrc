@@ -82,12 +82,13 @@ cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' 
 
 " Git-related mappings
 " Open Fugitive with git log split right.
-nnoremap <leader>gg :Git \| vertical Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+nnoremap <leader>gg :Git \| vertical Git log --graph --oneline --decorate \| wincmd p \| normal i<CR>
+nnoremap <leader>gG :0Git \| normal i<CR>
 " Open new tab containing Fugitive with git log split bottom.
-nnoremap <leader>gt :tabnew \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+nnoremap <leader>gt :tabnew \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| normal i<CR>
 " Close all windows and open Fugitive with git log split bottom.
-nnoremap <leader>go :only \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
-nnoremap <leader>gO :%bd \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
+nnoremap <leader>go :only \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| normal i<CR>
+nnoremap <leader>gO :%bd \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| normal i<CR>
 " nnoremap <leader>gE :bd1 \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| :5<CR>
 nnoremap <leader>gb :Git blame -s<CR>
 nnoremap <leader>gl :0Git log --graph --oneline --decorate<CR>
@@ -105,6 +106,20 @@ nnoremap <leader>gsx :Git stash clear<CR>
 nnoremap <leader>gS :Git fetch --all \| Git pull \| Git fetch origin main:main \| Git rebase main<CR>
 nnoremap <leader>gp :Git push -u origin<CR>
 nnoremap <leader>gP :Git push -fu origin<CR>
+
+Plug 'https://github.com/rhysd/conflict-marker.vim', { 'commit': '62742b2ffe7a433988759c67b5c5a22eff74a14b' }
+
+let g:conflict_marker_enable_mappings = 0
+
+nnoremap ]x :ConflictMarkerNextHunk<CR>
+nnoremap [x :ConflictMarkerPrevHunk<CR>
+
+nnoremap <leader>dG :diffget<CR>
+nnoremap <leader>dgh :ConflictMarkerOurselves<CR>
+nnoremap <leader>dgl :ConflictMarkerThemselves<CR>
+nnoremap <leader>dga :ConflictMarkerBoth<CR>
+nnoremap <leader>dgA :ConflictMarkerBoth!<CR>
+nnoremap <leader>dgd :ConflictMarkerNone<CR>
 
 " Heuristically set buffer options
 Plug 'https://github.com/tpope/vim-sleuth', { 'commit': '1cc4557420f215d02c4d2645a748a816c220e99b' }
@@ -260,9 +275,9 @@ map gz# <Plug>(asterisk-gz#)
 Plug 'https://github.com/wellle/targets.vim', { 'commit': '642d3a4ce306264b05ea3219920b13ea80931767' }
 
 " vim-zellij-navigator
-Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': '09c21b8ae429bbab575b003e9c750019f2c6d1f7' }
+Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': '511f864' }
 
-let g:zelli_navigator_move_focus_or_tab = 0
+let g:zelli_navigator_move_focus_or_tab = 1
 let g:zellij_navigator_disable_autolock = 0
 
 " Open ZelliJ floating pane.

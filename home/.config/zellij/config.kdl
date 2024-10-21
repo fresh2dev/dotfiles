@@ -211,8 +211,8 @@ keybinds clear-defaults=true {
         bind "Alt o" { NewPane "Down"; }
         bind "Alt v" { NewPane "Right"; }
 
-        bind "Ctrl h" { MoveFocus "Left"; }
-        bind "Ctrl l" { MoveFocus "Right"; }
+        bind "Ctrl h" { MoveFocusOrTab "Left"; }
+        bind "Ctrl l" { MoveFocusOrTab "Right"; }
         bind "Ctrl j" { MoveFocus "Down"; }
         bind "Ctrl k" { MoveFocus "Up"; }
 
@@ -288,6 +288,19 @@ session_serialization false
 // Once these themes are defined, one of them should to be selected in the "theme" section of this fil
 
 themes {
+    catppuccin-macchiato {
+        bg "#5b6078" // Surface2
+        fg "#cad3f5" // Text
+        red "#ed8796"
+        green "#a6da95"
+        blue "#8aadf4"
+        yellow "#eed49f"
+        magenta "#f5bde6" // Pin
+        orange "#f5a97f" // Pe
+        cyan "#91d7e3" // Sky
+        black "#1e2030" // Mante
+        white "#cad3f5" // Text
+    }
     dracula {
         fg 248 248 242
         bg 40 42 54

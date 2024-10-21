@@ -122,6 +122,9 @@ return { -- LSP Configuration & Plugins
           init_options = {
             settings = {
               -- Server settings should go here
+              -- logLevel = 'debug',
+              -- logFile = '/tmp/ruff.log',
+              organizeImports = false,
             },
           },
         },

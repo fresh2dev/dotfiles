@@ -7,7 +7,6 @@ return {
     'https://github.com/nvim-tree/nvim-web-devicons', -- optional dependency
   },
   opts = {
-    -- theme = 'tokyonight-night',
     theme = {
       -- this highlight is used to override other highlights
       -- you can take advantage of its `bg` and set a background throughout your winbar

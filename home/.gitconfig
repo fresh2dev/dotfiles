@@ -53,9 +53,13 @@
     colorMoved = default
     algorithm = histogram
 [alias]
-    root = !(git is-repo && git rev-parse --show-toplevel) || pwd
+    aliases = "!f() { \
+                git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /; \
+            }; f"
 
     is-repo = !git status --porcelain >/dev/null 2>&1
+
+    pwd = !(git is-repo && git rev-parse --show-toplevel) || pwd
 
     is-clean = "!f() { \
                 git is-repo && test -z \"$(git status --porcelain)\"; \
@@ -65,36 +69,8 @@
         fd '.git' --type d --hidden \"$@\" --exec dirname | grep -v '\\.git/modules/\\?' | sort -u; \
         }; f"
     f = find
-    o = open
-
-    aliases = "!f() { \
-                git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /; \
-            }; f"
 
     authors = shortlog --summary --numbered --email --all
-
-    # show current version
-    ver = !bump2version patch --list --allow-dirty --dry-run | grep "^current_version" | cut -d= -f2
-    # test if current version is release-candidate
-    ver-is-rc = !git ver | grep -qv '^[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+$'
-    # show what the next rc/patch version is
-    ; ver-next = !((git ver-is-rc && bump2version rc --list --allow-dirty --dry-run) || bump2version patch --list --allow-dirty --dry-run) | grep "^new_version" | cut -d= -f2
-    ver-next = "!f() { \
-                if git ver-is-rc; then \
-                    bump2version rc --list --allow-dirty --dry-run; \
-                else \
-                    bump2version patch --list --allow-dirty --dry-run; \
-                fi | grep '^new_version' | cut -d= -f2; \
-            }; f"
-    # bump to the next rc/patch version,
-    # or to the given version,
-    # and commit.
-    ver-bump = "!f() { \
-                bump2version patch --new-version ${1:-$(git ver-next)} --commit \
-                && git show -s; \
-            }; f"
-    # tag the current version and bump to the next
-    tag-ver = !git tag $(git ver)
 
     ##################################################
     # List branches.
@@ -229,50 +205,6 @@
     ##################################################
     dif = diff --compact-summary
 
-    # thanks: https://www.youtube.com/watch?v=lZehYwOfJAs
-    ibranches = "!f() { \
-        git branch --sort=-committerdate | rev | cut -d\\  -f1 | rev | fzf --header \"${1:-Branches}\" --preview 'git diff --color=always {} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}' | grep -v \"^$(git pwb)\"; \
-        }; f"
-    ib = ibranches
-
-    icho = !git ibranches "Checkout" | xargs -r git cho
-    ichox = !git ibranches "Checkout-Overwrite" | xargs -r git chox
-    img = !git ibranches "Merge" | xargs -r git mg
-    irb = !git ibranches "Rebase" | xargs -r git rbi
-
-    idiff = "!f() { \
-        git ls-files --modified --others --exclude-standard | uniq | tr -d '\"' | fzf --multi --header \"${1:-Unstaged}\" --preview '(git diff --color=always --exit-code -- "{}" 2>/dev/null || cat "{}") | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}'; \
-        }; f"
-    id = idiff
-
-    idiffstaged = "!f() { \
-        git stgls | cut -f2- | fzf --multi --header \"${1:-Staged}\" --preview '(git diff --staged --color=always --exit-code -- "{}" 2>/dev/null || cat "{}") | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}'; \
-        }; f"
-    istg = istaged
-    is = istaged
-
-    istashed = "!f() { \
-        git stash list | fzf --multi --header \"${1:-Stashed}\" --preview 'git stash show --color=always "$(echo "{}" | cut -d: -f1)" | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}' | cut -d: -f1; \
-        }; f"
-
-    ipop = !git istashed | xargs -r -d '\n' git stash pop
-
-    ilog = "!f() { \
-        git log --oneline | fzf --multi --header \"${1:-Commits}\" --preview 'git show --color=always "$(echo "{}" | cut -d\\  -f1)" | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}' | cut -d\\  -f1; \
-        }; f"
-
-    iadd = !git idiff "Stage" | xargs -r -d '\n' git add && git ls
-    ia = iadd
-
-    icommit = !git iadd && git c && git ls
-    ic = icommit
-
-    iunstage = !git istaged "Unstage" | xargs -r -d '\n' git reset -- && git ls
-    iu = iunstage
-
-    iburn = !git idiff "Destroy" | xargs -r -d '\n' -I{} sh -c 'git reset -- "{}" >/dev/null && git checkout HEAD -- "{}" 2>/dev/null || git clean -f "{}"'
-    ix = iburn
-
     ##################################################
     # Show diff of a single file in 2-pane difftool.
     # "diff2" == "diff 2-pane"
@@ -291,7 +223,7 @@
     graph = log --graph --decorate --oneline
     g = graph
     ga = graph --all
-    gd = "!f() { \
+    od = "!f() { \
         git g ${1:-$(git pwb)} --not ${2:-origin/$(git pwb)}; \
         }; f"
 
@@ -310,6 +242,7 @@
                 && printf '___\nUNSTAGED:\n' && git dif \
                 && printf '___\nUNTRACKED:\n' && git ls-untracked \
                 && printf '___\nSTASHED:\n' && git stash list \
+                && printf '___\nUNPUSHED:\n' && git od \
                 && printf '___\nRECENT:\n' && git g -n3 \
                 && printf '___\n'; \
             }; f"
@@ -319,7 +252,7 @@
     # "w" == "watch"
     # > git w
     ##################################################
-    watch = !watch -n3 --color --no-title 'echo $(date +%T) && git ls && echo "GRAPH:" && git g --all -n 10'
+    watch = !viddy -n 3 --no-title 'echo $(date +%T) && git ls && echo "TREE:" && git g --all -n 10'
 
     ##################################################
     # List untracked files.

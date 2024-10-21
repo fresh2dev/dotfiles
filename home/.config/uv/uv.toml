@@ -1,0 +1,5 @@
+index-url = "https://gitea.local.hostbutter.net/api/packages/Fresh2dev/pypi/simple/"
+extra-index-url = [
+    "https://pypi.org/simple",
+]
+cache-keys = [{ file = "pyproject.toml" }, { file = "setup.py" }, { file = "setup.cfg" }]

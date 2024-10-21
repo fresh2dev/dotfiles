@@ -1,3 +1,4 @@
 /home-secrets/
 /.aider*
 .DS_Store
+home/.config/nvim/.vim/
