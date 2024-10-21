@@ -12,5 +12,3 @@ if [ -e '/opt/homebrew/bin/brew' ]; then
 fi
 
 export PATH="${MY_TOOL_DIR}:${HOME}/.cargo/bin:${DEVBOX_GLOBAL_PREFIX}/bin:${PATH}"
-
-export ZELLIJ_AUTO_START="true"

@@ -13,6 +13,30 @@ setopt HIST_IGNORE_SPACE
 stty -ixon
 # stty erase '^?'
 
+# Fixes "Delete" key action in Alacritty.
+# ref: https://github.com/alacritty/alacritty/issues/3494#issuecomment-601664944
+bindkey "^[[3~" delete-char
+
+# Start Zellij
+if [ -z "$ZELLIJ" ]; then
+  read "resp?Start ZelliJ? (Y/n) "
+  resp=${resp:-Y}
+  # if [[ $resp =~ ^[Yy]$ ]]; then
+  #   ZELLIJ_AUTO_ATTACH='true' ZELLIJ_AUTO_EXIT='true' eval "$(zellij setup --generate-auto-start zsh)"
+  # fi
+
+  if [[ $resp =~ ^[Yy]$ ]]; then
+    zellij list-sessions || true
+    read "resp?Session Name: "
+    if [[ $resp =~ ^[0-9]+$ ]]; then
+      zellij attach --index "${resp}"
+    else
+      zellij attach -c "${resp:-unnamed}"
+    fi
+    exit
+  fi
+fi
+
 # if command -v devbox &>/dev/null; then
 #   eval "$(devbox global shellenv --init-hook)"
 # fi
@@ -21,10 +45,6 @@ stty -ixon
 alias devbox-recompute='eval "$(devbox global shellenv --recompute)"'
 alias devbox-edit='$EDITOR $(devbox global path)'
 alias devbox-cleanup='devbox run -- nix store gc --extra-experimental-features nix-command'
-
-# Fixes "Delete" key action in Alacritty.
-# ref: https://github.com/alacritty/alacritty/issues/3494#issuecomment-601664944
-bindkey "^[[3~" delete-char
 
 if ! command -v pbcopy &>/dev/null; then
   alias pbcopy="xclip -selection clipboard"
@@ -38,9 +58,7 @@ alias nv="nvim"
 
 alias g=git
 alias G=git
-
-alias gi='$EDITOR -c "normal 1 go"'
-alias Gi=gi
+alias gg='$EDITOR -c "normal 1 go"'
 
 alias q=exit
 alias x=exit
@@ -68,7 +86,7 @@ install_yapx_zsh_completion() {
 }
 
 export FZF_DEFAULT_COMMAND='rg --files'
-export FZF_DEFAULT_OPTS='--bind ctrl-a:select-all,ctrl-d:deselect-all,tab:toggle+down,shift-tab:toggle+up,ctrl-x:toggle --layout=reverse --preview-window=bottom,40%,border-top --highlight-line'
+export FZF_DEFAULT_OPTS='--bind alt-a:select-all,alt-d:deselect-all,tab:toggle+down,shift-tab:toggle --layout=reverse --preview-window=bottom,40%,border-top --highlight-line'
 export _ZO_FZF_OPTS="$FZF_DEFAULT_OPTS --border=none --preview-window=hidden"
 export _ZO_EXCLUDE_DIRS="$HOME:/tmp:/var/*:/mnt/*"
 export _ZO_MAXAGE=1000
@@ -90,20 +108,35 @@ if [ -d "$HOME/.zsh/fzf-tab" ]; then
   # disable sort when completing `git checkout`
   zstyle ':completion:*:git-checkout:*' sort false
   # set descriptions format to enable group support
+  # NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
   zstyle ':completion:*:descriptions' format '[%d]'
   # set list-colors to enable filename colorizing
-  # zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-  # preview directory's content with exa when completing cd
-  # zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-  # switch group using `,` and `.`
-  zstyle ':fzf-tab:*' switch-group ',' '.'
-  # zstyle ':fzf-tab:*' fzf-flags --preview-window=right,50%,border-left
+  zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+  # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+  zstyle ':completion:*' menu no
+  # preview directory's content with eza when completing cd
+  if command -v eza &>/dev/null; then
+    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+  fi
+  # custom fzf flags
+  # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
+  zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --preview-window=right,66%,border-left
+  # To make fzf-tab follow FZF_DEFAULT_OPTS.
+  # NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+  zstyle ':fzf-tab:*' use-fzf-default-opts yes
+  # switch group using `<` and `>`
+  zstyle ':fzf-tab:*' switch-group '<' '>'
   zstyle ':fzf-tab:*' fzf-pad 4
   zstyle ':fzf-tab:*' fzf-min-height 4
   source ~/.zsh/fzf-tab/fzf-tab.plugin.zsh
 fi
 
-# fzf
+if [ -d "$HOME/.zsh/forgit" ]; then
+  export FORGIT_NO_ALIASES=1 FORGIT_FZF_DEFAULT_OPTS='--preview-window=bottom,60%,border-top'
+  source ~/.zsh/forgit/forgit.plugin.sh
+  export PATH="$PATH:$FORGIT_INSTALL_DIR/bin"
+fi
+
 FZF_CTRL_T_COMMAND= FZF_ALT_C_COMMAND= eval "$(fzf --zsh)"
 
 if [ -d "$HOME/.zsh/zsh-autosuggestions" ]; then
@@ -174,23 +207,9 @@ eval "$(zoxide init zsh)"
 eval "$(direnv hook zsh)"
 # # pipx
 # eval "$(register-python-argcomplete pipx)"
-# zellij
-alias zj='zellij'
-alias zjqa='zellij action close-tab'
-alias zjsp='zellij action new-pane --direction down --close-on-exit -- $SHELL -c "cd "$PWD" && clear && $SHELL -i"'
-alias zjvs='zellij action new-pane --direction right --close-on-exit -- $SHELL -c "cd "$PWD" && clear && $SHELL -i"'
-zje() { zellij run --name "$EDITOR $*" --close-on-exit -- zsh -ic "$EDITOR $*"; }
-zjef() { zellij run --name "$EDITOR $*" --close-on-exit --floating -- zsh -ic "$EDITOR $*"; }
-zjr() { zellij run --name "$*" -- zsh -ic "$*"; }
-zjrf() { zellij run --name "$*" --floating -- zsh -ic "$*"; }
 
 if [ -n "$ZELLIJ" ]; then
-  # # If in a Zellij instance...
-
-  # if [[ ! -o login ]] && [[ -o interactive ]] && [[ $# -eq 0 ]]; then
-  #   zi # Run zoxide interactive if this is a non-login, interactive shell with no arguments.
-  # fi
-
+  # If in a Zellij instance...
   # On `cd`, set the Zellij tab name to the name of the git root or `pwd`.
   set_zellij_tab_name() {
     THIS_REPO="$(basename $(git rev-parse --show-toplevel 2>/dev/null || pwd))"

@@ -66,7 +66,7 @@ plugins {
     // autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
     autolock location="file:$HOME/sync/projects/zellij-autolock/target/wasm32-wasi/release/zellij-autolock.wasm" {
         triggers "nvim"  // Lock when any open these programs open. They are expected to unlock themselves when closed (e.g., using zellij.vim plugin).
-        watch_triggers "vim|fzf|zoxide|atuin"  // Lock when any of these open and monitor until closed. I haven't assessed how "expensive" this is.
+        watch_triggers "vim|git|fzf|zoxide|atuin"  // Lock when any of these open and monitor until closed. I haven't assessed how "expensive" this is.
         watch_interval "1.0"  // When monitoring, check every X seconds.
     }
 }
@@ -180,7 +180,7 @@ keybinds clear-defaults=true {
 
         bind "Alt w" { CloseFocus; }
         bind "Alt q" { CloseTab; }
-        bind "Alt d" { Detach; }
+        bind "Alt x" { Detach; }
         /* bind "Alt q" { Quit; } */
         bind "Alt s" {
             LaunchOrFocusPlugin "zellij:session-manager" {
