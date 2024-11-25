@@ -382,6 +382,16 @@ map gz* <Plug>(asterisk-gz*)
 map z#  <Plug>(asterisk-z#)
 map gz# <Plug>(asterisk-gz#)
 
+"vim-edgemotion
+Plug 'https://github.com/haya14busa/vim-edgemotion', { 'commit': '8d16bd92f6203dfe44157d43be7880f34fd5c060' }
+
+map gj <Plug>(edgemotion-j)
+map gk <Plug>(edgemotion-k)
+nnoremap gh ^
+vnoremap gh ^
+nnoremap gl $
+vnoremap gl g_
+
 "targets.vim
 Plug 'https://github.com/wellle/targets.vim', { 'commit': '642d3a4ce306264b05ea3219920b13ea80931767' }
 
