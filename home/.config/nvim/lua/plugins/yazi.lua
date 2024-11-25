@@ -1,20 +1,13 @@
 return {
   'https://github.com/mikavilpas/yazi.nvim',
   cmd = { 'Yazi' },
-  keys = {
-    -- 👇 in this section, choose your own keymappings!
-    -- {
-    --   -- Open in the current working directory
-    --   '<C-\\>',
-    --   '<cmd>Yazi cwd<cr>',
-    --   desc = '[F]ile [E]xplorer (Yazi)',
-    -- },
-    {
-      '<C-\\>',
-      '<cmd>Yazi<cr>',
-      desc = '[F]ile [E]xplorer (Yazi)',
-    },
-  },
+  -- keys = {
+  --   {
+  --     '<C-\\>',
+  --     '<cmd>Yazi<cr>',
+  --     desc = '[F]ile [E]xplorer (Yazi)',
+  --   },
+  -- },
   opts = {
     -- if you want to open yazi instead of netrw, see below for more info
     open_for_directories = false,

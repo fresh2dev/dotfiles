@@ -5,8 +5,29 @@ return {
   version = '*',
   cmd = 'Neotree',
   keys = {
-    { '<leader>bs', '<Cmd>Neotree toggle action=focus reveal=true position=left<CR>', desc = '[B]uffer [S]idebar' },
-    { '<leader>bb', '<Cmd>Neotree toggle action=focus reveal=true position=float<CR>', desc = '[B]uffer Explorer' },
+    { '<C-\\>', '<Cmd>silent! Neotree toggle action=focus reveal=true reveal_force_cwd=true position=left<CR>', desc = '[B]uffer [S]idebar' },
+    { '<leader>bb', '<Cmd>silent! Neotree toggle action=focus reveal=true reveal_force_cwd=true position=float<CR>', desc = '[B]uffer Explorer' },
+  },
+  dependencies = {
+    'https://github.com/nvim-lua/plenary.nvim',
+    'https://github.com/nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+    'https://github.com/MunifTanjim/nui.nvim',
+    -- {
+    --   'https://github.com/s1n7ax/nvim-window-picker',
+    --   opt = {
+    --     filter_rules = {
+    --       include_current_win = false,
+    --       autoselect_one = true,
+    --       -- filter using buffer options
+    --       bo = {
+    --         -- if the file type is one of following, the window will be ignored
+    --         filetype = { 'neo-tree', 'neo-tree-popup', 'notify' },
+    --         -- if the buffer type is one of following, the window will be ignored
+    --         buftype = { 'terminal', 'quickfix' },
+    --       },
+    --     },
+    --   },
+    -- },
   },
   opts = {
     sources = {
@@ -19,7 +40,7 @@ return {
       winbar = true,
       statusline = false,
     },
-    close_if_last_window = true,
+    close_if_last_window = false,
     default_source = 'buffers',
     enable_diagnostics = false,
     enable_git_status = true,
@@ -71,7 +92,6 @@ return {
             state.commands['toggle_node'](state)
           else
             state.commands['open_split'](state)
-            vim.cmd 'Neotree reveal'
           end
         end,
         ['<C-v>'] = function(state)
@@ -80,13 +100,24 @@ return {
             state.commands['toggle_node'](state)
           else
             state.commands['open_vsplit'](state)
-            vim.cmd 'Neotree reveal'
+          end
+        end,
+        ['<C-t>'] = function(state)
+          local node = state.tree:get_node()
+          if require('neo-tree.utils').is_expandable(node) then
+            state.commands['toggle_node'](state)
+          else
+            state.commands['open_tabnew'](state)
           end
         end,
         ['<F5>'] = 'refresh',
         ['u'] = 'refresh',
         ['cc'] = 'rename',
         -- ['q'] = 'close_window',
+        ['<C-\\>'] = function(state)
+          vim.cmd 'wincmd p'
+          vim.cmd 'Neotree action=close'
+        end,
         ['q'] = function(state)
           vim.cmd 'wincmd p'
           vim.cmd 'Neotree action=close'
@@ -139,26 +170,5 @@ return {
         },
       },
     },
-  },
-  dependencies = {
-    'https://github.com/nvim-lua/plenary.nvim',
-    'https://github.com/nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
-    'https://github.com/MunifTanjim/nui.nvim',
-    -- {
-    --   'https://github.com/s1n7ax/nvim-window-picker',
-    --   opt = {
-    --     filter_rules = {
-    --       include_current_win = false,
-    --       autoselect_one = true,
-    --       -- filter using buffer options
-    --       bo = {
-    --         -- if the file type is one of following, the window will be ignored
-    --         filetype = { 'neo-tree', 'neo-tree-popup', 'notify' },
-    --         -- if the buffer type is one of following, the window will be ignored
-    --         buftype = { 'terminal', 'quickfix' },
-    --       },
-    --     },
-    --   },
-    -- },
   },
 }
