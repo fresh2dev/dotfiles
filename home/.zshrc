@@ -18,12 +18,10 @@ stty -ixon
 bindkey "^[[3~" delete-char
 
 # Start Zellij
-if [ -z "$ZELLIJ" ]; then
+if [ -z "$ZELLIJ" ] && [ -z "$ZELLIJ_PROMPTED" ]; then
   read "resp?Start ZelliJ? (Y/n) "
   resp=${resp:-Y}
-  # if [[ $resp =~ ^[Yy]$ ]]; then
-  #   ZELLIJ_AUTO_ATTACH='true' ZELLIJ_AUTO_EXIT='true' eval "$(zellij setup --generate-auto-start zsh)"
-  # fi
+  export ZELLIJ_PROMPTED=1
 
   if [[ $resp =~ ^[Yy]$ ]]; then
     zellij list-sessions || true
