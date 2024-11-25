@@ -85,6 +85,11 @@ endif
 " Add a bit extra margin to the left
 set foldcolumn=1
 
+" Do not expand fold on horizontal movements or block movements.
+" see `:help 'foldopen'`
+set foldopen-=hor
+set foldopen-=block
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -167,6 +172,11 @@ nmap <C-Right> :vertical resize +2<CR>
 
 " Search inside visual selection
 xnoremap g/ <esc>/\%V
+
+" Consistent direction of n/N regardless
+" of whether search started with '*' or '#'
+nnoremap <expr> n (v:searchforward ? 'n' : 'N')
+nnoremap <expr> N (v:searchforward ? 'N' : 'n')
 
 " " Opens a new tab with the current buffer's path
 " " Super useful when editing files in the same directory
@@ -310,11 +320,11 @@ augroup END
 " xnoremap aL $o0
 " onoremap aL :normal vaL<cr>
 
-" paste while retain original value and cursor position
-" https://stackoverflow.com/a/7164121
-noremap p p`[
-noremap P P`[
-xnoremap p pgvy`[
+" " paste while retain original value and cursor position
+" " https://stackoverflow.com/a/7164121
+" noremap p p`[
+" noremap P P`[
+" xnoremap p pgvy`[
 
 " dot-repeat and restore cursor position
 nnoremap . m`.``
@@ -352,9 +362,20 @@ nnoremap >P <Plug>(unimpaired-put-above-rightward)
 nnoremap >p <Plug>(unimpaired-put-below-rightward)
 nnoremap <P <Plug>(unimpaired-put-above-leftward)
 nnoremap <p <Plug>(unimpaired-put-below-leftward)
-nnoremap =P <Plug>(unimpaired-put-above-reformat)
-nnoremap =p <Plug>(unimpaired-put-below-reformat)
+nnoremap <leader>P <Plug>(unimpaired-put-above-reformat)
+nnoremap <leader>p <Plug>(unimpaired-put-below-reformat)
 
+" disable `s`, `S` in favor of `vim-subversive`
+nmap s <Nop>
+xmap s <Nop>
+nmap S <Nop>
+xmap S <Nop>
+
+" " make vim-surround mappings work with vim-sandwich / mini.surround
+" xmap S sa
+" nmap ys sa
+" nmap ds sd
+" nmap cs sr
 
 " make Y act like D and C (yank to EOL)
 nmap Y y$
@@ -408,6 +429,8 @@ tnoremap <C-u> <C-\><C-n>
 " With this mapping, `gsp` is for "Go to file under cursor in new split"
 nnoremap gsp :wincmd F<CR>
 
+" `gp` to visual select last pasted text
+nnoremap gp `[v`]
 
 " Account for my common typo when quitting
 command Q :q
@@ -425,8 +448,6 @@ nnoremap <leader>tw :setlocal wrap! wrap?<CR>
 autocmd BufNewFile,BufRead *.yml.tpl,*.yaml.tpl setlocal filetype=yaml
 
 autocmd FileType python setlocal colorcolumn=88
-" autocmd FileType python,yaml,sh,zsh setlocal cinkeys-=0# indentkeys-=0#
-" autocmd FileType yaml,helm setlocal foldmethod=indent foldcolumn=0 foldlevel=99
 
 autocmd FileType yaml,sh,zsh setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType python,markdown,vim,json setlocal ts=4 sts=4 sw=4 expandtab
@@ -483,7 +504,7 @@ nnoremap ]<space> :set paste<CR>m`o<Esc>``:set nopaste<CR>
 nnoremap [<space> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 " Like <C-w>T, Open buffer in new tab, but preserve original window.
-nnoremap <C-w>t :tab sp<CR>
+nnoremap <C-w>t :tab split<CR>
 
 " saner-behavior-of-n-and-n
 " https://github.com/mhinz/vim-galore?tab=readme-ov-file#saner-behavior-of-n-and-n
@@ -516,6 +537,9 @@ source ~/.vim/vimrc.d/plugins.vimrc
 " Add comment above / below current line
 nnoremap gco o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>
 nnoremap gcO O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>
+" Add a "TODO" comment
+nnoremap gct o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>TODO: 
+nnoremap gcT O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>TODO: 
 
 if !has('nvim')
   " Vim only
@@ -527,7 +551,8 @@ else
 
   " Sets how neovim will display certain whitespace characters in the editor.
   set list
-  set listchars=multispace:·,lead:·,trail:·,tab:»·,extends:→,precedes:←,nbsp:␣
+  " set listchars=multispace:·,lead:·,trail:·,tab:»·,extends:→,precedes:←,nbsp:␣
+  set listchars=trail:·,tab:»·,extends:→,precedes:←,nbsp:␣
   " ,eol:↲
 
   " Require 24-bit colors (required by "fancy" UI plugins)
@@ -642,8 +667,10 @@ nnoremap <silent> <leader>x  :QuitSmart<CR>
 nnoremap <silent> <leader>qq :QuitSmart<CR>
 " Bdelete is supplied by vim-bbye
 nnoremap <silent> <leader>qe :Bdelete<CR>
+nnoremap <silent> <leader>qE :Bdelete!<CR>
+nnoremap <silent> <leader>bd :Bdelete<CR>
+nnoremap <silent> <leader>bD :Bdelete!<CR>
 nnoremap <silent> <leader>qo :QuitHidden<CR>
 nnoremap <silent> <leader>qO :QuitOther<CR>
 nnoremap <silent> <leader>qg :QuitGit<CR>
-nnoremap <silent> <leader>gq :QuitGit<CR>
 

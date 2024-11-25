@@ -4,21 +4,28 @@ return {
   dependencies = { 'https://github.com/nvim-tree/nvim-web-devicons' },
   cmd = 'FzfLua',
   keys = {
-    { '<C-p>', ':FzfLua<CR>', mode = 'n', desc = '[FZ]F Menu' },
+    -- Disabled in favor of `legendary.nvim`
+    -- { '<C-p>', ':FzfLua<CR>', mode = 'n', desc = '[FZ]F Menu' },
+    { '<leader>F', ':FzfLua<CR>', mode = 'n', desc = '[FZ]F Menu' },
     { '<leader>fa', ':FzfLua args<CR>', mode = 'n', desc = '[F]ZF [A]rgument List' },
     { '<leader>fh', ':FzfLua helptags<CR>', mode = 'n', desc = '[F]ZF [H]elptags' },
-    { '<leader>fk', ':FzfLua keymaps<CR>', mode = 'n', desc = '[F]ZF [K]eymaps' },
+    -- Disabled in favor of `legendary.nvim`
+    -- { '<leader>fk', ':FzfLua keymaps<CR>', mode = 'n', desc = '[F]ZF [K]eymaps' },
     { '<leader>ff', ':FzfLua files<CR>', mode = 'n', desc = '[F]ZF [F]iles' },
     { '<leader>fl', ':FzfLua blines<CR>', mode = 'n', desc = '[F]ZF [L]ines in Buffer' },
     { '<leader>fg', ':FzfLua git_bcommit<CR>', mode = 'n', desc = '[F]ZF [G]it Commits for Buffer' },
     { '<leader>fs', ':FzfLua live_grep_glob<CR>', mode = 'n', desc = '[F]ZF Grep [S]earch' },
     { '<leader>fS', ':FzfLua live_grep_glob resume=true<CR>', mode = 'n', desc = '[F]ZF Resume Grep [S]earch' },
-    { '<leader>fc', ':FzfLua changes<CR>', mode = 'n', desc = '[F]ZF File [C]hanges' },
+    -- Disabled in favor of `legendary.nvim`
+    -- { '<leader>fc', ':FzfLua changes<CR>', mode = 'n', desc = '[F]ZF File [C]hanges' },
     { '<leader>fo', ':FzfLua oldfiles<CR>', mode = 'n', desc = '[F]ZF [O]ldfiles' },
     { '<leader>fb', ':FzfLua buffers sort_mru=true sort_lastused=true<CR>', mode = 'n', desc = '[F]ZF [B]uffers' },
     -- Use `ft` for `:TodoFzfLua`
     -- { '<leader>ft', ':FzfLua tabs<CR>', mode = 'n', desc = '[F]ZF [T]abs' },
-    { '<leader>fm', ':FzfLua marks<CR>', mode = 'n', desc = '[F]ZF [M]arks' },
+    -- { '<leader>fm', ':FzfLua marks marks="%a"<CR>', mode = 'n', desc = '[F]ZF [M]arks' },
+    -- { '<leader>fM', ':FzfLua marks<CR>', mode = 'n', desc = '[F]ZF [M]arks' },
+    -- { '<leader>fm', "<Cmd>exec 'normal 1 mq' | cclose | FzfLua quickfix<CR>", mode = 'n', desc = '[F]ZF Book[M]arks' },
+    { '<leader>fm', '<Cmd>doautocmd BufEnter<CR><Plug>BookmarkShowAll<Cmd>cclose | FzfLua quickfix<CR>', mode = 'n', desc = '[F]ZF Book[M]arks' },
     { '<leader>fj', ':FzfLua jumps<CR>', mode = 'n', desc = '[F]ZF [J]umps' },
     { '<leader>f<C-o>', ':FzfLua jumps<CR>', mode = 'n', desc = '[F]ZF [J]umps' },
     { '<leader>fv', ':FzfLua lsp_document_symbols<CR>', mode = 'n', { desc = '[F]ZF Document Symbols' } },

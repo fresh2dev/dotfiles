@@ -188,7 +188,7 @@
     cp = cherry-pick
     rb = rebase
     rbi = rebase --autosquash --interactive
-    rbom = !git fetch --all && git rebase origin/main
+    sync = !git fetch --all --prune && (git pull origin $(git pwb) &>/dev/null || true) && git fetch origin main:main && git rebase main
 
     ##################################################
     # Init the repo, commit all changes, and

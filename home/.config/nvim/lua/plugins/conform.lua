@@ -22,6 +22,7 @@ return {
         sh = { 'shfmt' },
         zsh = { 'shfmt' },
         rust = { 'rustfmt' },
+        markdown = { 'mdformat' },
         -- Use the "_" filetype to run formatters on filetypes that don't
         -- have other formatters configured.
         -- ['_'] = { 'trim_whitespace', 'trim_newlines' },

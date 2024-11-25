@@ -15,12 +15,12 @@ return { -- ChatGPT plugin
   config = function()
     require('gp').setup {
       chat_template = [[
-# topic: ?
-- file: {{filename}}
----
+      # topic: ?
+      - file: {{filename}}
+      ---
 
-{{user_prefix}}
-]],
+      {{user_prefix}}
+      ]],
       chat_confirm_delete = false,
       -- conceal model parameters in chat
       chat_conceal_model_params = false,

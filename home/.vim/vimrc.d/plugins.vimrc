@@ -73,6 +73,8 @@ autocmd FileType git nmap <buffer> q :close<CR>
 autocmd FileType fugitiveblame nmap <buffer> <CR> o
 " `O` opens a vsplit in Fugitive (overrides opening in tab)
 autocmd FileType fugitive nmap <buffer> O gO
+" `dt` opens a diff in vsplit in a new tab
+autocmd FileType fugitive nmap <buffer> <silent> dt :Gtabedit <Plug><cfile><Bar>Gvdiffsplit \| wincmd l<CR>
 
 let g:fugitive_no_maps = 1
 let g:fugitive_legacy_commands = 0
@@ -95,7 +97,8 @@ nnoremap <leader>gl :0Git log --graph --oneline --decorate<CR>
 nnoremap <leader>gL :0Git log --graph --oneline --decorate --all<CR>
 nnoremap <leader>ge :Gedit<CR>
 nnoremap <leader>gw :Gwrite<CR>
-nnoremap <leader>gd :Gvdiffsplit<CR>
+nnoremap <leader>gW :Gwrite!<CR>
+nnoremap <leader>gd :tab split \| Gvdiffsplit \| wincmd l<CR>
 " "Git Revisions" Populate quickfix with past revisions of current file.
 nnoremap <leader>gr :1,$GcLog!<CR>
 xnoremap <leader>gr :GcLog!<CR>
@@ -134,11 +137,10 @@ Plug 'https://github.com/aymericbeaumet/vim-symlink', { 'commit': 'fec2d1a72c687
 " Slightly better quickfix behavior (auto-open, auto-resize, auto-quit, allow `dd`, etc.)
 Plug 'https://github.com/romainl/vim-qf', { 'commit': '7e65325651ff5a0b06af8df3980d2ee54cf10e14' }
 
-nnoremap <leader>tqf <Plug>(qf_qf_toggle_stay)
-nnoremap <leader>tll <Plug>(qf_loc_toggle_stay)
+" nnoremap <leader>tqf <Plug>(qf_qf_toggle_stay)
+" nnoremap <leader>tll <Plug>(qf_loc_toggle_stay)
 nnoremap gq <Plug>(qf_qf_switch)
 
-let g:qf_mapping_ack_style = 0
 let g:qf_window_bottom = 1
 let g:qf_loclist_window_bottom = 1
 let g:qf_auto_open_quickfix = 1
@@ -154,9 +156,44 @@ autocmd FileType qf nnoremap <buffer> dd :.Reject<CR>
 autocmd FileType qf xnoremap <buffer> dd :Reject<CR>
 autocmd FileType qf nnoremap <buffer> D :Reject<CR>
 
+Plug 'https://github.com/thinca/vim-qfreplace', { 'commit': '707a895f9f86eeed106f64da0bd9fa07b3cd9cee' }
+
+autocmd FileType qf nnoremap <buffer> cc :Qfreplace<CR>
+
+let g:qfreplace_no_save = 1
+
+Plug 'https://github.com/yssl/QFEnter', { 'commit': '1e4bf00b264e0f1541401c28c4b63ace5bb3d2be' }
+
+let g:qfenter_keymap = {}
+let g:qfenter_keymap.open = ['<CR>', '<2-LeftMouse>']
+let g:qfenter_keymap.vopen = ['<C-v>']
+let g:qfenter_keymap.hopen = ['<C-o>']
+let g:qfenter_keymap.topen = ['<C-t>']
+
 " Enable cfilter (https://neovim.io/doc/user/quickfix.html#%3ACfilter)
 packadd cfilter
 cnoreabbrev <expr> cfilter  (getcmdtype() ==# ':' && getcmdline() ==# 'cfilter')  ? 'Cfilter'  : 'cfilter'
+
+"skywind3000/asyncrun.vim
+Plug 'https://github.com/skywind3000/asyncrun.vim', { 'commit': '09b8117fe607941c0abff39b194074e40a3dee88' }
+
+let g:asyncrun_open = 10
+let g:asyncrun_last = 2
+let g:asyncrun_trim = 1
+
+command! -bar -nargs=* Rg :execute 'AsyncRun! rg --vimgrep' <q-args> | normal gq
+command! -bar -nargs=* RgFile :execute 'AsyncRun! rg --vimgrep' <q-args> '"%"' | normal gq
+
+command! -bar -nargs=* RuffCheck :execute 'AsyncRun! ruff check --output-format=concise' <q-args> | normal gq
+command! -bar -nargs=* RuffCheckFile :execute 'AsyncRun! ruff check --output-format=concise "%"' <q-args> | normal gq
+
+command! -bar -nargs=* PyTest :execute 'AsyncRun! pytest -vvv' <q-args> | normal gq
+command! -bar -nargs=* PyTestFile :execute 'AsyncRun! pytest -vvv "%"' <q-args> | normal gq
+
+command! -bar -nargs=* Aider :execute 'AsyncRun! -mode=terminal aider --git "%"' <q-args> | normal gq
+command! -bar -nargs=* AiderFile :execute 'AsyncRun! -mode=terminal aider --no-git --file "%"' <q-args> | normal gq
+command! -bar -nargs=* AiderDo :execute 'AsyncRun! -mode=terminal aider --git --message "Complete each request specified in each TODO comment" "%"' <q-args> | normal gq
+command! -bar -nargs=* AiderDoFile :execute 'AsyncRun! -mode=terminal aider --no-git --message "Complete each request specified in each TODO comment" --file "%"' <q-args> | normal gq
 
 " -----------------------------------------------------------------------------|
 "                          __   ___      ___     __   __        ___  __  ___   |
@@ -173,6 +210,7 @@ Plug 'https://github.com/junegunn/vim-easy-align', { 'commit': '9815a55dbcd81778
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+
 
 " -----------------------------------------------------------------------------|
 "                               __   __  ___  __   ___  ___                    |
@@ -222,7 +260,10 @@ Plug 'https://github.com/tpope/vim-sensible', { 'commit': '3e878abfd6ddc6fb5dba4
 "                - - - - - - - - - - - - - - - - - - - - - - -                 |
 "                                                                              |
 " -----------------------------------------------------------------------------|
-Plug 'https://github.com/tpope/vim-eunuch', { 'commit': '67f3dd32b4dcd1c427085f42ff5f29c7adc645c6' }
+Plug 'https://github.com/tpope/vim-eunuch', { 'commit': '6c6af39aa0a25223389607338ae965c5dfc7c972' }
+
+" fix: https://github.com/tpope/vim-eunuch/issues/95#issuecomment-1183890098
+let g:eunuch_no_maps = 1
 
 " -----------------------------------------------------------------------------|
 "                               __       ___            __   __                |
@@ -239,6 +280,71 @@ xnoremap m d
 nnoremap mm dd
 nnoremap M D
 
+" " vim-signature
+" Plug 'https://github.com/kshenoy/vim-signature', { 'commit': '6bc3dd1294a22e897f0dcf8dd72b85f350e306bc' }
+"
+" " Only set global marks
+" " let g:SignatureIncludeMarks = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+" let g:SignatureDeleteConfirmation = 1
+" let g:SignaturePurgeConfirmation = 1
+" let g:SignatureEnabledAtStartup = 1
+" let g:SignatureDeferPlacement = 0
+" let g:SignatureMap = {
+"       \ 'Leader'             :  "m",
+"       \ 'PlaceNextMark'      :  "",
+"       \ 'ToggleMarkAtLine'   :  "m<CR>",
+"       \ 'PurgeMarksAtLine'   :  "",
+"       \ 'DeleteMark'         :  "dm",
+"       \ 'PurgeMarks'         :  "",
+"       \ 'PurgeMarkers'       :  "",
+"       \ 'GotoNextLineAlpha'  :  "']",
+"       \ 'GotoPrevLineAlpha'  :  "'[",
+"       \ 'GotoNextSpotAlpha'  :  "`]",
+"       \ 'GotoPrevSpotAlpha'  :  "`[",
+"       \ 'GotoNextLineByPos'  :  "]'",
+"       \ 'GotoPrevLineByPos'  :  "['",
+"       \ 'GotoNextSpotByPos'  :  "]`",
+"       \ 'GotoPrevSpotByPos'  :  "[`",
+"       \ 'GotoNextMarker'     :  "]-",
+"       \ 'GotoPrevMarker'     :  "[-",
+"       \ 'GotoNextMarkerAny'  :  "]=",
+"       \ 'GotoPrevMarkerAny'  :  "[=",
+"       \ 'ListBufferMarks'    :  "",
+"       \ 'ListBufferMarkers'  :  ""
+"       \ }
+"
+" " this only deletes buffer-local marks (a-z)
+" " nnoremap dM :delmarks! \| delmarks A-Z \| wshada! \| SignatureRefresh<CR>
+" nnoremap gm :SignatureListGlobalMarks<CR>
+
+" vim-bookmarks
+Plug 'https://github.com/MattesGroeger/vim-bookmarks', { 'commit': '9cc5fa7ecc23b052bd524d07c85356c64b92aeef' }
+
+let g:bookmark_no_default_key_mappings = 1
+
+let g:bookmark_auto_save = 1
+let g:bookmark_save_per_working_dir = 1
+
+let g:bookmark_highlight_lines = 1
+let g:bookmark_center = 1
+let g:bookmark_disable_ctrlp = 1
+
+let g:bookmark_show_warning = 1
+let g:bookmark_show_toggle_warning = 1
+
+" nmap mm <Plug>BookmarkToggle
+nmap <leader>mm <Plug>BookmarkToggle
+nmap <leader>mi <Plug>BookmarkAnnotate
+nmap <leader>mn <Plug>BookmarkNext
+nmap <leader>mp <Plug>BookmarkPrev
+nmap <leader>mx <Plug>BookmarkClear
+nmap <leader>mX <Plug>BookmarkClearAll
+nmap <leader>mq :doautocmd BufEnter<CR><Plug>BookmarkShowAll
+nmap gm <leader>mq
+" nmap <Leader>kk <Plug>BookmarkMoveUp
+" nmap <Leader>jj <Plug>BookmarkMoveDown
+" nmap <Leader>g <Plug>BookmarkMoveToLine
+
 " -----------------------------------------------------------------------------|
 "                         __        __        ___  __   __          ___        |
 "        \  / |  |\/| __ /__` |  | |__) \  / |__  |__) /__` | \  / |__         |
@@ -249,12 +355,17 @@ nnoremap M D
 " -----------------------------------------------------------------------------|
 Plug 'https://github.com/svermeulen/vim-subversive', { 'commit': '6286cda3f9222bfd490fe34a00a2d8cd4925adec' }
 
-" nmap - <plug>(SubversiveSubstitute)
-" nmap -- <plug>(SubversiveSubstituteLine)
-" nmap _ <plug>(SubversiveSubstituteToEndOfLine)
-nmap s <plug>(SubversiveSubstitute)
-nmap ss <plug>(SubversiveSubstituteLine)
-nmap S <plug>(SubversiveSubstituteToEndOfLine)
+" let g:subversivePreserveCursorPosition = 1
+" let g:subversivePromptWithCurrent = 1
+" let g:subversivePromptWithActualCommand = 1
+
+nnoremap s <plug>(SubversiveSubstitute)
+xnoremap s <plug>(SubversiveSubstitute)
+nnoremap ss <plug>(SubversiveSubstituteLine)
+nnoremap S <plug>(SubversiveSubstituteToEndOfLine)
+
+nnoremap - <plug>(SubversiveSubstituteWordRange)
+xnoremap - <plug>(SubversiveSubstituteRange)
 
 "vim-exchange
 Plug 'https://github.com/tommcdo/vim-exchange', { 'commit': 'd6c1e9790bcb8df27c483a37167459bbebe0112e' }
@@ -278,7 +389,7 @@ Plug 'https://github.com/wellle/targets.vim', { 'commit': '642d3a4ce306264b05ea3
 Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': '511f864' }
 
 let g:zelli_navigator_move_focus_or_tab = 1
-let g:zellij_navigator_disable_autolock = 0
+let g:zellij_navigator_disable_autolock = 1
 
 " Open ZelliJ floating pane.
 nnoremap <leader>zjf :ZellijNewPane<CR>
@@ -308,22 +419,20 @@ nnoremap <leader>zjrv :execute 'ZellijNewPaneVSplit ' . input('Command: ')<CR>
 nnoremap <leader>zjrr :execute 'ZellijNewPaneSplit ruff check "' . expand('%') . '"'<CR>
 nnoremap <leader>zjrR :ZellijNewPaneSplit ruff check<CR>
 
-autocmd DirChanged,BufEnter *
+autocmd DirChanged,WinEnter,BufEnter *
       \ if &buftype == '' |
       \ call system('zellij action rename-tab "' . fnamemodify(getcwd(), ':t') . '"') |
       \ endif
 
 if !has("nvim")
   " This plugins are only enabled for vanilla Vim.
-  Plug 'https://github.com/tpope/vim-commentary', { 'commit': 'f67e3e67ea516755005e6cccb178bc8439c6d402' }
-  " Plug 'https://github.com/machakann/vim-sandwich', { 'commit': '74cf93d58ccc567d8e2310a69860f1b93af19403' }
+  " Plug 'https://github.com/tpope/vim-commentary', { 'commit': 'f67e3e67ea516755005e6cccb178bc8439c6d402' }
+  Plug 'https://github.com/machakann/vim-sandwich', { 'commit': '74cf93d58ccc567d8e2310a69860f1b93af19403' }
 
   Plug 'https://github.com/machakann/vim-highlightedyank', { 'commit': 'fa3f57b097e9521ce41a66b6c7cf5d9adea70ea3' }
   let g:highlightedyank_highlight_duration = 333
 
-  " "auto-pairs
-  " Plug 'https://github.com/jiangmiao/auto-pairs', { 'commit': '39f06b873a8449af8ff6a3eee716d3da14d63a76' }
-  " let g:AutoPairsShortcutToggle = ''
+  Plug 'https://github.com/junegunn/vim-peekaboo', { 'commit': 'cc4469c204099c73dd7534531fa8ba271f704831' }
 else
   augroup highlight_yank
     autocmd!
@@ -338,7 +447,7 @@ call plug#end()
 "   filetype indent off   `Disable file-type-specific indentation`
 "   syntax off            `Disable syntax highlighting`
 
-" if !has("nvim")
-"   " Configure vim-sandwich to use vim-surround mappings.
-"   runtime macros/sandwich/keymap/surround.vim
-" endif
+if !has("nvim")
+  " Configure vim-sandwich to use vim-surround mappings.
+  runtime macros/sandwich/keymap/surround.vim
+endif

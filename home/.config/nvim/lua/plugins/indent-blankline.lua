@@ -1,26 +1,41 @@
-return {
-  { -- Add indentation guides even on blank lines
-    'https://github.com/lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help ibl`
-    main = 'ibl',
-    opts = {
-      indent = {
-        char = "│",
-        tab_char = "│",
-      },
-      scope = { enabled = false },
-      exclude = {
-        filetypes = {
-          "help",
-          "dashboard",
-          "neo-tree",
-          "Trouble",
-          "trouble",
-          "mason",
-          "notify",
-        },
-      },
-    },
-  },
-}
+return {}
+-- return {
+--   { -- Add indentation guides even on blank lines
+--     'https://github.com/lukas-reineke/indent-blankline.nvim',
+--     lazy = false,
+--     dependencies = {
+--       'https://github.com/hiphish/rainbow-delimiters.nvim',
+--       config = function()
+--         require('rainbow-delimiters.setup').setup {}
+--       end,
+--     },
+--     config = function()
+--       -- local highlight = {
+--       --   'Whitespace',
+--       --   'CursorColumn',
+--       -- }
+--       require('ibl').setup {
+--         scope = { enabled = false },
+--         indent = {
+--           -- highlight = highlight,
+--           char = { '', '┆', '┆', '┆', '┆', '┆', '┆', '┆', '┆', '┆', '┆' },
+--           tab_char = { '', '┆', '┆', '┆', '┆', '┆', '┆', '┆', '┆', '┆', '┆' },
+--         },
+--         whitespace = {
+--           -- highlight = highlight,
+--         },
+--         exclude = {
+--           filetypes = {
+--             'help',
+--             'dashboard',
+--             'neo-tree',
+--             'Trouble',
+--             'trouble',
+--             'mason',
+--             'notify',
+--           },
+--         },
+--       }
+--     end,
+--   },
+-- }

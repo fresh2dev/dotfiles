@@ -48,8 +48,8 @@ keymap = [
 	{ on = "G",          run = "arrow 99999999",  desc = "Move cursor to the bottom" },
 
 	# Navigation
-	{ on = "h", run = "leave", desc = "Go back to the parent directory" },
-	{ on = "l", run = "enter", desc = "Enter the child directory" },
+	{ on = "<Backspace>", run = "leave", desc = "Go back to the parent directory" },
+	{ on = "<Enter>", run = "enter", desc = "Enter the child directory" },
 
 	{ on = "<Left>",  run = "leave",    desc = "Go back to the parent directory" },
 	{ on = "<Right>", run = "enter",    desc = "Enter the child directory" },

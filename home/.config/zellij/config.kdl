@@ -59,16 +59,28 @@ plugins {
     filepicker location="zellij:strider" {
         cwd "/"
     }
+    configuration location="zellij:configuration"
+    plugin-manager location="zellij:plugin-manager"
+
     forgot-plugin location="file:~/.config/zellij/plugins/zellij_forgot.wasm" {
         "LOAD_ZELLIJ_BINDINGS" "true"
         floating true
     }
     // autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
-    autolock location="file:$HOME/sync/projects/zellij-autolock/target/wasm32-wasi/release/zellij-autolock.wasm" {
-        triggers "nvim"  // Lock when any open these programs open. They are expected to unlock themselves when closed (e.g., using zellij.vim plugin).
-        watch_triggers "vim|git|fzf|zoxide|atuin"  // Lock when any of these open and monitor until closed. I haven't assessed how "expensive" this is.
-        watch_interval "1.0"  // When monitoring, check every X seconds.
+    autolock location="file:$HOME/sync/projects/zellij-autolock/target/wasm32-wasip1/release/zellij-autolock.wasm" {
+        // Enabled at start?
+        is_enabled true
+        // Lock when any open these programs open.
+        triggers "nvim|vim|git|fzf|zoxide|atuin|nano README.md"
+        // Reaction to input occurs after this many seconds.
+        // (An existing scheduled reaction prevents additional reactions.)
+        reaction_seconds "0.3"
+        // Print to Zellij log?
+        print_to_log true
     }
+}
+load_plugins {
+    autolock
 }
 
 // If you'd like to override the default keybindings completely, be sure to change "keybinds" to "keybinds clear-defaults=true"
@@ -79,13 +91,12 @@ keybinds clear-defaults=true {
             WriteChars "\u{000D}";  // Passthru `Enter`
             MessagePlugin "autolock" {};  // Activate the autolock plugin.
         }
-        bind "Ctrl r" {  // `Ctrl+r` is for shell history, e.g., `fzf` or `atuin`.
-            WriteChars "\u{0012}";  // Passthru `Ctrl+r`
-            MessagePlugin "autolock" {};  // Activate the autolock plugin.
-        }
     }
     locked {
-        bind "Alt z" { SwitchToMode "Normal"; }
+        bind "Alt z" {
+            MessagePlugin "autolock" {payload "disable";};  // Disable the autolock plugin.
+            SwitchToMode "Normal";
+        }
     }
     entersearch {
         bind "Enter" { SwitchToMode "Search"; }
@@ -128,6 +139,10 @@ keybinds clear-defaults=true {
         bind "-" { Resize "Decrease"; }
     }
     shared {
+        bind "Alt Shift z" {
+            MessagePlugin "autolock" {payload "enable";};  // Enable the autolock plugin.
+        }
+
         bind "Alt r" { SwitchToMode "Resize"; }
 
         bind "Alt Right" { NextSwapLayout; }
@@ -202,8 +217,10 @@ keybinds clear-defaults=true {
     // }
     shared_except "locked" {
         /* Put keybindings here if they conflict with Vim or others. */
-
-        bind "Alt z" { SwitchToMode "Locked"; }
+        bind "Alt z" {
+            MessagePlugin "autolock" {payload "disable";};  // Disable the autolock plugin.
+            SwitchToMode "Locked";
+        }
 
         // These same mappings are defined in the Vim config.
         // When used from within Vim, they preserve Vim's `pwd`.

@@ -2,4 +2,3 @@
 - name: "gpt-4o"
   edit_format: "whole"
   weak_model_name: "gpt-4o-mini"
-  use_repo_map: false

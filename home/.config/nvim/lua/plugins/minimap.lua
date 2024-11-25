@@ -4,18 +4,18 @@ return {
   cmd = { 'Minimap', 'MinimapToggle', 'MinimapFocus' },
   keys = {
     { '<leader>tmm', ':MinimapToggle<CR>', mode = 'n', desc = '[T]oggle [M]ini[M]ap' },
-    {
-      'gm',
-      function()
-        if vim.bo.filetype == 'minimap' then
-          vim.cmd 'wincmd p'
-        else
-          vim.cmd 'MinimapFocus'
-        end
-      end,
-      mode = 'n',
-      desc = '[G]o to Mini[M]ap',
-    },
+    -- {
+    --   'gm',
+    --   function()
+    --     if vim.bo.filetype == 'minimap' then
+    --       vim.cmd 'wincmd p'
+    --     else
+    --       vim.cmd 'MinimapFocus'
+    --     end
+    --   end,
+    --   mode = 'n',
+    --   desc = '[G]o to Mini[M]ap',
+    -- },
   },
   init = function()
     vim.g.minimap_width = 8

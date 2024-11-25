@@ -6,7 +6,6 @@ return {
     lazy = false,
     priority = 1000, -- Make sure to load this before all the other start plugins.
     -- init = function()
-    --   -- Load the colorscheme here.
     --   -- Like many other themes, this one has different styles, and you could load
     --   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
     --   vim.cmd.colorscheme 'tokyonight-night'
@@ -26,7 +25,6 @@ return {
     name = 'catppuccin',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
-      -- Load the colorscheme here.
       vim.cmd.colorscheme 'catppuccin-mocha'
     end,
     opts = {
@@ -40,6 +38,21 @@ return {
       --   },
       -- },
     },
+  },
+  {
+    'maxmx03/fluoromachine.nvim',
+    lazy = false,
+    priority = 1000,
+    init = function()
+      -- vim.cmd.colorscheme 'fluoromachine'
+    end,
+    config = function()
+      require('fluoromachine').setup {
+        glow = false,
+        theme = 'retrowave',
+        transparent = false,
+      }
+    end,
   },
   {
     -- Neovim plugin to improve the default vim.ui interfaces

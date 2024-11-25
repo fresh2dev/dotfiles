@@ -2,3 +2,6 @@
 /.aider*
 .DS_Store
 home/.config/nvim/.vim/
+.aider*
+.env
+.vim-bookmarks

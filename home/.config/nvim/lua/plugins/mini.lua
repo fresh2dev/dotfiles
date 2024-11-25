@@ -17,8 +17,127 @@ return {
     },
   },
   {
-    'https://github.com/echasnovski/mini.files',
+    'https://github.com/echasnovski/mini.cursorword',
     version = '*',
+    lazy = false,
+    opts = {},
+    config = function(_, opts)
+      require('mini.cursorword').setup { opts }
+      vim.cmd 'hi! link MiniCursorword Visual'
+      vim.cmd 'hi! link MiniCursorwordCurrent CursorLine'
+    end,
+  },
+  {
+    'https://github.com/echasnovski/mini.operators',
+    version = '*',
+    lazy = false,
+    config = function()
+      require('mini.operators').setup {
+        -- Each entry configures one operator.
+        -- `prefix` defines keys mapped during `setup()`: in Normal mode
+        -- to operate on textobject and line, in Visual - on selection.
+
+        -- Evaluate text and replace with output
+        evaluate = {
+          prefix = '',
+          -- Function which does the evaluation
+          func = nil,
+        },
+
+        -- Exchange text regions
+        exchange = {
+          prefix = '',
+          -- Whether to reindent new text to match previous indent
+          reindent_linewise = true,
+        },
+
+        -- Multiply (duplicate) text
+        multiply = {
+          prefix = '',
+          -- Function which can modify text before multiplying
+          func = nil,
+        },
+
+        -- Replace text with register
+        replace = {
+          prefix = '',
+          -- Whether to reindent new text to match previous indent
+          reindent_linewise = true,
+        },
+
+        -- Sort text
+        sort = {
+          prefix = 'gs',
+          -- Function which does the sort
+          func = nil,
+        },
+      }
+    end,
+  },
+  -- {
+  --   'https://github.com/echasnovski/mini.visits',
+  --   version = '*',
+  --   lazy = false,
+  --   config = true,
+  --   keys = {
+  --     {
+  --       '<leader>fo',
+  --       function()
+  --         require('mini.visits').select_path()
+  --       end,
+  --       desc = '[F]ind [V]isits',
+  --     },
+  --   },
+  -- },
+  {
+    'https://github.com/echasnovski/mini.diff',
+    version = '*',
+    lazy = false,
+    -- No need to copy this inside `setup()`. Will be used automatically.
+    keys = {
+      {
+        '<leader>tg',
+        function()
+          require('mini.diff').toggle_overlay(0)
+        end,
+        desc = '[T]oggle [G]it Overlay',
+      },
+    },
+    opts = {
+      -- Delays (in ms) defining asynchronous processes
+      delay = {
+        -- How much to wait before update following every text change
+        text_change = 200,
+      },
+
+      -- Module mappings. Use `''` (empty string) to disable one.
+      mappings = {
+        -- Apply hunks inside a visual/operator region
+        apply = '<leader>ga',
+
+        -- Reset hunks inside a visual/operator region
+        reset = '<leader>gA',
+
+        -- Hunk range textobject to be used inside operator
+        -- Works also in Visual mode if mapping differs from apply and reset
+        textobject = 'gd',
+
+        -- Go to hunk range in corresponding direction
+        goto_first = '[H',
+        goto_prev = '[h',
+        goto_next = ']h',
+        goto_last = ']H',
+      },
+    },
+    config = function(_, opts)
+      require('mini.diff').setup(opts)
+      vim.cmd 'hi! link MiniDiffOverChange CurSearch'
+      vim.cmd 'hi! link MiniDiffOverContext MiniDiffOverDelete'
+    end,
+  },
+  {
+    'https://github.com/echasnovski/mini.files',
+    -- version = '*',
     lazy = false,
     dependencies = {
       'https://github.com/nvim-tree/nvim-web-devicons', -- optional dependency
@@ -29,7 +148,7 @@ return {
         function()
           local MiniFiles = require 'mini.files'
           if not MiniFiles.close() then
-            MiniFiles.open(nul, false)
+            MiniFiles.open(nil, false)
           end
         end,
         mode = 'n',
@@ -102,95 +221,68 @@ return {
         },
       }
 
-      -- local map_split = function(buf_id, lhs, direction)
-      --   local rhs = function()
-      --     -- Make new window and set it as target
-      --     local cur_target = MiniFiles.get_explorer_state().target_window
-      --     local new_target = vim.api.nvim_win_call(cur_target, function()
-      --       vim.cmd(direction .. ' split')
-      --       return vim.api.nvim_get_current_win()
-      --     end)
-      --
-      --     MiniFiles.set_target_window(new_target)
-      --     MiniFiles.close()
-      --   end
-      --
-      --   -- Adding `desc` will result into `show_help` entries
-      --   local desc = 'Split ' .. direction
-      --   vim.keymap.set('n', lhs, rhs, { buffer = buf_id, desc = desc })
-      -- end
-      --
-      -- vim.api.nvim_create_autocmd('User', {
-      --   pattern = 'MiniFilesBufferCreate',
-      --   callback = function(args)
-      --     local buf_id = args.data.buf_id
-      --     -- Tweak keys to your liking
-      --     map_split(buf_id, '<C-s>', 'belowright horizontal')
-      --     map_split(buf_id, '<C-v>', 'belowright vertical')
-      --   end,
-      -- })
+      local map_split = function(buf_id, lhs, direction)
+        local rhs = function()
+          -- Make new window and set it as target
+          local cur_target = MiniFiles.get_explorer_state().target_window
+          local new_target = vim.api.nvim_win_call(cur_target, function()
+            vim.cmd(direction .. ' split')
+            return vim.api.nvim_get_current_win()
+          end)
 
-      local files_grug_far_replace = function(path)
-        -- works only if cursor is on the valid file system entry
-        local cur_entry_path = MiniFiles.get_fs_entry().path
-        local prefills = { paths = vim.fs.dirname(cur_entry_path) }
+          MiniFiles.set_target_window(new_target)
 
-        local grug_far = require 'grug-far'
-
-        -- instance check
-        if not grug_far.has_instance 'explorer' then
-          grug_far.open {
-            instanceName = 'explorer',
-            prefills = prefills,
-            staticTitle = 'Find and Replace from Explorer',
-          }
-        else
-          grug_far.open_instance 'explorer'
-          -- updating the prefills without crealing the search and other fields
-          grug_far.update_instance_prefills('explorer', prefills, false)
+          -- After splitting window, open the file.
+          MiniFiles.go_in { close_on_file = true }
         end
+
+        -- Adding `desc` will result into `show_help` entries
+        local desc = 'Split ' .. direction
+        vim.keymap.set('n', lhs, rhs, { buffer = buf_id, desc = desc })
       end
 
       vim.api.nvim_create_autocmd('User', {
         pattern = 'MiniFilesBufferCreate',
         callback = function(args)
-          vim.keymap.set('n', '<leader>fs', files_grug_far_replace, { buffer = args.data.buf_id, desc = 'Search in directory' })
-          vim.keymap.set('n', '<leader>fr', files_grug_far_replace, { buffer = args.data.buf_id, desc = 'Search in directory' })
+          local buf_id = args.data.buf_id
+          -- Tweak keys to your liking
+          map_split(buf_id, '<C-o>', 'belowright horizontal')
+          map_split(buf_id, '<C-v>', 'belowright vertical')
         end,
       })
     end,
   },
-  -- {
-  --   'https://github.com/echasnovski/mini.ai',
-  --   version = '*',
-  --   lazy = false,
-  --   config = true,
-  --   opts = {
-  --     -- Table with textobject id as fields, textobject specification as values.
-  --     -- Also use this to disable builtin textobjects. See |MiniAi.config|.
-  --     custom_textobjects = nil,
-  --
-  --     -- Number of lines within which textobject is searched
-  --     n_lines = 500,
-  --
-  --     -- Module mappings. Use `''` (empty string) to disable one.
-  --     mappings = {
-  --       -- Main textobject prefixes
-  --       around = 'a',
-  --       inside = 'i',
-  --
-  --       -- Next/last variants
-  --       around_next = 'an',
-  --       inside_next = 'in',
-  --       around_last = 'al',
-  --       inside_last = 'il',
-  --
-  --       -- Move cursor to corresponding edge of `a` textobject
-  --       goto_left = 'g[',
-  --       goto_right = 'g]',
-  --     },
-  --   },
-  -- },
+  {
+    'https://github.com/echasnovski/mini.ai',
+    version = '*',
+    lazy = false,
+    config = true,
+    opts = {
+      -- Table with textobject id as fields, textobject specification as values.
+      -- Also use this to disable builtin textobjects. See |MiniAi.config|.
+      custom_textobjects = nil,
+
+      -- Number of lines within which textobject is searched
+      n_lines = 500,
+
+      -- Module mappings. Use `''` (empty string) to disable one.
+      mappings = {
+        -- Main textobject prefixes
+        around = '', -- Disabled in favor of targets.nvim
+        inside = '', -- Disabled in favor of targets.nvim
+
+        -- Next/last variants
+        around_next = '', -- Disabled in favor of targets.nvim
+        inside_next = '', -- Disabled in favor of targets.nvim
+        around_last = '', -- Disabled in favor of targets.nvim
+        inside_last = '', -- Disabled in favor of targets.nvim
+
+        -- Move cursor to corresponding edge of `a` textobject
+        goto_left = 'g[',
+        goto_right = 'g]',
+      },
+    },
+  },
   {
     'https://github.com/echasnovski/mini.splitjoin',
     version = '*',
@@ -246,7 +338,23 @@ return {
           suffix_last = '',
           suffix_next = '',
         },
-        search_method = 'cover_or_next',
+
+        -- Number of lines within which surrounding is searched
+        n_lines = 50,
+
+        -- Whether to respect selection type:
+        -- - Place surroundings on separate lines in linewise mode.
+        -- - Place surroundings on each line in blockwise mode.
+        respect_selection_type = false,
+
+        -- How to search for surrounding (first inside current line, then inside
+        -- neighborhood). One of 'cover', 'cover_or_next', 'cover_or_prev',
+        -- 'cover_or_nearest', 'next', 'prev', 'nearest'. For more details,
+        -- see `:h MiniSurround.config`.
+        search_method = 'cover',
+
+        -- Whether to disable showing non-error feedback
+        silent = false,
       }
 
       -- Remap adding surrounding to Visual mode selection
@@ -255,16 +363,21 @@ return {
 
       -- Make special mapping for "add surrounding for line"
       vim.keymap.set('n', 'yss', 'ys_', { remap = true })
+
+      -- Disable builtin `s`
+      -- vim.keymap.set({ 'n', 'x' }, 's', '<Nop>')
+      -- vim.keymap.set('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
+      -- vim.keymap.set('n', 'ss', 'sa_', { remap = true })
     end,
   },
   {
     'https://github.com/echasnovski/mini.pairs',
-    version = '*',
+    -- version = '*',
     lazy = false,
     config = true,
     opts = {
       -- In which modes mappings from this `config` should be created
-      modes = { insert = true, command = false, terminal = false },
+      -- modes = { insert = true, command = false, terminal = false },
 
       -- Global mappings. Each right hand side should be a pair information, a
       -- table with at least these fields (see more in |MiniPairs.map|):
@@ -273,17 +386,19 @@ return {
       -- By default pair is not inserted after `\`, quotes are not recognized by
       -- `<CR>`, `'` does not insert pair after a letter.
       -- Only parts of tables can be tweaked (others will use these defaults).
-      mappings = {
-        ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\]\n', register = { cr = true } },
-        [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].', register = { cr = true } },
-        ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\]\n', register = { cr = true } },
-        [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].', register = { cr = true } },
-        ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\]\n', register = { cr = true } },
-        ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].', register = { cr = true } },
-        ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\"]\n', register = { cr = false } },
-        ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = "[^\\%a']\n", register = { cr = false } },
-        ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\`]\n', register = { cr = false } },
-      },
+      -- mappings = {
+      --   ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\].' },
+      --   ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\].' },
+      --   ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\].' },
+      --
+      --   [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].' },
+      --   [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].' },
+      --   ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].' },
+      --
+      --   ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\].', register = { cr = false } },
+      --   ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%a\\].', register = { cr = false } },
+      --   ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\].', register = { cr = false } },
+      -- },
     },
   },
   {
@@ -482,4 +597,52 @@ return {
   --     }
   --   end,
   -- },
+  {
+    'https://github.com/echasnovski/mini.starter',
+    version = '*',
+    lazy = false,
+    opts = {
+      evaluate_single = true,
+      query_updaters = '',
+      header = table.concat({
+        '██╗      █████╗ ███████╗██╗   ██╗██╗   ██╗██╗███╗   ███╗          Z',
+        '██║     ██╔══██╗╚══███╔╝╚██╗ ██╔╝██║   ██║██║████╗ ████║      Z    ',
+        '██║     ███████║  ███╔╝  ╚████╔╝ ██║   ██║██║██╔████╔██║   z       ',
+        '██║     ██╔══██║ ███╔╝    ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║ z         ',
+        '███████╗██║  ██║███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║           ',
+        '╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝           ',
+      }, '\n'),
+      items = {
+        { name = ' F  ~ Find', action = 'normal 1 F', section = '' },
+        { name = ' fo ~ Recent files', action = 'normal 1 fo', section = '' },
+        { name = ' ff ~ Find file', action = 'normal 1 ff', section = '' },
+        { name = ' fs ~ Find text', action = 'normal 1 fs', section = '' },
+        { name = ' ft ~ Find TODOs', action = 'normal 1 ft', section = '' },
+        { name = ' fm ~ Find Bookmarks', action = 'normal 1 fm', section = '' },
+        { name = ' gt ~ Git Fugitive', action = 'normal 1 gt', section = '' },
+        { name = ' gh ~ GitHub Actions', action = 'normal 1 gh', section = '' },
+        { name = ' gB ~ GitHub in Browser', action = 'normal 1 gB', section = '' },
+        { name = ' gI ~ GitHub Issues', action = 'normal 1 gB', section = '' },
+        { name = ' qq ~ Quit', action = 'quit', section = '' },
+      },
+    },
+    config = function(_, opts)
+      local starter = require 'mini.starter'
+      starter.setup(opts)
+
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'MiniStarterOpened',
+        callback = function(ev)
+          local stats = require('lazy').stats()
+          local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+          -- local pad_footer = string.rep(' ', 8)
+          starter.config.footer = '⚡ Neovim loaded ' .. stats.count .. ' plugins in ' .. ms .. 'ms'
+          -- INFO: based on @echasnovski's recommendation (thanks a lot!!!)
+          if vim.bo[ev.buf].filetype == 'ministarter' then
+            pcall(starter.refresh)
+          end
+        end,
+      })
+    end,
+  },
 }

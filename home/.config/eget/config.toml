@@ -257,7 +257,7 @@ file          = "yq_*"
 target        = "~/.local/bin/yq"
 
 ["astral-sh/uv"]
-tag           = "0.4.11"
+tag           = "0.4.30"
 # asset_filters = ["musl"]
 # file          = "*"
 # target        = "~/.local/bin/"

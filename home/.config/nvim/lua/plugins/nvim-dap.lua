@@ -1,5 +1,4 @@
 return {
-  -- NOTE: Yes, you can install new plugins here!
   'https://github.com/mfussenegger/nvim-dap',
   lazy = false,
   dependencies = {
@@ -25,7 +24,7 @@ return {
     vim.keymap.set('n', '<F11>', dap.step_into, { desc = 'Debug: Step Into' })
     vim.keymap.set('n', '<F12>', dap.step_out, { desc = 'Debug: Step Out' })
     vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
-    vim.keymap.set('n', '<leader>dq', dap.terminate, { desc = 'Debug: Stop' })
+    vim.keymap.set('n', '<leader>dQ', dap.terminate, { desc = 'Debug: Stop' })
     -- vim.keymap.set('n', '<leader>B', function()
     --   dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
     -- end, { desc = 'Debug: Set Breakpoint' })
