@@ -1,19 +1,88 @@
+local file_types = { 'markdown', 'markdown.mdx' }
+
+-- Takes the word under the cursor and puts it in the appropriate spot in a link.
+-- If no word is under the cursor, insert the link syntax
+-- derived from: https://github.com/ixru/nvim-markdown/blob/f8f8e4191677ccda257ad7ff73a8a36324e0a134/lua/markdown.lua#L533
+local function create_link()
+  local line = vim.fn.getline '.'
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local mode = vim.fn.mode '.'
+
+  local new_line, new_cursor_pos
+  if mode == 'v' then
+    vim.cmd ':normal! ' -- Need to return to normal mode to set the below marks
+    local start = vim.fn.getpos "'<"
+    local stop = vim.fn.getpos "'>"
+
+    -- Don't do anything if the visual selection spans multiple lines
+    if start[2] ~= stop[2] then
+      return
+    else
+      start = start[3]
+      stop = stop[3]
+    end
+
+    local selection = line:sub(start, stop)
+    if selection:match '/' or vim.fn.filereadable(selection) == 1 then
+      new_line = line:sub(1, start - 1) .. '[]'
+      new_cursor_pos = #new_line
+      new_line = new_line .. '(' .. selection .. ')' .. line:sub(stop + 1)
+    else
+      new_line = line:sub(1, start - 1) .. '[' .. selection .. ']()'
+      new_cursor_pos = #new_line
+      new_line = new_line .. line:sub(stop + 1)
+    end
+  else
+    return
+  end
+
+  vim.fn.setline('.', new_line)
+  vim.fn.setpos('.', { 0, cursor[1], new_cursor_pos, 0 })
+end
 return {
   {
     'MeanderingProgrammer/render-markdown.nvim',
-    ft = 'markdown',
+    ft = file_types,
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
       'nvim-tree/nvim-web-devicons',
     },
     keys = {
-      { '<leader>tmr', '<Cmd>RenderMarkdown toggle<CR>', mode = 'n', desc = '[T]oggle [M]arkdown [R]endering' },
+      {
+        '<leader>tmr',
+        '<Cmd>RenderMarkdown toggle<CR>',
+        mode = 'n',
+        ft = file_types,
+        desc = '[T]oggle [M]arkdown [R]endering',
+      },
+      -- These are not specific to this plugin,
+      -- but I had to put 'em somewhere.
+      {
+        'p',
+        function()
+          create_link()
+          vim.cmd 'normal! P'
+        end,
+        mode = 'x',
+        desc = 'Create Markdown Link',
+        ft = file_types,
+      },
+      -- {
+      --   'gl',
+      --   function()
+      --     create_link()
+      --     vim.cmd 'startinsert'
+      --   end,
+      --   ft = file_types,
+      --   desc = 'Create Markdown Link',
+      --   mode = 'x',
+      -- },
     },
     config = function()
       require('render-markdown').setup {
         -- Whether Markdown should be rendered by default or not
         enabled = true,
-        file_types = { 'markdown' },
+        file_types = file_types,
         heading = {
           -- Turn on / off heading icon & background rendering
           enabled = true,
@@ -124,25 +193,62 @@ return {
   },
   {
     'https://github.com/roodolv/markdown-toggle.nvim',
-    ft = 'markdown',
+    ft = file_types,
+    dependencies = {
+      {
+        'https://github.com/gaoDean/autolist.nvim',
+        ft = file_types,
+        keys = {
+          { '<tab>', '<cmd>AutolistTab<cr>', mode = 'i' },
+          { '<s-tab>', '<cmd>AutolistShiftTab<cr>', mode = 'i' },
+
+          { '<CR>', '<CR><cmd>AutolistNewBullet<cr>', mode = 'i' },
+          { 'o', 'o<cmd>AutolistNewBullet<cr>', mode = 'n' },
+          { 'O', 'O<cmd>AutolistNewBulletBefore<cr>', mode = 'n' },
+          -- { '<CR>', '<cmd>AutolistToggleCheckbox<cr><CR>k', mode = 'n' },
+          -- functions to recalculate list on edit
+          { '>>', '>><cmd>AutolistRecalculate<cr>', mode = 'n' },
+          { '<<', '<<<cmd>AutolistRecalculate<cr>', mode = 'n' },
+          { 'dd', 'dd<cmd>AutolistRecalculate<cr>', mode = 'n' },
+          { 'd', 'd<cmd>AutolistRecalculate<cr>', mode = 'v' },
+        },
+        config = function()
+          local autolist = require 'autolist'
+
+          autolist.setup {
+            cycle = { '-', '1.' },
+            colon = { -- if a line ends in a colon
+              indent = false, -- if in list and line ends in `:` then create list
+              indent_raw = false, -- above, but doesn't need to be in a list to work
+            },
+          }
+
+          -- Dot-repeatable function to toggle type of existing list
+          -- (requires that the list already exists in normal mode)
+          vim.keymap.set('n', '<leader>t-', autolist.cycle_next_dr, { expr = true })
+        end,
+      },
+    },
     config = function()
-      local file_types = { 'markdown', 'markdown.mdx', 'Avante' }
+      local mdtoggle = require 'markdown-toggle'
+      local autolist = require 'autolist'
+
       ---@diagnostic disable-next-line: missing-fields
-      require('markdown-toggle').setup {
+      mdtoggle.setup {
         -- If true, the auto-setup for the default keymaps is enabled
         use_default_keymaps = false,
         -- The keymaps are valid only for these filetypes
         filetypes = file_types,
 
         -- The list marks table used in cycle-mode (list_table[1] is used as the default list-mark)
-        list_table = { '-', '+', '*', '=' },
+        list_table = { '-', '1.' },
         -- Cycle the marks in user-defined table when toggling lists
-        cycle_list_table = false,
+        cycle_list_table = true,
 
         -- The checkbox marks table used in cycle-mode (box_table[1] is used as the default checked-state)
-        box_table = { 'x', '-' },
+        box_table = { 'x' },
         -- Cycle the marks in user-defined table when toggling checkboxes
-        cycle_box_table = true,
+        cycle_box_table = false,
         -- A bullet list is toggled before turning into a checkbox (similar to how it works in Obsidian).
         list_before_box = false,
 
@@ -165,53 +271,27 @@ return {
         pattern = file_types,
         callback = function(args)
           local opts = { silent = true, noremap = true, buffer = args.buf }
-          local toggle = require 'markdown-toggle'
 
-          -- Keymap configurations will be added here for each feature
-          vim.keymap.set('n', 'O', toggle.autolist_up, opts)
-          vim.keymap.set('n', 'o', toggle.autolist_down, opts)
-          vim.keymap.set('i', '<CR>', toggle.autolist_cr, opts)
+          -- Cycle list type with `markdown-toggle` and recalculate with `autolist`
+          -- (does not require that the list already exists in visual mode)
+          vim.keymap.set({ 'x' }, '<leader>t-', function()
+            mdtoggle.list()
+            autolist.recalculate()
+          end, opts)
 
+          -- Toggle (or create) checkbox.
+          vim.keymap.set('x', '<leader>t[', mdtoggle.checkbox_cycle, opts)
+          vim.keymap.set('x', '<leader>t]', mdtoggle.checkbox_cycle, opts)
           opts.expr = true -- required for dot-repeat in Normal mode
-          -- vim.keymap.set('n', '<leader>t1', toggle.olist_dot, opts)
-          vim.keymap.set('n', '<leader>t-', toggle.list_dot, opts)
-          vim.keymap.set('n', '<leader>t[', toggle.checkbox_cycle_dot, opts)
-          vim.keymap.set('n', '<leader>t]', toggle.checkbox_cycle_dot, opts)
-
-          opts.expr = false -- required for Visual mode
-          -- vim.keymap.set('x', '<C-n>', toggle.olist, opts)
-          -- vim.keymap.set('x', '<leader>t1', toggle.olist, opts)
-          vim.keymap.set('x', '<leader>t-', toggle.list, opts)
-          vim.keymap.set('x', '<leader>t[', toggle.checkbox_cycle, opts)
-          vim.keymap.set('x', '<leader>t]', toggle.checkbox_cycle, opts)
+          vim.keymap.set('n', '<leader>t[', mdtoggle.checkbox_cycle_dot, opts)
+          vim.keymap.set('n', '<leader>t]', mdtoggle.checkbox_cycle_dot, opts)
         end,
       })
     end,
   },
   {
-    'https://github.com/preservim/vim-markdown',
-    ft = 'markdown',
-    init = function()
-      vim.g.vim_markdown_no_default_key_mappings = 1
-      -- vim.g.vim_markdown_folding_level = 1
-      -- vim.g.vim_markdown_folding_style_pythonic = 1
-      vim.g.vim_markdown_folding_disabled = 0
-      vim.g.vim_markdown_frontmatter = 1
-      vim.g.vim_markdown_strikethrough = 1
-      vim.g.vim_markdown_math = 1
-      vim.g.vim_markdown_follow_anchor = 1
-      vim.g.vim_markdown_toc_autofit = 1
-      vim.g.vim_markdown_conceal = 0
-      vim.g.vim_markdown_conceal_code_blocks = 0
-      vim.g.vim_markdown_new_list_item_indent = 4
-    end,
-    dependencies = {
-      { 'https://github.com/godlygeek/tabular', cmd = 'TableFormat' },
-    },
-  },
-  {
     'https://github.com/mzlogin/vim-markdown-toc',
-    ft = 'markdown',
+    ft = file_types,
     cmd = { 'GenTocGFM', 'UpdateToc' },
     init = function()
       vim.g.vmt_auto_update_on_save = 0
