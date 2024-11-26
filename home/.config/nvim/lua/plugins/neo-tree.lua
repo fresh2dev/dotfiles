@@ -5,8 +5,8 @@ return {
   version = '*',
   cmd = 'Neotree',
   keys = {
-    { '<C-\\>', '<Cmd>silent! Neotree toggle action=focus reveal=true reveal_force_cwd=true position=left<CR>', desc = '[B]uffer [S]idebar' },
-    { '<leader>bb', '<Cmd>silent! Neotree toggle action=focus reveal=true reveal_force_cwd=true position=float<CR>', desc = '[B]uffer Explorer' },
+    { '<C-\\>', '<Cmd>Neotree toggle action=focus position=left<CR>', desc = '[B]uffer [S]idebar' },
+    { '<leader>bb', '<Cmd>Neotree toggle action=focus position=float<CR>', desc = '[B]uffer Explorer' },
   },
   dependencies = {
     'https://github.com/nvim-lua/plenary.nvim',
@@ -134,7 +134,7 @@ return {
       },
     },
     buffers = {
-      bind_to_cwd = true,
+      bind_to_cwd = false,
       follow_current_file = {
         enabled = true,
       },
