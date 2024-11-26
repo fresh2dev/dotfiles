@@ -395,6 +395,18 @@ vnoremap gl g_
 "targets.vim
 Plug 'https://github.com/wellle/targets.vim', { 'commit': '642d3a4ce306264b05ea3219920b13ea80931767' }
 
+"matchup
+Plug 'https://github.com/andymass/vim-matchup', { 'commit': '5fb083de1e06fdd134c6ad8d007d4b5576b25ba7' }
+let g:loaded_matchit = 1
+let g:matchup_matchparen_offscreen = {'method': 'popup'}
+" let g:matchup_matchparen_enabled = 0
+" let g:matchup_motion_enabled = 0
+" let g:matchup_text_obj_enabled = 0
+" let g:matchup_surround_enabled = 0
+let g:matchup_matchparen_deferred = 1
+let g:matchup_matchparen_hi_surround_always = 1
+let g:matchup_motion_override_Npercent = 0
+
 " vim-zellij-navigator
 Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': '511f864' }
 

@@ -2,7 +2,6 @@ return { -- Highlight, edit, and navigate code
   {
     'https://github.com/nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs',
     dependencies = {
       'https://github.com/RRethy/nvim-treesitter-textsubjects',
     },
@@ -27,6 +26,10 @@ return { -- Highlight, edit, and navigate code
           'jsonc',
           'yaml',
           'python',
+        },
+        matchup = {
+          enable = true, -- mandatory, false will disable the whole extension
+          disable_virtual_text = true,
         },
         textsubjects = {
           enable = true,
