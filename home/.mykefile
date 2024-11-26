@@ -67,7 +67,6 @@ def upgrade():
 #          "eget 'neovim/neovim' --tag='0.9.5'",
 #          "eget 'gohugoio/hugo' --tag='v0.121.2'",
 #          "eget 'harness/drone-cli' --tag='v1.7.0'",
-#          "eget 'wfxr/code-minimap' --tag='v0.6.4'",
 #          "eget 'direnv/direnv' --tag='v2.33.0'"
 #          "eget 'openfaas/faas-cli' --tag='0.16.21'",
 #          "eget 'orhun/git-cliff' --tag='v1.4.0'",

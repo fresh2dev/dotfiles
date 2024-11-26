@@ -166,12 +166,6 @@ tag           = "v0.136.2"
 # file          = "*"
 # target        = "~/.local/bin/"
 
-["wfxr/code-minimap"]
-tag           = "v0.6.7"
-# asset_filters = ["musl"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
 ["direnv/direnv"]
 tag           = "v2.34.0"
 # asset_filters = []
