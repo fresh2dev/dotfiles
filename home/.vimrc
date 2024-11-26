@@ -173,11 +173,6 @@ nmap <C-Right> :vertical resize +2<CR>
 " Search inside visual selection
 xnoremap g/ <esc>/\%V
 
-" Consistent direction of n/N regardless
-" of whether search started with '*' or '#'
-nnoremap <expr> n (v:searchforward ? 'n' : 'N')
-nnoremap <expr> N (v:searchforward ? 'N' : 'n')
-
 " " Opens a new tab with the current buffer's path
 " " Super useful when editing files in the same directory
 " map <leader>te :tabedit <C-r>=escape(expand("%:p:h"), " ")<cr>/
