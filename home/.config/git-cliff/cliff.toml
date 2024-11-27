@@ -69,6 +69,8 @@ commit_parsers = [
     { message = "^change\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 2 -->:point_right: Changes", keep_prefix = false},
     { message = "^remove\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 2 -->:point_right: Changes", keep_prefix = true},
     { message = "^refactor?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other", keep_prefix = true},
+    { message = "^chore\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other", keep_prefix = true},
+    { message = "^revert\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other", keep_prefix = true},
     { message = "^bump\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other", keep_prefix = true},
     # { message = "^[a-z]+\\(?[A-Za-z-_]*\\)?!?:", group = "<!-- 3 -->:metal: Other", keep_prefix = true},
     { message = ".*", group = "<!-- 4 -->:shit: Unconventional", keep_prefix = true},
