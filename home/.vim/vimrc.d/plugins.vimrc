@@ -345,28 +345,6 @@ nmap gm <leader>mq
 " nmap <Leader>jj <Plug>BookmarkMoveDown
 " nmap <Leader>g <Plug>BookmarkMoveToLine
 
-" -----------------------------------------------------------------------------|
-"                         __        __        ___  __   __          ___        |
-"        \  / |  |\/| __ /__` |  | |__) \  / |__  |__) /__` | \  / |__         |
-"         \/  |  |  |    .__/ \__/ |__)  \/  |___ |  \ .__/ |  \/  |___        |
-"        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       |
-"                                                                              |
-" `-` for substitute                                                           |
-" -----------------------------------------------------------------------------|
-Plug 'https://github.com/svermeulen/vim-subversive', { 'commit': '6286cda3f9222bfd490fe34a00a2d8cd4925adec' }
-
-" let g:subversivePreserveCursorPosition = 1
-" let g:subversivePromptWithCurrent = 1
-" let g:subversivePromptWithActualCommand = 1
-
-nnoremap s <plug>(SubversiveSubstitute)
-xnoremap s <plug>(SubversiveSubstitute)
-nnoremap ss <plug>(SubversiveSubstituteLine)
-nnoremap S <plug>(SubversiveSubstituteToEndOfLine)
-
-nnoremap - <plug>(SubversiveSubstituteWordRange)
-xnoremap - <plug>(SubversiveSubstituteRange)
-
 "vim-exchange
 Plug 'https://github.com/tommcdo/vim-exchange', { 'commit': 'd6c1e9790bcb8df27c483a37167459bbebe0112e' }
 
@@ -446,8 +424,25 @@ autocmd DirChanged,WinEnter,BufEnter *
       \ call system('zellij action rename-tab "' . fnamemodify(getcwd(), ':t') . '"') |
       \ endif
 
+" vim-subversive
+Plug 'https://github.com/svermeulen/vim-subversive', { 'commit': '6286cda3f9222bfd490fe34a00a2d8cd4925adec' }
+
+" let g:subversivePreserveCursorPosition = 1
+" let g:subversivePromptWithCurrent = 1
+" let g:subversivePromptWithActualCommand = 1
+
+nnoremap _ <plug>(SubversiveSubstituteWordRange)
+xnoremap _ <plug>(SubversiveSubstituteRange)
+
 if !has("nvim")
-  " This plugins are only enabled for vanilla Vim.
+  " These plugins are only enabled for vanilla Vim.
+
+  " These subversive mappings are handled by `mini.operators`
+  nnoremap - <plug>(SubversiveSubstitute)
+  xnoremap - <plug>(SubversiveSubstitute)
+  " nnoremap -- ^<plug>(SubversiveSubstituteLine)
+  nmap -- ^-$
+
   " Plug 'https://github.com/tpope/vim-commentary', { 'commit': 'f67e3e67ea516755005e6cccb178bc8439c6d402' }
   Plug 'https://github.com/machakann/vim-sandwich', { 'commit': '74cf93d58ccc567d8e2310a69860f1b93af19403' }
 

@@ -120,7 +120,7 @@ return {
 
         -- Replace text with register
         replace = {
-          prefix = '',
+          prefix = '-',
           -- Whether to reindent new text to match previous indent
           reindent_linewise = true,
         },
