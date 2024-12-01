@@ -28,7 +28,7 @@ def upgrade():
         # pipx upgrade --install hostbutter
         "uv tool install --upgrade --force jupyterlab",
         "uv tool install --upgrade --force --with mkdocs-material --with mkdocs-jupyter --with 'mkdocstrings[python]' --with black --with mkdocs-include-dir-to-nav mkdocs",
-        "uv tool install --upgrade --force --with mdformat-mkdocs --with mdformat-ruff --with mdformat-shfmt mdformat",
+        "uv tool install --upgrade --force --with mdformat-mkdocs --with mdformat-tables --with mdformat-admon --with mdformat-deflist --with mdformat-footnote --with mdformat-frontmatter --with mdformat-ruff --with mdformat-shfmt mdformat",
         "uv tool install --upgrade --force pyinfra",
         "uv tool install --upgrade --force pre-commit",
         # pipx upgrade --install myke
