@@ -1,42 +1,23 @@
 return {
   {
-    'saghen/blink.cmp',
+    'https://github.com/saghen/blink.cmp',
+    version = '*',
     lazy = false, -- lazy loading handled internally
-    -- optional: provides snippets for the snippet source
     dependencies = {
-      -- { 'https://github.com/niuiic/blink-cmp-rg.nvim' },
-      -- { 'https://github.com/mikavilpas/blink-ripgrep.nvim' },
-      {
-        'https://github.com/L3MON4D3/LuaSnip',
-        version = 'v2.*',
-      },
-      {
-        'https://github.com/rafamadriz/friendly-snippets',
-        config = function()
-          require('luasnip.loaders.from_vscode').lazy_load()
-        end,
-      },
+      'https://github.com/fresh2dev/friendly-snippets',
     },
-    version = 'v0.*',
     -- allows extending the enabled_providers array elsewhere in your config
     -- without having to redefining it
     opts_extend = { 'sources.completion.enabled_providers' },
     config = function()
       local cmp = require 'blink.cmp'
-      local luasnip = require 'luasnip'
 
-      local function previous_char_is_space()
-        local col = vim.fn.col '.' - 1
-        return col == 0 or vim.fn.getline('.'):sub(col, col):match '%s' ~= nil
-      end
+      -- local function previous_char_is_space()
+      --   local col = vim.fn.col '.' - 1
+      --   return col == 0 or vim.fn.getline('.'):sub(col, col):match '%s' ~= nil
+      -- end
 
       cmp.setup {
-        -- TODO:
-        -- 'default' for mappings similar to built-in completion
-        -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
-        -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
-        -- see the "default configuration" section below for full documentation on how to define
-        -- your own keymap.
         keymap = {
           preset = 'default',
           -- ['<C-e>'] = { 'hide', 'fallback' },
@@ -50,9 +31,7 @@ return {
           --
           ['<Tab>'] = {
             function(_cmp)
-              if _cmp.is_in_snippet() then
-                return _cmp.accept()
-              elseif require('blink.cmp.windows.autocomplete').get_selected_item() then
+              if require('blink.cmp.windows.autocomplete').get_selected_item() then
                 -- Only accept on tab if an item is selected.
                 return _cmp.accept()
               end
@@ -77,7 +56,6 @@ return {
         -- experimental auto-brackets support
         accept = {
           auto_brackets = { enabled = true },
-          expand_snippet = luasnip.lsp_expand,
         },
 
         -- experimental signature help support
@@ -93,7 +71,7 @@ return {
         sources = {
           -- list of enabled providers
           completion = {
-            enabled_providers = { 'lsp', 'path', 'snippets', 'buffer' },
+            enabled_providers = { 'lsp', 'path', 'buffer', 'snippets' },
           },
 
           -- table of providers to configure
@@ -107,43 +85,27 @@ return {
               module = 'blink.cmp.sources.path',
               score_offset = 3,
             },
-            snippets = {
-              name = 'Snippets',
-              module = 'blink.cmp.sources.snippets',
-              score_offset = -3,
-            },
             buffer = {
               name = 'Buffer',
               module = 'blink.cmp.sources.buffer',
               fallback_for = { 'lsp' },
             },
-            -- ripgrep = {
-            --   name = 'Ripgrep',
-            --   -- module = 'blink-cmp-rg',
-            --   module = 'blink-ripgrep',
-            --   opts = {
-            --     prefix_min_len = 3,
-            --     context_size = 3,
-            --     -- get_command = function(context, prefix)
-            --     --   return {
-            --     --     'rg',
-            --     --     '--no-config',
-            --     --     '--json',
-            --     --     '--word-regexp',
-            --     --     '--ignore-case',
-            --     --     '--',
-            --     --     prefix .. '[\\w_-]+',
-            --     --     vim.fs.root(0, '.git') or vim.fn.getcwd(),
-            --     --   }
-            --     -- end,
-            --     -- get_prefix = function(context)
-            --     --   local col = vim.api.nvim_win_get_cursor(0)[2]
-            --     --   local line = vim.api.nvim_get_current_line()
-            --     --   local prefix = line:sub(1, col):match '[%w_-]+$' or ''
-            --     --   return prefix
-            --     -- end,
-            --   },
-            -- },
+            snippets = {
+              name = 'Snippets',
+              module = 'blink.cmp.sources.snippets',
+              score_offset = -3,
+              opts = {
+                -- NOTE: these should be similar to what is defined
+                -- for `nvim-snippets` in `snippets.lua`.
+                friendly_snippets = true,
+                -- search_paths = { '/Users/donald/.vim/snippets' },
+                global_snippets = { 'all' },
+                ignored_filetypes = {},
+                extended_filetypes = {
+                  markdown = { 'html' },
+                },
+              },
+            },
           },
         },
 

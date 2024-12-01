@@ -42,8 +42,9 @@ return { -- LSP Configuration & Plugins
           -- Accept defaults introduced in this PR:
           -- https://github.com/neovim/neovim/pull/28650
           -- which are scheduled to be included in Neovim 0.11
-          -- Open signature help
-          map('<C-s>', vim.lsp.buf.signature_help, 'Signature Help')
+          -- NOTE: <C-s> is for snippets instead
+          -- -- Open signature help
+          -- map('<C-s>', vim.lsp.buf.signature_help, 'Signature Help')
           -- Find references for the word under your cursor.
           map('grr', ':FzfLua lsp_references<CR>', '[G]oto [R]eferences')
           -- Rename the variable under your cursor.

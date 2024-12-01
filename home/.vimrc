@@ -435,7 +435,7 @@ command Wqa :wqa
 
 " Toggle background
 set background=dark
-nnoremap <leader>tb :execute 'set background=' . (&background == 'dark' ? 'light' : 'dark')<CR>
+" nnoremap <leader>tB :execute 'set background=' . (&background == 'dark' ? 'light' : 'dark')<CR>
 " Toggle wrap
 nnoremap <leader>tw :setlocal wrap! wrap?<CR>
 
