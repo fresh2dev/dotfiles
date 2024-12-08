@@ -203,7 +203,7 @@ tag           = "v0.2.65"
 # target        = "~/.local/bin/"
 
 ["zellij-org/zellij"]
-tag           = "v0.40.1"
+tag           = "v0.41.2"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"

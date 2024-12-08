@@ -37,6 +37,14 @@ endif
 " Always show current position
 set ruler
 
+" When "on" the commands listed below move the cursor to the first non-blank of the line.  
+" This applies to the commands:
+" - CTRL-D, CTRL-U, CTRL-B, CTRL-F, "G", "H", "M", "L", "gg"
+" - "d", "<<" and ">>" with a linewise operator
+" - "%" with a count
+" - buffer changing commands (CTRL-^, :bnext, :bNext, etc.)
+set startofline
+
 " Height of the command bar
 set cmdheight=1
 
@@ -187,8 +195,8 @@ set titlestring=%F\ (%{expand('%:p:h')}) titlelen=80
 
 set diffopt+=internal,algorithm:histogram
 
-" Don't continue comment char on newline
-autocmd BufWinEnter,BufNewFile * setlocal formatoptions-=cro
+" " Don't continue comment char on newline
+" autocmd BufWinEnter,BufNewFile * setlocal formatoptions-=cro
 
 " never linebreak
 set textwidth=0
@@ -233,6 +241,10 @@ autocmd FileType netrw silent! unmap <buffer> <C-l>
 "                       - - - - - - - - - - - - - - - -                        |
 "                                                                              |
 " -----------------------------------------------------------------------------|
+if has('macunix')
+  command NeovideOpen :silent !open --new -b com.neovide.neovide
+endif
+
 if exists("g:neovide")
   " Put anything you want to happen only in Neovide here
   set linespace=0
@@ -317,9 +329,9 @@ augroup END
 
 " " paste while retain original value and cursor position
 " " https://stackoverflow.com/a/7164121
-" noremap p p`[
-" noremap P P`[
-" xnoremap p pgvy`[
+noremap p p`[
+noremap P P`[
+xnoremap p pgvy`[
 
 " dot-repeat and restore cursor position
 nnoremap . m`.``
@@ -357,8 +369,8 @@ nnoremap >P <Plug>(unimpaired-put-above-rightward)
 nnoremap >p <Plug>(unimpaired-put-below-rightward)
 nnoremap <P <Plug>(unimpaired-put-above-leftward)
 nnoremap <p <Plug>(unimpaired-put-below-leftward)
-nnoremap <leader>P <Plug>(unimpaired-put-above-reformat)
-nnoremap <leader>p <Plug>(unimpaired-put-below-reformat)
+nnoremap =P <Plug>(unimpaired-put-above-reformat)
+nnoremap =p <Plug>(unimpaired-put-below-reformat)
 
 " disable `s`, `S` in favor of `vim-subversive`
 nmap s <Nop>
@@ -498,6 +510,10 @@ nnoremap ]e  :<c-u>execute 'move +'. v:count1<cr>
 nnoremap ]<space> :set paste<CR>m`o<Esc>``:set nopaste<CR>
 nnoremap [<space> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
+" Insert on new line, with extra newline.
+nmap <leader>o :execute getline('.') =~ '^\s*$' ? 'normal ] o' : 'normal ] jo'<CR>cc
+nmap <leader>O :execute getline('.') =~ '^\s*$' ? 'normal [ O' : 'normal [ kO'<CR>cc
+
 " Like <C-w>T, Open buffer in new tab, but preserve original window.
 nnoremap <C-w>t :tab split<CR>
 
@@ -594,6 +610,13 @@ else
   " ref: https://github.com/aymericbeaumet/vim-symlink/issues/14
   let g:editorconfig = 0
 
+  augroup highlight_yank
+    autocmd!
+    autocmd TextYankPost * lua require'vim.highlight'.on_yank { { higroup = 'Visual', timeout = 333 } }
+  augroup END
+
+  command! Dotfiles execute 'vs | edit ' . stdpath('config')
+
   " Open terminal in insert-mode.
   augroup TermOpenInsert
     autocmd!
@@ -609,6 +632,12 @@ else
     echo 'Installing Python packages...'
     call system([g:python3_host_prog, '-m', 'pip', 'install', 'pynvim'])
   endif
+endif
+
+" If not args are given to Vim, and it is opened at
+" either the root or home directory, open the Zoxide directory picker.
+if argc() == 0 && (getcwd() == expand('~') || getcwd() == '/')
+  call timer_start(0, {-> execute('Zi')})
 endif
 
 " Command to delete all git-related buffers

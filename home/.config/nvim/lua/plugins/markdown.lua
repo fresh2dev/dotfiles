@@ -67,16 +67,6 @@ return {
         desc = 'Create Markdown Link',
         ft = file_types,
       },
-      -- {
-      --   'gl',
-      --   function()
-      --     create_link()
-      --     vim.cmd 'startinsert'
-      --   end,
-      --   ft = file_types,
-      --   desc = 'Create Markdown Link',
-      --   mode = 'x',
-      -- },
     },
     config = function()
       require('render-markdown').setup {
@@ -154,6 +144,14 @@ return {
           -- Turn on / off sign rendering
           enabled = false,
         },
+        html = {
+          -- Turn on / off all HTML rendering
+          enabled = true,
+          comment = {
+            -- Turn on / off HTML comment concealing
+            conceal = false,
+          },
+        },
         -- Window options to use that change between rendered and raw view
         win_options = {
           -- See :h 'conceallevel'
@@ -199,18 +197,17 @@ return {
         'https://github.com/gaoDean/autolist.nvim',
         ft = file_types,
         keys = {
-          { '<tab>', '<cmd>AutolistTab<cr>', mode = 'i' },
-          { '<s-tab>', '<cmd>AutolistShiftTab<cr>', mode = 'i' },
-
           { '<CR>', '<CR><cmd>AutolistNewBullet<cr>', mode = 'i' },
           { 'o', 'o<cmd>AutolistNewBullet<cr>', mode = 'n' },
           { 'O', 'O<cmd>AutolistNewBulletBefore<cr>', mode = 'n' },
+          -- { '<tab>', '<cmd>AutolistTab<cr>', mode = 'i' },
+          -- { '<s-tab>', '<cmd>AutolistShiftTab<cr>', mode = 'i' },
           -- { '<CR>', '<cmd>AutolistToggleCheckbox<cr><CR>k', mode = 'n' },
           -- functions to recalculate list on edit
-          { '>>', '>><cmd>AutolistRecalculate<cr>', mode = 'n' },
-          { '<<', '<<<cmd>AutolistRecalculate<cr>', mode = 'n' },
-          { 'dd', 'dd<cmd>AutolistRecalculate<cr>', mode = 'n' },
-          { 'd', 'd<cmd>AutolistRecalculate<cr>', mode = 'v' },
+          -- { '>>', '>><cmd>AutolistRecalculate<cr>', mode = 'n' },
+          -- { '<<', '<<<cmd>AutolistRecalculate<cr>', mode = 'n' },
+          -- { 'dd', 'dd<cmd>AutolistRecalculate<cr>', mode = 'n', noremap = false },
+          -- { 'd', 'd<cmd>AutolistRecalculate<cr>', mode = 'v', noremap = false },
         },
         config = function()
           local autolist = require 'autolist'

@@ -120,7 +120,8 @@ return {
 
         -- Replace text with register
         replace = {
-          prefix = '-',
+          prefix = '',
+          -- prefix = '<leader>p',
           -- Whether to reindent new text to match previous indent
           reindent_linewise = true,
         },
@@ -400,7 +401,7 @@ return {
         },
 
         -- Number of lines within which surrounding is searched
-        n_lines = 50,
+        n_lines = 25,
 
         -- Whether to respect selection type:
         -- - Place surroundings on separate lines in linewise mode.
@@ -657,52 +658,52 @@ return {
   --     }
   --   end,
   -- },
-  {
-    'https://github.com/echasnovski/mini.starter',
-    version = '*',
-    lazy = false,
-    opts = {
-      evaluate_single = true,
-      query_updaters = '',
-      header = table.concat({
-        '██╗      █████╗ ███████╗██╗   ██╗██╗   ██╗██╗███╗   ███╗          Z',
-        '██║     ██╔══██╗╚══███╔╝╚██╗ ██╔╝██║   ██║██║████╗ ████║      Z    ',
-        '██║     ███████║  ███╔╝  ╚████╔╝ ██║   ██║██║██╔████╔██║   z       ',
-        '██║     ██╔══██║ ███╔╝    ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║ z         ',
-        '███████╗██║  ██║███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║           ',
-        '╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝           ',
-      }, '\n'),
-      items = {
-        { name = ' F  ~ Find', action = 'normal 1 F', section = '' },
-        { name = ' fo ~ Recent files', action = 'normal 1 fo', section = '' },
-        { name = ' ff ~ Find file', action = 'normal 1 ff', section = '' },
-        { name = ' fs ~ Find text', action = 'normal 1 fs', section = '' },
-        { name = ' ft ~ Find TODOs', action = 'normal 1 ft', section = '' },
-        { name = ' fm ~ Find Bookmarks', action = 'normal 1 fm', section = '' },
-        { name = ' gt ~ Git Fugitive', action = 'normal 1 gt', section = '' },
-        { name = ' gh ~ GitHub Actions', action = 'normal 1 gh', section = '' },
-        { name = ' gB ~ GitHub in Browser', action = 'normal 1 gB', section = '' },
-        { name = ' gI ~ GitHub Issues', action = 'normal 1 gB', section = '' },
-        { name = ' qq ~ Quit', action = 'quit', section = '' },
-      },
-    },
-    config = function(_, opts)
-      local starter = require 'mini.starter'
-      starter.setup(opts)
-
-      vim.api.nvim_create_autocmd('User', {
-        pattern = 'MiniStarterOpened',
-        callback = function(ev)
-          local stats = require('lazy').stats()
-          local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
-          -- local pad_footer = string.rep(' ', 8)
-          starter.config.footer = '⚡ Neovim loaded ' .. stats.count .. ' plugins in ' .. ms .. 'ms'
-          -- INFO: based on @echasnovski's recommendation (thanks a lot!!!)
-          if vim.bo[ev.buf].filetype == 'ministarter' then
-            pcall(starter.refresh)
-          end
-        end,
-      })
-    end,
-  },
+  -- {
+  --   'https://github.com/echasnovski/mini.starter',
+  --   version = '*',
+  --   lazy = false,
+  --   opts = {
+  --     evaluate_single = true,
+  --     query_updaters = '',
+  --     header = table.concat({
+  --       '██╗      █████╗ ███████╗██╗   ██╗██╗   ██╗██╗███╗   ███╗          Z',
+  --       '██║     ██╔══██╗╚══███╔╝╚██╗ ██╔╝██║   ██║██║████╗ ████║      Z    ',
+  --       '██║     ███████║  ███╔╝  ╚████╔╝ ██║   ██║██║██╔████╔██║   z       ',
+  --       '██║     ██╔══██║ ███╔╝    ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║ z         ',
+  --       '███████╗██║  ██║███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║           ',
+  --       '╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝           ',
+  --     }, '\n'),
+  --     items = {
+  --       { name = ' F  ~ Find', action = 'normal 1 F', section = '' },
+  --       { name = ' fo ~ Recent files', action = 'normal 1 fo', section = '' },
+  --       { name = ' ff ~ Find file', action = 'normal 1 ff', section = '' },
+  --       { name = ' fs ~ Find text', action = 'normal 1 fs', section = '' },
+  --       { name = ' ft ~ Find TODOs', action = 'normal 1 ft', section = '' },
+  --       { name = ' fm ~ Find Bookmarks', action = 'normal 1 fm', section = '' },
+  --       { name = ' gt ~ Git Fugitive', action = 'normal 1 gt', section = '' },
+  --       { name = ' gh ~ GitHub Actions', action = 'normal 1 gh', section = '' },
+  --       { name = ' gB ~ GitHub in Browser', action = 'normal 1 gB', section = '' },
+  --       { name = ' gI ~ GitHub Issues', action = 'normal 1 gB', section = '' },
+  --       { name = ' qq ~ Quit', action = 'quit', section = '' },
+  --     },
+  --   },
+  --   config = function(_, opts)
+  --     local starter = require 'mini.starter'
+  --     starter.setup(opts)
+  --
+  --     vim.api.nvim_create_autocmd('User', {
+  --       pattern = 'MiniStarterOpened',
+  --       callback = function(ev)
+  --         local stats = require('lazy').stats()
+  --         local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+  --         -- local pad_footer = string.rep(' ', 8)
+  --         starter.config.footer = '⚡ Neovim loaded ' .. stats.count .. ' plugins in ' .. ms .. 'ms'
+  --         -- INFO: based on @echasnovski's recommendation (thanks a lot!!!)
+  --         if vim.bo[ev.buf].filetype == 'ministarter' then
+  --           pcall(starter.refresh)
+  --         end
+  --       end,
+  --     })
+  --   end,
+  -- },
 }

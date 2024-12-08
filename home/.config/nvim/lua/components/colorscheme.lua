@@ -40,21 +40,6 @@ return {
     },
   },
   {
-    'maxmx03/fluoromachine.nvim',
-    lazy = false,
-    priority = 1000,
-    init = function()
-      -- vim.cmd.colorscheme 'fluoromachine'
-    end,
-    config = function()
-      require('fluoromachine').setup {
-        glow = false,
-        theme = 'retrowave',
-        transparent = false,
-      }
-    end,
-  },
-  {
     -- Neovim plugin to improve the default vim.ui interfaces
     'https://github.com/stevearc/dressing.nvim',
     opts = {},

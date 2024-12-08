@@ -110,6 +110,15 @@ nnoremap <leader>gS :Git fetch --all \| Git pull \| Git fetch origin main:main \
 nnoremap <leader>gp :Git push -u origin<CR>
 nnoremap <leader>gP :Git push -fu origin<CR>
 
+Plug 'https://github.com/nanotee/zoxide.vim', { 'commit': 'b1e70b6fc1682a83929aee63680d2b43456fe9a5' }
+
+let g:zoxide_use_select = 1
+
+cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'z') ? 'Z' : 'z'
+cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'zi') ? 'Zi' : 'zi'
+
+nnoremap <leader>zi :Zi<CR>
+
 Plug 'https://github.com/rhysd/conflict-marker.vim', { 'commit': '62742b2ffe7a433988759c67b5c5a22eff74a14b' }
 
 let g:conflict_marker_enable_mappings = 0
@@ -265,85 +274,88 @@ Plug 'https://github.com/tpope/vim-eunuch', { 'commit': '6c6af39aa0a252233896073
 " fix: https://github.com/tpope/vim-eunuch/issues/95#issuecomment-1183890098
 let g:eunuch_no_maps = 1
 
-" -----------------------------------------------------------------------------|
-"                               __       ___            __   __                |
-"              \  / |  |\/| __ /  ` |  |  |  |     /\  /__` /__`               |
-"               \/  |  |  |    \__, \__/  |  |___ /~~\ .__/ .__/               |
-"              - - - - - - - - - - - - - - - - - - - - - - - - -               |
-"                                                                              |
-" original delete `d` behavior exists with new mapping `m`                     |
-" -----------------------------------------------------------------------------|
 Plug 'https://github.com/svermeulen/vim-cutlass', { 'commit': '7afd649415541634c8ce317fafbc31cd19d57589' }
 
-nnoremap m d
-xnoremap m d
-nnoremap mm dd
-nnoremap M D
+nnoremap d d
+xnoremap d d
+nnoremap dd dd
+nnoremap D D
 
-" " vim-signature
-" Plug 'https://github.com/kshenoy/vim-signature', { 'commit': '6bc3dd1294a22e897f0dcf8dd72b85f350e306bc' }
+" Make it so that `dd` only populates the default register
+" when the current line is not only whitespace.
+function! Smart_dd()
+    if match(getline("."), '^\s*$') != -1
+        return '"_dd'
+    endif
+    return "dd"
+endfunction
+
+nnoremap <expr> dd Smart_dd()
+" vim-signature
+Plug 'https://github.com/kshenoy/vim-signature', { 'commit': '6bc3dd1294a22e897f0dcf8dd72b85f350e306bc' }
+
+" Only set global marks
+let g:SignatureIncludeMarks = 'ABCDEFGHIJKLNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'  " Excludes `M`
+let g:SignatureDeleteConfirmation = 1
+let g:SignaturePurgeConfirmation = 1
+let g:SignatureEnabledAtStartup = 1
+let g:SignatureDeferPlacement = 0
+let g:SignatureMap = {
+      \ 'Leader'             :  "M",
+      \ 'PlaceNextMark'      :  "",
+      \ 'ToggleMarkAtLine'   :  "MM",
+      \ 'PurgeMarksAtLine'   :  "",
+      \ 'DeleteMark'         :  "",
+      \ 'PurgeMarks'         :  "",
+      \ 'PurgeMarkers'       :  "",
+      \ 'GotoNextLineAlpha'  :  "",
+      \ 'GotoPrevLineAlpha'  :  "",
+      \ 'GotoNextSpotAlpha'  :  "",
+      \ 'GotoPrevSpotAlpha'  :  "",
+      \ 'GotoNextLineByPos'  :  "",
+      \ 'GotoPrevLineByPos'  :  "",
+      \ 'GotoNextSpotByPos'  :  "",
+      \ 'GotoPrevSpotByPos'  :  "",
+      \ 'GotoNextMarker'     :  "",
+      \ 'GotoPrevMarker'     :  "",
+      \ 'GotoNextMarkerAny'  :  "",
+      \ 'GotoPrevMarkerAny'  :  "",
+      \ 'ListBufferMarks'    :  "",
+      \ 'ListBufferMarkers'  :  ""
+      \ }
+
+" this only deletes buffer-local marks (a-z)
+" nnoremap dM :delmarks! \| delmarks A-Z \| wshada! \| SignatureRefresh<CR>
+nnoremap gM :SignatureListGlobalMarks<CR>
+
+" " vim-bookmarks
+" Plug 'https://github.com/MattesGroeger/vim-bookmarks', { 'commit': '9cc5fa7ecc23b052bd524d07c85356c64b92aeef' }
 "
-" " Only set global marks
-" " let g:SignatureIncludeMarks = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-" let g:SignatureDeleteConfirmation = 1
-" let g:SignaturePurgeConfirmation = 1
-" let g:SignatureEnabledAtStartup = 1
-" let g:SignatureDeferPlacement = 0
-" let g:SignatureMap = {
-"       \ 'Leader'             :  "m",
-"       \ 'PlaceNextMark'      :  "",
-"       \ 'ToggleMarkAtLine'   :  "m<CR>",
-"       \ 'PurgeMarksAtLine'   :  "",
-"       \ 'DeleteMark'         :  "dm",
-"       \ 'PurgeMarks'         :  "",
-"       \ 'PurgeMarkers'       :  "",
-"       \ 'GotoNextLineAlpha'  :  "']",
-"       \ 'GotoPrevLineAlpha'  :  "'[",
-"       \ 'GotoNextSpotAlpha'  :  "`]",
-"       \ 'GotoPrevSpotAlpha'  :  "`[",
-"       \ 'GotoNextLineByPos'  :  "]'",
-"       \ 'GotoPrevLineByPos'  :  "['",
-"       \ 'GotoNextSpotByPos'  :  "]`",
-"       \ 'GotoPrevSpotByPos'  :  "[`",
-"       \ 'GotoNextMarker'     :  "]-",
-"       \ 'GotoPrevMarker'     :  "[-",
-"       \ 'GotoNextMarkerAny'  :  "]=",
-"       \ 'GotoPrevMarkerAny'  :  "[=",
-"       \ 'ListBufferMarks'    :  "",
-"       \ 'ListBufferMarkers'  :  ""
-"       \ }
+" let g:bookmark_no_default_key_mappings = 1
 "
-" " this only deletes buffer-local marks (a-z)
-" " nnoremap dM :delmarks! \| delmarks A-Z \| wshada! \| SignatureRefresh<CR>
-" nnoremap gm :SignatureListGlobalMarks<CR>
-
-" vim-bookmarks
-Plug 'https://github.com/MattesGroeger/vim-bookmarks', { 'commit': '9cc5fa7ecc23b052bd524d07c85356c64b92aeef' }
-
-let g:bookmark_no_default_key_mappings = 1
-
-let g:bookmark_auto_save = 1
-let g:bookmark_save_per_working_dir = 1
-
-let g:bookmark_highlight_lines = 1
-let g:bookmark_center = 1
-let g:bookmark_disable_ctrlp = 1
-
-let g:bookmark_show_warning = 1
-let g:bookmark_show_toggle_warning = 1
-
+" let g:bookmark_auto_save = 1
+" let g:bookmark_save_per_working_dir = 1
+"
+" let g:bookmark_highlight_lines = 1
+" let g:bookmark_center = 1
+" let g:bookmark_disable_ctrlp = 1
+"
+" let g:bookmark_show_warning = 1
+" let g:bookmark_show_toggle_warning = 1
+"
 " nmap mm <Plug>BookmarkToggle
-nmap <leader>mm <Plug>BookmarkToggle
-nmap <leader>mi <Plug>BookmarkAnnotate
-nmap <leader>mn <Plug>BookmarkNext
-nmap <leader>mp <Plug>BookmarkPrev
-nmap <leader>mx <Plug>BookmarkClear
-nmap <leader>mX <Plug>BookmarkClearAll
-nmap <leader>mq :doautocmd BufEnter<CR><Plug>BookmarkShowAll
-nmap gm <leader>mq
-" nmap <Leader>kk <Plug>BookmarkMoveUp
-" nmap <Leader>jj <Plug>BookmarkMoveDown
-" nmap <Leader>g <Plug>BookmarkMoveToLine
+" nmap mi <Plug>BookmarkAnnotate
+" nmap mn <Plug>BookmarkNext
+" nmap mp <Plug>BookmarkPrev
+" nmap mx <Plug>BookmarkClear
+" nmap mX <Plug>BookmarkClearAll
+" " see: https://github.com/MattesGroeger/vim-bookmarks/issues/185
+" " nmap mq :doautocmd BufEnter<CR><Plug>BookmarkShowAll
+" nmap mq <Plug>BookmarkShowAll<Plug>BookmarkShowAll<Plug>BookmarkShowAll
+" nmap gm mq
+" " nmap <Leader>kk <Plug>BookmarkMoveUp
+" " nmap <Leader>jj <Plug>BookmarkMoveDown
+" " nmap <Leader>g <Plug>BookmarkMoveToLine
 
 "vim-exchange
 Plug 'https://github.com/tommcdo/vim-exchange', { 'commit': 'd6c1e9790bcb8df27c483a37167459bbebe0112e' }
@@ -386,18 +398,13 @@ let g:matchup_matchparen_hi_surround_always = 1
 let g:matchup_motion_override_Npercent = 0
 
 " vim-zellij-navigator
-Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': '511f864' }
+Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': '199e97469e52c08036bd19c7f69d379467b46004' }
 
 let g:zelli_navigator_move_focus_or_tab = 1
-let g:zellij_navigator_disable_autolock = 1
 
-" Open ZelliJ floating pane.
-nnoremap <leader>zjf :ZellijNewPane<CR>
-" Open ZelliJ pane below.
-nnoremap <leader>zjo :ZellijNewPaneSplit<CR>
-" Open ZelliJ pane to the right.
-nnoremap <leader>zjv :ZellijNewPaneVSplit<CR>
-
+" Open Zellij tab with `Alt+n`.
+execute "set <M-n>=\en"
+noremap <M-n> :ZellijNewTab<CR>
 " Open floating Zellij pane with `Alt+f`.
 execute "set <M-t>=\ef"
 noremap <M-t> :ZellijNewPane<CR>
@@ -415,14 +422,12 @@ nnoremap <leader>zjro :execute 'ZellijNewPaneSplit ' . input('Command: ')<CR>
 " Run command in new ZelliJ pane to the right.
 nnoremap <leader>zjrv :execute 'ZellijNewPaneVSplit ' . input('Command: ')<CR>
 
-" Run `ruff` Python linter in new ZelliJ pane below.
-nnoremap <leader>zjrr :execute 'ZellijNewPaneSplit ruff check "' . expand('%') . '"'<CR>
-nnoremap <leader>zjrR :ZellijNewPaneSplit ruff check<CR>
+" " Run `ruff` Python linter in new ZelliJ pane below.
+" nnoremap <leader>zjrr :execute 'ZellijNewPaneSplit ruff check "' . expand('%') . '"'<CR>
+" nnoremap <leader>zjrR :ZellijNewPaneSplit ruff check<CR>
 
-autocmd DirChanged,WinEnter,BufEnter *
-      \ if &buftype == '' |
-      \ call system('zellij action rename-tab "' . fnamemodify(getcwd(), ':t') . '"') |
-      \ endif
+autocmd DirChanged,BufEnter *
+  \ call system('zellij action rename-tab "' . fnamemodify(getcwd(), ':t') . '"')
 
 " vim-subversive
 Plug 'https://github.com/svermeulen/vim-subversive', { 'commit': '6286cda3f9222bfd490fe34a00a2d8cd4925adec' }
@@ -431,17 +436,19 @@ Plug 'https://github.com/svermeulen/vim-subversive', { 'commit': '6286cda3f9222b
 " let g:subversivePromptWithCurrent = 1
 " let g:subversivePromptWithActualCommand = 1
 
-nnoremap _ <plug>(SubversiveSubstituteWordRange)
-xnoremap _ <plug>(SubversiveSubstituteRange)
+" These subversive mappings are handled by `mini.operators`
+nnoremap <leader>p <plug>(SubversiveSubstitute)
+xnoremap <leader>p <plug>(SubversiveSubstitute)
+" nnoremap -- ^<plug>(SubversiveSubstituteLine)
+nmap <leader>pp ^<leader>p$
+" nmap <leader>P <plug>(SubversiveSubstituteToEndOfLine)
+nmap <leader>P <leader>p$
+
+nnoremap <leader>cw <plug>(SubversiveSubstituteWordRange)
+xnoremap <leader>cw <plug>(SubversiveSubstituteRange)
 
 if !has("nvim")
   " These plugins are only enabled for vanilla Vim.
-
-  " These subversive mappings are handled by `mini.operators`
-  nnoremap - <plug>(SubversiveSubstitute)
-  xnoremap - <plug>(SubversiveSubstitute)
-  " nnoremap -- ^<plug>(SubversiveSubstituteLine)
-  nmap -- ^-$
 
   " Plug 'https://github.com/tpope/vim-commentary', { 'commit': 'f67e3e67ea516755005e6cccb178bc8439c6d402' }
   Plug 'https://github.com/machakann/vim-sandwich', { 'commit': '74cf93d58ccc567d8e2310a69860f1b93af19403' }
@@ -450,11 +457,6 @@ if !has("nvim")
   let g:highlightedyank_highlight_duration = 333
 
   Plug 'https://github.com/junegunn/vim-peekaboo', { 'commit': 'cc4469c204099c73dd7534531fa8ba271f704831' }
-else
-  augroup highlight_yank
-    autocmd!
-    autocmd TextYankPost * lua require'vim.highlight'.on_yank { { higroup = 'Visual', timeout = 333 } }
-  augroup END
 endif
 
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
@@ -468,3 +470,4 @@ if !has("nvim")
   " Configure vim-sandwich to use vim-surround mappings.
   runtime macros/sandwich/keymap/surround.vim
 endif
+

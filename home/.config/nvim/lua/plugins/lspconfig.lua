@@ -185,94 +185,94 @@ return { -- LSP Configuration & Plugins
       end
     end,
   },
-  {
-    'rachartier/tiny-inline-diagnostic.nvim',
-    event = 'LspAttach',
-    priority = 1000, -- needs to be loaded in first
-    keys = {
-      {
-        '<leader>td',
-        function()
-          if vim.diagnostic.is_enabled() then
-            vim.diagnostic.enable(false)
-            require('tiny-inline-diagnostic').disable()
-          else
-            vim.diagnostic.enable(true)
-            require('tiny-inline-diagnostic').enable()
-          end
-        end,
-        desc = '[T]oggle [D]iagnostics',
-      },
-      {
-        '[d',
-        function()
-          vim.diagnostic.goto_prev { float = false }
-        end,
-        desc = 'Go to previous [D]iagnostic message',
-      },
-      {
-        ']d',
-        function()
-          vim.diagnostic.goto_next { float = false }
-        end,
-        desc = 'Go to previous [D]iagnostic message',
-      },
-    },
-    config = function()
-      vim.diagnostic.config { virtual_text = false }
-
-      require('tiny-inline-diagnostic').setup {
-        options = {
-          -- Format the diagnostic message.
-          format = function(diagnostic)
-            if not diagnostic.code or diagnostic.code == '' then
-              return diagnostic.message .. ' [' .. diagnostic.source .. ']'
-            else
-              return diagnostic.message .. ' [' .. diagnostic.source .. ': ' .. diagnostic.code .. ']'
-            end
-          end,
-
-          -- Throttle the update of the diagnostic when moving cursor, in milliseconds.
-          -- You can increase it if you have performance issues.
-          -- Or set it to 0 to have better visuals.
-          throttle = 20,
-
-          -- The minimum length of the message, otherwise it will be on a new line.
-          softwrap = 15,
-
-          -- If multiple diagnostics are under the cursor, display all of them.
-          multiple_diag_under_cursor = true,
-
-          -- Enable diagnostic message on all lines.
-          multilines = true,
-
-          -- Show all diagnostics on the cursor line.
-          show_all_diags_on_cursorline = true,
-
-          -- Enable diagnostics on Insert mode. You should also se the `throttle` option to 0, as some artefacts may appear.
-          enable_on_insert = false,
-
-          overflow = {
-            -- Manage the overflow of the message.
-            --    - wrap: when the message is too long, it is then displayed on multiple lines.
-            --    - none: the message will not be truncated.
-            --    - oneline: message will be displayed entirely on one line.
-            mode = 'wrap',
-          },
-
-          --- Enable it if you want to always have message with `after` characters length.
-          break_line = {
-            enabled = false,
-            after = 30,
-          },
-
-          virt_texts = {
-            priority = 2048,
-          },
-        },
-      }
-    end,
-  },
+  -- {
+  --   'rachartier/tiny-inline-diagnostic.nvim',
+  --   event = 'LspAttach',
+  --   priority = 1000, -- needs to be loaded in first
+  --   keys = {
+  --     {
+  --       '<leader>td',
+  --       function()
+  --         if vim.diagnostic.is_enabled() then
+  --           vim.diagnostic.enable(false)
+  --           require('tiny-inline-diagnostic').disable()
+  --         else
+  --           vim.diagnostic.enable(true)
+  --           require('tiny-inline-diagnostic').enable()
+  --         end
+  --       end,
+  --       desc = '[T]oggle [D]iagnostics',
+  --     },
+  --     {
+  --       '[d',
+  --       function()
+  --         vim.diagnostic.goto_prev { float = false }
+  --       end,
+  --       desc = 'Go to previous [D]iagnostic message',
+  --     },
+  --     {
+  --       ']d',
+  --       function()
+  --         vim.diagnostic.goto_next { float = false }
+  --       end,
+  --       desc = 'Go to previous [D]iagnostic message',
+  --     },
+  --   },
+  --   config = function()
+  --     vim.diagnostic.config { virtual_text = false }
+  --
+  --     require('tiny-inline-diagnostic').setup {
+  --       options = {
+  --         -- Format the diagnostic message.
+  --         format = function(diagnostic)
+  --           if not diagnostic.code or diagnostic.code == '' then
+  --             return diagnostic.message .. ' [' .. diagnostic.source .. ']'
+  --           else
+  --             return diagnostic.message .. ' [' .. diagnostic.source .. ': ' .. diagnostic.code .. ']'
+  --           end
+  --         end,
+  --
+  --         -- Throttle the update of the diagnostic when moving cursor, in milliseconds.
+  --         -- You can increase it if you have performance issues.
+  --         -- Or set it to 0 to have better visuals.
+  --         throttle = 20,
+  --
+  --         -- The minimum length of the message, otherwise it will be on a new line.
+  --         softwrap = 15,
+  --
+  --         -- If multiple diagnostics are under the cursor, display all of them.
+  --         multiple_diag_under_cursor = true,
+  --
+  --         -- Enable diagnostic message on all lines.
+  --         multilines = true,
+  --
+  --         -- Show all diagnostics on the cursor line.
+  --         show_all_diags_on_cursorline = true,
+  --
+  --         -- Enable diagnostics on Insert mode. You should also se the `throttle` option to 0, as some artefacts may appear.
+  --         enable_on_insert = false,
+  --
+  --         overflow = {
+  --           -- Manage the overflow of the message.
+  --           --    - wrap: when the message is too long, it is then displayed on multiple lines.
+  --           --    - none: the message will not be truncated.
+  --           --    - oneline: message will be displayed entirely on one line.
+  --           mode = 'wrap',
+  --         },
+  --
+  --         --- Enable it if you want to always have message with `after` characters length.
+  --         break_line = {
+  --           enabled = false,
+  --           after = 30,
+  --         },
+  --
+  --         virt_texts = {
+  --           priority = 2048,
+  --         },
+  --       },
+  --     }
+  --   end,
+  -- },
   -- Disabled in favor of `tiny-inline-diagnostic.nvim`
   -- {
   --   'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
