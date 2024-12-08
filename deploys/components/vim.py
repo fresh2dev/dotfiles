@@ -4,7 +4,6 @@ test_command("vim", "nvim")
 
 link(".vimrc")
 link(".vim/vimrc.d")
-link(".vim/snippets")
 
 link(".config/nvim")
 

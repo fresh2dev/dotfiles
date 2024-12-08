@@ -1,0 +1,51 @@
+{
+    "name": "friendly-snippets",
+    "engines": {
+        "vscode": "^1.11.0"
+    },
+    "contributes": {
+        "snippets": [
+            {
+                "language": ["global", "all"],
+                "path": "./snippets/global.json"
+            },
+            {
+                "language": ["gitcommit"],
+                "path": "./snippets/gitcommit.json"
+            },
+            {
+                "language": "lua",
+                "path": "./snippets/lua/lua.json"
+            },
+            {
+                "language": "luadoc",
+                "path": "./snippets/lua/luadoc.json"
+            },
+            {
+                "language": ["shellscript", "shell", "sh", "zsh"],
+                "path": "./snippets/shell/shell.json"
+            },
+            {
+                "language": "shelldoc",
+                "path": "./snippets/shell/shelldoc.json"
+            },
+            {
+                "language": ["markdown", "rmd"],
+                "path": "./snippets/markdown.json"
+            },
+            {
+                "language": ["html", "markdown", "rmd"],
+                "path": "./snippets/html.json"
+            },
+            {
+                "language": ["css", "scss", "sass", "less", "stylus"],
+                "path": "./snippets/css.json"
+            },
+            {
+                "language": "python",
+                "path": "./snippets/python.json"
+            }
+        ]
+    }
+}
+
