@@ -525,6 +525,30 @@ nnoremap <silent> <esc> :nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>
 " vnoremap <silent> < <gv
 " vnoremap <silent> > >gv
 
+" Preserve cursor position on yank.
+" Inspired by: https://nanotipsforvim.prose.sh/sticky-yank
+let g:cursorPreYank = []
+
+function! SetCursorPreYank()
+  let g:cursorPreYank = getpos('.')
+  return 'y'
+endfunction
+
+nnoremap <expr> y SetCursorPreYank()
+xnoremap <expr> y SetCursorPreYank()
+
+function! SetCursorPreYankY()
+  let g:cursorPreYank = getpos('.')
+  return 'y$'
+endfunction
+
+nnoremap <expr> Y SetCursorPreYankY()
+
+augroup YankRestore
+  autocmd!
+  autocmd TextYankPost * if v:event['operator'] ==# 'y' && !empty(g:cursorPreYank) | call setpos('.', g:cursorPreYank) | endif
+augroup END
+
 """
 
 source ~/.vim/vimrc.d/plugins.vimrc
