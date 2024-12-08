@@ -532,9 +532,6 @@ source ~/.vim/vimrc.d/plugins.vimrc
 " Add comment above / below current line
 nnoremap gco o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>
 nnoremap gcO O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>
-" Add a "TODO" comment
-nnoremap gct o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>TODO: 
-nnoremap gcT O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>TODO: 
 
 if !has('nvim')
   " Vim only
