@@ -39,16 +39,6 @@ return {
   },
   keys = {
     {
-      '<C-p>',
-      function()
-        require('legendary').find {
-          filters = { require('legendary.filters').current_mode() },
-        }
-      end,
-      mode = 'n',
-      desc = 'Find Commands and Keymaps',
-    },
-    {
       '<leader>fk',
       function()
         require('legendary').find {
@@ -65,7 +55,7 @@ return {
       function()
         require('legendary').find {
           filters = {
-            require('legendary.filters').current_mode(),
+            -- require('legendary.filters').current_mode(),
             require('legendary.filters').commands(),
           },
         }

@@ -1,0 +1,63 @@
+breaking_changes = true
+issues = true
+emoji = true
+
+[[commit_types]]
+name = "feat"
+emoji = "✨"
+description = "A new feature."
+
+[[commit_types]]
+name = "fix"
+emoji = "🐛"
+description = "A bug fix."
+
+[[commit_types]]
+name = "chore"
+emoji = "🧹"
+description = "Non-code changes that don't modify src or test files."
+
+[[commit_types]]
+name = "docs"
+emoji = "📚"
+description = "Changes to documentation."
+
+[[commit_types]]
+name = "style"
+emoji = "💄"
+description = "Code changes related to style and format."
+
+[[commit_types]]
+name = "refactor"
+emoji = "♻️"
+description = "Code changes that neither fixes a bug nor adds a feature."
+
+[[commit_types]]
+name = "perf"
+emoji = "⚡"
+description = "Code changes that improves performance."
+
+[[commit_types]]
+name = "test"
+emoji = "✅"
+description = "Additions or modifications to tests."
+
+[[commit_types]]
+name = "build"
+emoji = "📦"
+description = "Changes that affect the build system or external dependencies."
+
+[[commit_types]]
+name = "change"
+emoji = "💩"
+description = "An opinionated, potentially breaking change."
+
+[[commit_types]]
+name = "ci"
+emoji = "🚀"
+description = "Changes to CI configuration."
+
+[[commit_types]]
+name = "revert"
+emoji = "⏪"
+description = "Reverts a previous commit."

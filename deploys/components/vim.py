@@ -6,5 +6,3 @@ link(".vimrc")
 link(".vim/vimrc.d")
 
 link(".config/nvim")
-
-link(".scratch.md", is_secret=True)

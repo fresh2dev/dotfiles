@@ -18,7 +18,7 @@ stty -ixon
 bindkey "^[[3~" delete-char
 
 # Start Zellij
-if [ -z "$ZELLIJ" ] && [ -z "$ZELLIJ_PROMPTED" ]; then
+if [ -z "$ZELLIJ_SESSION_NAME" ] && [ -z "$ZELLIJ_PROMPTED" ]; then
   read "resp?Start ZelliJ? (Y/n) "
   resp=${resp:-Y}
   export ZELLIJ_PROMPTED=1
@@ -46,6 +46,10 @@ alias devbox-cleanup='devbox run -- nix store gc --extra-experimental-features n
 
 if ! command -v pbcopy &>/dev/null; then
   alias pbcopy="xclip -selection clipboard"
+fi
+
+if command -v viddy &>/dev/null; then
+  alias watch="viddy"
 fi
 
 export VISUAL="nvim"
@@ -188,7 +192,7 @@ if [ -d "$HOME/.zsh/zsh-vi-mode" ]; then
   zvm_after_init_commands+=('zvm_bindkey vicmd "^R" _atuin_search')
   zvm_after_init_commands+=('zvm_bindkey viins "^R" _atuin_search')
 
-  if [ ! -z "$ZELLIJ" ]; then
+  if [ -n "$ZELLIJ_SESSION_NAME" ]; then
     zvm_after_init_commands+=('zvm_bindkey vicmd "^K" zsh_zellij_focus_up')
     zvm_after_init_commands+=('zvm_bindkey vicmd "^J" zsh_zellij_focus_down')
     zvm_after_init_commands+=('zvm_bindkey vicmd "^H" zsh_zellij_focus_left')
@@ -214,7 +218,7 @@ if command -v kubectl &>/dev/null; then
   source <(kubectl completion zsh)
 fi
 
-if [ -n "$ZELLIJ" ]; then
+if [ -n "$ZELLIJ_SESSION_NAME" ]; then
   # If in a Zellij instance...
   # On `cd`, set the Zellij tab name to the name of the git root or `pwd`.
   set_zellij_tab_name() {

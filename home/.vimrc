@@ -327,15 +327,6 @@ augroup END
 " xnoremap aL $o0
 " onoremap aL :normal vaL<cr>
 
-" " paste while retain original value and cursor position
-" " https://stackoverflow.com/a/7164121
-noremap p p`[
-noremap P P`[
-xnoremap p pgvy`[
-
-" dot-repeat and restore cursor position
-nnoremap . m`.``
-
 " Paste linewise above/below with optional reindentation.
 " Copied from tpope/vim-unimpaired.
 function! s:putline(how, map) abort
@@ -384,8 +375,8 @@ xmap S <Nop>
 " nmap ds sd
 " nmap cs sr
 
-" make Y act like D and C (yank to EOL)
-nmap Y y$
+" Mapping to open new tab
+nmap <leader>N :tabnew<CR>
 
 " change default split direction
 set splitright
@@ -416,7 +407,7 @@ set breakindent
 
 " don't mess with indenting comments
 set nosmartindent
-set cindent
+set cindent cinkeys-=0#
 
 " Wait indefinitely for next key.
 set notimeout ttimeout ttimeoutlen=50
@@ -541,6 +532,15 @@ nnoremap <silent> <esc> :nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>
 " vnoremap <silent> < <gv
 " vnoremap <silent> > >gv
 
+" " paste while retain original value and cursor position
+" " https://stackoverflow.com/a/7164121
+noremap p p`[
+noremap P P`[
+xnoremap p pgvy`[
+
+" dot-repeat and restore cursor position
+nnoremap . m`.``
+
 " Preserve cursor position on yank.
 " Inspired by: https://nanotipsforvim.prose.sh/sticky-yank
 let g:cursorPreYank = []
@@ -550,20 +550,22 @@ function! SetCursorPreYank()
   return 'y'
 endfunction
 
-nnoremap <expr> y SetCursorPreYank()
-xnoremap <expr> y SetCursorPreYank()
-
 function! SetCursorPreYankY()
   let g:cursorPreYank = getpos('.')
   return 'y$'
 endfunction
 
+nnoremap <expr> y SetCursorPreYank()
+xnoremap <expr> y SetCursorPreYank()
 nnoremap <expr> Y SetCursorPreYankY()
 
 augroup YankRestore
   autocmd!
   autocmd TextYankPost * if v:event['operator'] ==# 'y' && !empty(g:cursorPreYank) | call setpos('.', g:cursorPreYank) | endif
 augroup END
+
+" " make Y act like D and C (yank to EOL)
+" nmap Y y$
 
 """
 
@@ -632,12 +634,6 @@ else
     echo 'Installing Python packages...'
     call system([g:python3_host_prog, '-m', 'pip', 'install', 'pynvim'])
   endif
-endif
-
-" If not args are given to Vim, and it is opened at
-" either the root or home directory, open the Zoxide directory picker.
-if argc() == 0 && (getcwd() == expand('~') || getcwd() == '/')
-  call timer_start(0, {-> execute('Zi')})
 endif
 
 " Command to delete all git-related buffers

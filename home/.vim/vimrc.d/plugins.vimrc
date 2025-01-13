@@ -79,7 +79,7 @@ autocmd FileType fugitive nmap <buffer> <silent> dt :Gtabedit <Plug><cfile><Bar>
 let g:fugitive_no_maps = 1
 let g:fugitive_legacy_commands = 0
 
-cnoreabbrev <expr> g  (getcmdtype() ==# ':' && getcmdline() ==# 'g')  ? 'G'  : 'g'
+" cnoreabbrev <expr> g  (getcmdtype() ==# ':' && getcmdline() ==# 'g')  ? 'G'  : 'g'
 cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
 
 " Git-related mappings
@@ -114,8 +114,8 @@ Plug 'https://github.com/nanotee/zoxide.vim', { 'commit': 'b1e70b6fc1682a83929ae
 
 let g:zoxide_use_select = 1
 
-cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'z') ? 'Z' : 'z'
-cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'zi') ? 'Zi' : 'zi'
+" cnoreabbrev <expr> z (getcmdtype() ==# ':' && getcmdline() ==# 'z') ? 'Z' : 'z'
+cnoreabbrev <expr> zi (getcmdtype() ==# ':' && getcmdline() ==# 'zi') ? 'Zi' : 'zi'
 
 nnoremap <leader>zi :Zi<CR>
 
@@ -398,22 +398,22 @@ let g:matchup_matchparen_hi_surround_always = 1
 let g:matchup_motion_override_Npercent = 0
 
 " vim-zellij-navigator
-Plug 'https://gitea.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': '199e97469e52c08036bd19c7f69d379467b46004' }
+Plug 'https://forgejo.local.hostbutter.net/fresh2dev/zellij.vim', { 'commit': 'e5425ea646d57902f0eb68ab58e9abbd16382e10' }
 
-let g:zelli_navigator_move_focus_or_tab = 1
+" let g:zelli_navigator_move_focus_or_tab = 1
 
-" Open Zellij tab with `Alt+n`.
-execute "set <M-n>=\en"
-noremap <M-n> :ZellijNewTab<CR>
-" Open floating Zellij pane with `Alt+f`.
-execute "set <M-t>=\ef"
-noremap <M-t> :ZellijNewPane<CR>
-" Open Zellij pane below with `Alt+t`.
-execute "set <M-o>=\et"
-noremap <M-o> :ZellijNewPaneSplit<CR>
-" Open Zellij pane to the right with `Alt+v`.
-execute "set <M-v>=\ev"
-noremap <M-v> :ZellijNewPaneVSplit<CR>
+" " Open Zellij tab with `Alt+n`.
+" execute "set <M-n>=\en"
+" noremap <M-n> :ZellijNewTab<CR>
+" " Open floating Zellij pane with `Alt+f`.
+" execute "set <M-t>=\ef"
+" noremap <M-t> :ZellijNewPane<CR>
+" " Open Zellij pane below with `Alt+t`.
+" execute "set <M-o>=\et"
+" noremap <M-o> :ZellijNewPaneSplit<CR>
+" " Open Zellij pane to the right with `Alt+v`.
+" execute "set <M-v>=\ev"
+" noremap <M-v> :ZellijNewPaneVSplit<CR>
 
 " Run command in new ZelliJ floating pane.
 nnoremap <leader>zjrf :execute 'ZellijNewPane ' . input('Command: ')<CR>
@@ -436,14 +436,6 @@ Plug 'https://github.com/svermeulen/vim-subversive', { 'commit': '6286cda3f9222b
 " let g:subversivePromptWithCurrent = 1
 " let g:subversivePromptWithActualCommand = 1
 
-" These subversive mappings are handled by `mini.operators`
-nnoremap <leader>p <plug>(SubversiveSubstitute)
-xnoremap <leader>p <plug>(SubversiveSubstitute)
-" nnoremap -- ^<plug>(SubversiveSubstituteLine)
-nmap <leader>pp ^<leader>p$
-" nmap <leader>P <plug>(SubversiveSubstituteToEndOfLine)
-nmap <leader>P <leader>p$
-
 nnoremap <leader>cw <plug>(SubversiveSubstituteWordRange)
 xnoremap <leader>cw <plug>(SubversiveSubstituteRange)
 
@@ -457,6 +449,14 @@ if !has("nvim")
   let g:highlightedyank_highlight_duration = 333
 
   Plug 'https://github.com/junegunn/vim-peekaboo', { 'commit': 'cc4469c204099c73dd7534531fa8ba271f704831' }
+else
+  " These subversive mappings are handled by `mini.operators` in neovim.
+  nnoremap <leader>p <plug>(SubversiveSubstitute)
+  xnoremap <leader>p <plug>(SubversiveSubstitute)
+  " nnoremap -- ^<plug>(SubversiveSubstituteLine)
+  nmap <leader>pp 0<leader>p$==
+  " nmap <leader>P <plug>(SubversiveSubstituteToEndOfLine)
+  nmap <leader>P <leader>p$
 endif
 
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.

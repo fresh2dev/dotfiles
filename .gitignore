@@ -1,7 +1,7 @@
 /home-secrets/
 /.aider*
 .DS_Store
-home/.config/nvim/.vim/
-.aider*
 .env
-.vim-bookmarks
+home/.config/nvim/.vim/
+home/.config/karabiner/assets/
+home/.config/karabiner/automatic_backups/

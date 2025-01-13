@@ -132,6 +132,12 @@ tag           = "v1.6.0"
 
 ["artempyanykh/marksman"]
 tag           = "2023-12-09"
+asset_filters = [".tar.gz"]
+# file          = "*"
+# target        = "~/.local/bin/"
+
+["Feel-ix-343/markdown-oxide"]
+tag           = "v0.25.0"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
@@ -379,3 +385,10 @@ target        = "~/.local/bin/helm-dashboard"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
+
+["cococonscious/koji"]
+tag           = "v3.0.0"
+# asset_filters = [".tar.gz", "^.tar.gz."]
+# file          = "*"
+# target        = "~/.local/bin/koji"
+

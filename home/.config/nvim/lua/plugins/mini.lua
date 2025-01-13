@@ -120,8 +120,8 @@ return {
 
         -- Replace text with register
         replace = {
-          prefix = '',
-          -- prefix = '<leader>p',
+          -- prefix = '',
+          prefix = '<leader>p',
           -- Whether to reindent new text to match previous indent
           reindent_linewise = true,
         },
@@ -249,8 +249,8 @@ return {
           go_in_plus = '<CR>',
           go_out = '<BS>',
           go_out_plus = '',
-          mark_goto = '',
-          mark_set = '',
+          mark_goto = "'",
+          mark_set = 'M',
           reset = '<F5>',
           reveal_cwd = '@',
           show_help = 'g?',
@@ -272,7 +272,7 @@ return {
           -- Maximum number of windows to show side by side
           max_number = math.huge,
           -- Whether to show preview of file/directory under cursor
-          preview = false,
+          preview = true,
           -- Width of focused window
           width_focus = 50,
           -- Width of non-focused window
@@ -385,7 +385,13 @@ return {
     lazy = false,
     config = function()
       require('mini.surround').setup {
+
+        custom_surroundings = {
+          c = { input = { '```\n().-()\n```' }, output = { left = '```\n', right = '\n```' } },
+        },
+
         highlight_duration = 500,
+
         -- Map as is done in tpope/vim-surround
         mappings = {
           add = 'ys',
@@ -438,28 +444,35 @@ return {
     config = true,
     opts = {
       -- In which modes mappings from this `config` should be created
-      -- modes = { insert = true, command = false, terminal = false },
+      modes = { insert = true, command = false, terminal = false },
 
       -- Global mappings. Each right hand side should be a pair information, a
       -- table with at least these fields (see more in |MiniPairs.map|):
       -- - <action> - one of 'open', 'close', 'closeopen'.
       -- - <pair> - two character string for pair to be used.
+      -- {neigh_pattern} `(string|nil)` Pattern for two neighborhood characters.
+      --   Character "\r" indicates line start, "\n" - line end.
       -- By default pair is not inserted after `\`, quotes are not recognized by
       -- `<CR>`, `'` does not insert pair after a letter.
       -- Only parts of tables can be tweaked (others will use these defaults).
-      -- mappings = {
-      --   ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\].' },
-      --   ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\].' },
-      --   ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\].' },
-      --
-      --   [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].' },
-      --   [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].' },
-      --   ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].' },
-      --
-      --   ['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\].', register = { cr = false } },
-      --   ["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^%a\\].', register = { cr = false } },
-      --   ['`'] = { action = 'closeopen', pair = '``', neigh_pattern = '[^\\].', register = { cr = false } },
-      -- },
+      mappings = {
+        -- Only autopair at EOL.
+        -- ['('] = { action = 'open', pair = '()', neigh_pattern = '.\n' },
+        -- ['['] = { action = 'open', pair = '[]', neigh_pattern = '.\n' },
+        -- ['{'] = { action = 'open', pair = '{}', neigh_pattern = '.\n' },
+
+        ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\].' },
+        ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\].' },
+        ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\].' },
+
+        [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].' },
+        [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].' },
+        ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].' },
+
+        ['"'] = false,
+        ["'"] = false,
+        ['`'] = false,
+      },
     },
   },
   {

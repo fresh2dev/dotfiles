@@ -5,7 +5,7 @@ return {
   cmd = 'FzfLua',
   keys = {
     -- Disabled in favor of `legendary.nvim`
-    -- { '<C-p>', ':FzfLua<CR>', mode = 'n', desc = '[FZ]F Menu' },
+    { '<C-p>', ':FzfLua<CR>', mode = { 'n', 'i' }, desc = '[FZ]F Menu' },
     { '<leader>F', ':FzfLua<CR>', mode = 'n', desc = '[FZ]F Menu' },
     { '<leader>fa', ':FzfLua args<CR>', mode = 'n', desc = '[F]ZF [A]rgument List' },
     { '<leader>fh', ':FzfLua helptags<CR>', mode = 'n', desc = '[F]ZF [H]elptags' },
@@ -17,7 +17,8 @@ return {
     { '<leader>fs', ':FzfLua live_grep_glob<CR>', mode = 'n', desc = '[F]ZF Grep [S]earch' },
     { '<leader>fS', ':FzfLua live_grep_glob resume=true<CR>', mode = 'n', desc = '[F]ZF Resume Grep [S]earch' },
     -- Disabled in favor of `legendary.nvim`
-    -- { '<leader>fc', ':FzfLua changes<CR>', mode = 'n', desc = '[F]ZF File [C]hanges' },
+    { '<leader>fc', ':FzfLua commands<CR>', mode = 'n', desc = '[F]ZF File [C]hanges' },
+    { '<leader>fC', ':FzfLua command_history<CR>', mode = 'n', desc = '[F]ZF File [C]hanges' },
     { '<leader>fo', ':FzfLua oldfiles<CR>', mode = 'n', desc = '[F]ZF [O]ldfiles' },
     { '<leader>fb', ':FzfLua buffers sort_mru=true sort_lastused=true<CR>', mode = 'n', desc = '[F]ZF [B]uffers' },
     { '<leader>ft', ':FzfLua tabs<CR>', mode = 'n', desc = '[F]ZF [T]abs' },
@@ -38,9 +39,7 @@ return {
     local fzf = require 'fzf-lua'
     local actions = require 'fzf-lua.actions'
     fzf.setup {
-      -- 'fzf-vim',
       winopts = {
-        fullscreen = false, -- start fullscreen?
         preview = {
           layout = 'vertical',
           vertical = 'down:60%',
@@ -73,20 +72,21 @@ return {
           ['<S-left>'] = 'preview-page-reset',
         },
         fzf = {
-          -- This should be set in environment variable $FZF_DEFAULT_OPTS
           -- -- fzf '--bind=' options
-          -- ['ctrl-z'] = 'abort',
+          -- -- ['ctrl-z'] = 'abort',
           -- -- ['ctrl-u'] = 'unix-line-discard',
           -- ['ctrl-d'] = 'half-page-down',
           -- ['ctrl-u'] = 'half-page-up',
+          -- ['ctrl-f'] = 'preview-page-down',
+          -- ['ctrl-b'] = 'preview-page-up',
           -- -- ['ctrl-a'] = 'beginning-of-line',
           -- -- ['ctrl-e'] = 'end-of-line',
-          -- ['ctrl-a'] = 'toggle-all',
+          -- -- ['ctrl-a'] = 'toggle-all',
           -- -- Only valid with fzf previewers (bat/cat/git/etc)
           -- ['f3'] = 'toggle-preview-wrap',
           -- ['f4'] = 'toggle-preview',
-          -- ['shift-down'] = 'preview-page-down',
-          -- ['shift-up'] = 'preview-page-up',
+          -- ['shift-down'] = 'half-page-down',
+          -- ['shift-up'] = 'half-page-up',
         },
       },
       actions = {
@@ -170,6 +170,7 @@ return {
           -- inherits from 'actions.files', here we can override
           -- or set bind to 'false' to disable a default action
           -- action to toggle `--no-ignore`, requires fd or rg installed
+          ['ctrl-g'] = false,
           ['ctrl-r'] = { actions.toggle_ignore },
           -- uncomment to override `actions.file_edit_or_qf`
           --   ["default"]   = actions.file_edit,
@@ -329,7 +330,7 @@ return {
           -- this action toggles between 'grep' and 'live_grep'
           ['ctrl-g'] = { actions.grep_lgrep },
           -- uncomment to enable '.gitignore' toggle for grep
-          -- ['ctrl-r'] = { actions.toggle_ignore },
+          ['ctrl-r'] = { actions.toggle_ignore },
         },
         no_header = false, -- hide grep|cwd header?
         no_header_i = false, -- hide interactive header?

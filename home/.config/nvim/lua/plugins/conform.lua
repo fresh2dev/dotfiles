@@ -4,7 +4,7 @@ return {
   version = 'v8',
   lazy = false,
   event = { 'BufWritePre' },
-  cmd = { 'ConformInfo', 'FormatterEnable', 'FormatterDisable', 'FormatterToggle' },
+  cmd = { 'ConformInfo', 'ConformEnable', 'ConformDisable', 'ConformToggle' },
   config = function()
     require('conform').setup {
       -- Set up format-on-save
@@ -38,23 +38,23 @@ return {
       },
     }
 
-    vim.api.nvim_create_user_command('FormatterDisable', function()
+    vim.api.nvim_create_user_command('ConformDisable', function()
       vim.b.disable_autoformat = true
     end, {
       desc = 'Disable Formatter',
     })
 
-    vim.api.nvim_create_user_command('FormatterEnable', function()
+    vim.api.nvim_create_user_command('ConformEnable', function()
       vim.b.disable_autoformat = false
     end, {
       desc = 'Enable Formatter',
     })
 
-    vim.api.nvim_create_user_command('FormatterToggle', function()
+    vim.api.nvim_create_user_command('ConformToggle', function()
       if vim.b.disable_autoformat then
-        vim.cmd 'FormatterEnable'
+        vim.cmd 'ConformEnable'
       else
-        vim.cmd 'FormatterDisable'
+        vim.cmd 'ConformDisable'
       end
     end, {
       desc = 'Toggle Formatter',

@@ -1,1 +1,2 @@
-return { 'https://github.com/wakatime/vim-wakatime', lazy = false }
+return {}
+-- return { 'https://github.com/wakatime/vim-wakatime', lazy = false }

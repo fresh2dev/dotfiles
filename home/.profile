@@ -9,6 +9,7 @@ export EGET_BIN="$MY_TOOL_DIR"
 
 if [ -e '/opt/homebrew/bin/brew' ]; then
   eval $(/opt/homebrew/bin/brew shellenv)
+  export XDG_DATA_DIRS="${HOMEBREW_PREFIX}/share:${XDG_DATA_DIRS}"
 fi
 
 export PATH="${MY_TOOL_DIR}:${HOME}/.cargo/bin:${DEVBOX_GLOBAL_PREFIX}/bin:${PATH}"

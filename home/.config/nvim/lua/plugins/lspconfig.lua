@@ -25,8 +25,8 @@ return { -- LSP Configuration & Plugins
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          -- map('[d', vim.diagnostic.goto_prev, 'Go to previous [D]iagnostic message')
-          -- map(']d', vim.diagnostic.goto_next, 'Go to next [D]iagnostic message')
+          map('[d', vim.diagnostic.goto_prev, 'Go to previous [D]iagnostic message')
+          map(']d', vim.diagnostic.goto_next, 'Go to next [D]iagnostic message')
           map('<leader>ce', vim.diagnostic.open_float, 'Show diagnostic [E]rror messages')
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
@@ -80,9 +80,9 @@ return { -- LSP Configuration & Plugins
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           -- Toggle diagnostics
-          -- map('<leader>td', function()
-          --   vim.diagnostic[vim.diagnostic.is_enabled() and 'disable' or 'enable']()
-          -- end, '[T]oggle [D]iagnostics')
+          map('<leader>td', function()
+            vim.diagnostic[vim.diagnostic.is_enabled() and 'disable' or 'enable']()
+          end, '[T]oggle [D]iagnostics')
 
           -- Send code diagnostics to quickfix
           map('<leader>cq', vim.diagnostic.setloclist, '[C]ode diagnostics to [Q]uickfix (Buffer)')
@@ -100,6 +100,15 @@ return { -- LSP Configuration & Plugins
             -- if present, enable by default
             vim.lsp.inlay_hint.enable(true)
           end
+
+          -- setup Markdown Oxide daily note commands
+          -- if client and client.name == 'markdown_oxide' then
+          --   vim.api.nvim_create_user_command('Daily', function(args)
+          --     local input = args.args
+          --
+          --     vim.lsp.buf.execute_command { command = 'jump', arguments = { input } }
+          --   end, { desc = 'Open daily note', nargs = '*' })
+          -- end
         end,
       })
 
@@ -122,11 +131,6 @@ return { -- LSP Configuration & Plugins
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       --
       local servers = {
-        -- pyright,
-        -- yamlls = {},
-        -- clangd = {},
-        -- gopls = {},
-        -- tsserver = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         basedpyright = {
           filetypes = { 'python' },
@@ -151,9 +155,6 @@ return { -- LSP Configuration & Plugins
         rust_analyzer = {
           filetypes = { 'rust' },
         },
-        marksman = {
-          filetypes = { 'markdown' },
-        },
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -165,6 +166,19 @@ return { -- LSP Configuration & Plugins
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
+            },
+          },
+        },
+        -- marksman = {
+        --   filetypes = { 'markdown' },
+        -- },
+        markdown_oxide = {
+          filetypes = { 'markdown' },
+          capabilities = {
+            workspace = {
+              didChangeWatchedFiles = {
+                dynamicRegistration = true,
+              },
             },
           },
         },

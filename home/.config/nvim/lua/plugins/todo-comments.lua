@@ -7,7 +7,7 @@ return {
     signs = false,
     highlight = {
       pattern = '.*<(KEYWORDS):', -- pattern or table of patterns, used for highlighting (vim regex)
-      before = 'fg', -- "fg" or "bg" or empty
+      before = '', -- "fg" or "bg" or empty
       keyword = 'wide', -- "fg", "bg", "wide", "wide_bg", "wide_fg" or empty. (wide and wide_bg is the same as bg, but will also highlight surrounding characters, wide_fg acts accordingly but with fg)
       after = 'fg', -- "fg" or "bg" or empty
     },
@@ -55,18 +55,18 @@ return {
     },
     {
       'mm',
-      'm`O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>TODO: <esc>``',
-      desc = 'Mark with TODO comment',
+      'm`O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>TODO:<esc>``',
+      desc = 'Mark with TODO',
     },
     {
       'mi',
       'O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>TODO: ',
-      desc = 'Mark with TODO comment',
+      desc = 'Insert TODO comment',
     },
     {
       'mn',
       'O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>NOTE: ',
-      desc = 'Mark with NOTE comment',
+      desc = 'Insert NOTE comment',
     },
     {
       'm.',

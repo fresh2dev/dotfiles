@@ -59,7 +59,7 @@ commit_parsers = [
     { message = "^style\\(?[A-Za-z-_]*\\)?!?:", skip = true},
     { message = "^build\\(?[A-Za-z-_]*\\)?!?:", skip = true},
     { message = "^ci\\(?[A-Za-z-_]*\\)?!?:", skip = true},
-    { message = "^test\\(?[A-Za-z-_]*\\)?!?:", skip = true},
+    { message = "^tests?\\(?[A-Za-z-_]*\\)?!?:", skip = true},
     { message = "^[Mm]erge", skip = true},
     # group these
     # https://www.github.com/orhun/git-cliff/issues/9#issuecomment-914521594

@@ -1,4 +1,49 @@
 {
+  "Daily Note": {
+    "body": [
+      "---",
+      "title: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "tags:",
+      "  - daily",
+      "---",
+      "",
+      "> I laughed when...",
+      "",
+      "...",
+      "",
+      "> I was thankful when...",
+      "",
+      "...",
+      "",
+      "> I was disappointed when...",
+      "",
+      "...",
+      "",
+      "> Today I learned...",
+      "",
+      "...",
+      "",
+      "> Tomorrow I hope...",
+      "",
+      "..."
+    ],
+    "prefix": "Daily Note"
+  },
+  "Hugo Front Matter": {
+    "body": [
+      "---",
+      "title: '${1:UNTITLED}'",
+      "date: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "publishdate: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "lastmod: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "draft: ${2:false}",
+      "toc: ${3:true}",
+      "tags:",
+      "  - ${4:UNTAGGED}",
+      "---"
+    ],
+    "prefix": "Hugo Front Matter"
+  },
   "Insert Caution": {
     "body": "> [!CAUTION]\n> ",
     "description": "Insert Caution",

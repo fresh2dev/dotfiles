@@ -1,0 +1,99 @@
+---
+profiles:
+  - name: Default profile
+    selected: true
+    virtual_hid_keyboard:
+      keyboard_type_v2: ansi
+    complex_modifications:
+      parameters:
+        basic.simultaneous_threshold_milliseconds: 0
+      rules:
+        - description: Caps Lock → Hyper Key (⌃⌥⌘) (Escape if alone)
+          manipulators:
+            - type: basic
+              from:
+                key_code: caps_lock
+                modifiers:
+                  optional: [any]
+              to:
+                - key_code: left_command
+                  modifiers:
+                    - left_option
+                    - left_control
+              to_if_alone:
+                - key_code: escape
+        - description: Right Option → Meh Key (⌃⌥⇧) (Option if alone)
+          manipulators:
+            - type: basic
+              from:
+                key_code: right_option
+                modifiers:
+                  optional: [any]
+              to:
+                - key_code: left_shift
+                  modifiers:
+                    - left_option
+                    - left_control
+              to_if_alone:
+                - key_code: right_option
+        - description: Change hyper+(hjkl) to (←↓↑→) keys
+          manipulators:
+            - type: basic
+              from:
+                key_code: h
+                modifiers:
+                  mandatory:
+                    - left_command
+                    - left_option
+                    - left_control
+                  optional: [any]
+              to:
+                - key_code: left_arrow
+            - type: basic
+              from:
+                key_code: k
+                modifiers:
+                  mandatory:
+                    - left_command
+                    - left_option
+                    - left_control
+                  optional: [any]
+              to:
+                - key_code: up_arrow
+            - type: basic
+              from:
+                key_code: j
+                modifiers:
+                  mandatory:
+                    - left_command
+                    - left_option
+                    - left_control
+                  optional: [any]
+              to:
+                - key_code: down_arrow
+            - type: basic
+              from:
+                key_code: l
+                modifiers:
+                  mandatory:
+                    - left_command
+                    - left_option
+                    - left_control
+                  optional: [any]
+              to:
+                - key_code: right_arrow
+        - description: Left Shift + Right Shift → Caps Lock
+          enabled: false
+          manipulators:
+            - type: basic
+              from:
+                simultaneous:
+                  - key_code: "left_shift"
+                  - key_code: "right_shift"
+                modifiers:
+                  optional: [any]
+              to:
+                # https://karabiner-elements.pqrs.org/docs/json/complex-modifications-manipulator-definition/to/hold-down-milliseconds/
+                - key_code: caps_lock
+                  hold_down_milliseconds: 300
+                - key_code: "vk_none"

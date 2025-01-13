@@ -1,5 +1,6 @@
-# set arguments for all 'brew install --cask' commands
-# export HOMEBREW_CASK_OPTS="--appdir=$HOME/MyApplications"
+# Apply with `brew bundle --file ~/.Brewfile`
+
+# Set arguments for all 'brew install --cask' commands.
 cask_args appdir: "~/Applications", require_sha: true
 
 brew "curl"
@@ -15,8 +16,11 @@ brew "kubernetes-cli"
 brew "helm"
 brew "skopeo"
 
+brew "renovate"
+
 brew "ffmpeg"
 brew "pandoc"
+brew "lychee"
 brew "sshpass"
 brew "openssl@3"
 brew "yt-dlp"
@@ -41,7 +45,7 @@ cask "pinta"
 cask "obs"
 cask "ticktick"
 cask "vlc"
-cask "upscayl"
+# cask "upscayl"
 cask "cool-retro-term"
 
 brew "xclip" if OS.linux?

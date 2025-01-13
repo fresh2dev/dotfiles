@@ -89,8 +89,14 @@ return {
         ['<Down>'] = { 'select_next', 'fallback' },
       },
 
-      -- Disables keymaps, completions and signature help for these filetypes
-      blocked_filetypes = {},
+      -- Enables keymaps, completions and signature help when true
+      enabled = function()
+        return vim.bo.buftype ~= 'prompt'
+      end,
+      -- Example for blocking multiple filetypes
+      -- enabled = function()
+      --  return not vim.tbl_contains({ "lua", "markdown" }, vim.bo.filetype) and vim.bo.buftype ~= "prompt"
+      -- end,
 
       snippets = {
         -- Function to use when expanding LSP provided snippets
@@ -108,17 +114,6 @@ return {
       },
 
       completion = {
-        -- keyword = {
-        --   -- 'prefix' will fuzzy match on the text before the cursor
-        --   -- 'full' will fuzzy match on the text before *and* after the cursor
-        --   -- example: 'foo_|_bar' will match 'foo_' for 'prefix' and 'foo__bar' for 'full'
-        --   range = 'prefix',
-        --   -- Regex used to get the text when fuzzy matching
-        --   regex = '[-_]\\|\\k',
-        --   -- After matching with regex, any characters matching this regex at the prefix will be excluded
-        --   exclude_from_prefix_regex = '[\\-]',
-        -- },
-
         trigger = {
           -- When false, will not show the completion window automatically when in a snippet
           show_in_snippet = false,

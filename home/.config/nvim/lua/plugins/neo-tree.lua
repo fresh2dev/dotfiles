@@ -5,8 +5,8 @@ return {
   version = '*',
   cmd = 'Neotree',
   keys = {
-    { '<C-\\>', '<Cmd>Neotree toggle action=focus position=left<CR>', desc = '[B]uffer [S]idebar' },
-    { '<leader>bb', '<Cmd>Neotree toggle action=focus position=float<CR>', desc = '[B]uffer Explorer' },
+    { '<C-\\>', '<Cmd>Neotree action=focus position=left<CR>', desc = '[B]uffer [S]idebar' },
+    { '<leader>bb', '<Cmd>Neotree action=focus position=float<CR>', desc = '[B]uffer Explorer' },
   },
   dependencies = {
     'https://github.com/nvim-lua/plenary.nvim',
