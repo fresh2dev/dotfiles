@@ -14,9 +14,10 @@ import myke
 
 @myke.shell_task(parents=("os"))
 def upgrade():
+    # TODO: install/upgrade eget apps
     return [
         "brew bundle --file ~/.Brewfile",
-        "uv tool install --upgrade aider-chat",
+        "uv tool install --upgrade --force --python 3.12 aider-chat",
         # General Tools
         "uv tool install --upgrade --force asciinema",
         "uv tool install --upgrade --force b2",
@@ -291,7 +292,7 @@ def py_fix(*args: str):
                         if len(rule_violations_by_file) > 1:
                             print()
                             print(
-                                f"This rule is violated in {len(rule_violations_by_file)-1} other file(s)."
+                                f"This rule is violated in {len(rule_violations_by_file) - 1} other file(s)."
                             )
 
                         options: Dict[str, str] = {

@@ -1,6 +1,6 @@
 # [[manager.prepend_keymap]]
 # on   = "p"
-# run  = "plugin --sync hide-preview"
+# run  = "plugin hide-preview"
 # desc = "Hide or show preview"
 #
 # [[input.prepend_keymap]]
@@ -62,12 +62,12 @@ keymap = [
 	{ on = "<S-Down>", run = "seek 5",  desc = "Seek down 5 units in the preview" },
 
 	# Selection
-	# { on = "<Space>", run = [ "select --state=none", "arrow 1" ], desc = "Toggle the current selection state" },
-	{ on = "<Tab>", run = [ "select --state=none", "arrow 1" ], desc = "Toggle the current selection state" },
+	# { on = "<Space>", run = [ "toggle", "arrow 1" ], desc = "Toggle the current selection state" },
+	{ on = "<Tab>", run = [ "toggle", "arrow 1" ], desc = "Toggle the current selection state" },
 	# { on = "v",       run = "visual_mode",                        desc = "Enter visual mode (selection mode)" },
 	# { on = "V",       run = "visual_mode --unset",                desc = "Enter visual mode (unset mode)" },
-	{ on = "<C-a>",   run = "select_all --state=true",            desc = "Select all files" },
-	# { on = "<C-r>",   run = "select_all --state=none",            desc = "Inverse selection of all files" },
+	{ on = "<C-a>",   run = "toggle_all --state=on",            desc = "Select all files" },
+	# { on = "<C-r>",   run = "toggle_all",            desc = "Inverse selection of all files" },
 
 	# Operation
 	{ on = "o",         run = "open",                        desc = "Open selected files" },
@@ -103,7 +103,7 @@ keymap = [
 	# # Linemode
 	# { on = [ "m", "s" ], run = "linemode size",        desc = "Set linemode to size" },
 	# { on = [ "m", "p" ], run = "linemode permissions", desc = "Set linemode to permissions" },
-	# { on = [ "m", "c" ], run = "linemode ctime",       desc = "Set linemode to ctime" },
+	# { on = [ "m", "c" ], run = "linemode btime",       desc = "Set linemode to ctime" },
 	# { on = [ "m", "m" ], run = "linemode mtime",       desc = "Set linemode to mtime" },
 	# { on = [ "m", "o" ], run = "linemode owner",       desc = "Set linemode to owner" },
 	# { on = [ "m", "n" ], run = "linemode none",        desc = "Set linemode to none" },
@@ -124,10 +124,10 @@ keymap = [
 	# { on = "N", run = "find_arrow --previous",   desc = "Go to the previous found" },
 
 	# Sorting
-	# { on = [ "s", "m" ], run = [ "sort modified --reverse=no", "linemode mtime" ], desc = "Sort by modified time" },
-	{ on = [ "s", "m" ], run = [ "sort modified --reverse", "linemode mtime" ],    desc = "Sort by modified time (reverse)" },
-	# { on = [ "s", "c" ], run = [ "sort created --reverse=no", "linemode ctime" ],  desc = "Sort by created time" },
-	{ on = [ "s", "c" ], run = [ "sort created --reverse", "linemode ctime" ],     desc = "Sort by created time (reverse)" },
+	# { on = [ "s", "m" ], run = [ "sort mtime --reverse=no", "linemode mtime" ], desc = "Sort by modified time" },
+	{ on = [ "s", "m" ], run = [ "sort mtime --reverse", "linemode mtime" ],    desc = "Sort by modified time (reverse)" },
+	# { on = [ "s", "c" ], run = [ "sort btime --reverse=no", "linemode ctime" ],  desc = "Sort by created time" },
+	{ on = [ "s", "c" ], run = [ "sort btime --reverse", "linemode ctime" ],     desc = "Sort by created time (reverse)" },
 	# { on = [ "s", "e" ], run = "sort extension --reverse=no",                      desc = "Sort by extension" },
 	{ on = [ "s", "e" ], run = "sort extension --reverse",                         desc = "Sort by extension (reverse)" },
 	# { on = [ "s", "a" ], run = "sort alphabetical --reverse=no",                   desc = "Sort alphabetically" },
@@ -193,7 +193,7 @@ keymap = [
 	{ on = "<F1>", run = "help", desc = "Open help" },
 ]
 
-[select]
+[pick]
 
 keymap = [
 	{ on = "<Esc>",   run = "close",          desc = "Cancel selection" },

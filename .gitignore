@@ -1,7 +1,8 @@
-/home-secrets/
-/.aider*
 .DS_Store
 .env
-home/.config/nvim/.vim/
+/.aider*
+/home-secrets/
 home/.config/karabiner/assets/
 home/.config/karabiner/automatic_backups/
+home/.config/nvim/.vim/
+home/.config/zellij/plugins/*.wasm
