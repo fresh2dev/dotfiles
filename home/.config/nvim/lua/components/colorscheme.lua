@@ -44,10 +44,4 @@ return {
     'https://github.com/stevearc/dressing.nvim',
     opts = {},
   },
-  {
-    -- A fancy, configurable, notification manager for NeoVim
-    'https://github.com/rcarriga/nvim-notify',
-    version = 'v3',
-    opts = {},
-  },
 }

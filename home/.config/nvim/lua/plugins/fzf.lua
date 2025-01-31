@@ -10,7 +10,7 @@ return {
     { '<leader>fa', ':FzfLua args<CR>', mode = 'n', desc = '[F]ZF [A]rgument List' },
     { '<leader>fh', ':FzfLua helptags<CR>', mode = 'n', desc = '[F]ZF [H]elptags' },
     -- Disabled in favor of `legendary.nvim`
-    -- { '<leader>fk', ':FzfLua keymaps<CR>', mode = 'n', desc = '[F]ZF [K]eymaps' },
+    { '<leader>fk', ':FzfLua keymaps<CR>', mode = 'n', desc = '[F]ZF [K]eymaps' },
     { '<leader>ff', ':FzfLua files<CR>', mode = 'n', desc = '[F]ZF [F]iles' },
     { '<leader>fl', ':FzfLua blines<CR>', mode = 'n', desc = '[F]ZF [L]ines in Buffer' },
     { '<leader>fg', ':FzfLua git_bcommit<CR>', mode = 'n', desc = '[F]ZF [G]it Commits for Buffer' },
@@ -166,12 +166,15 @@ return {
         cwd_prompt_shorten_val = 1, -- shortened path parts length
         toggle_ignore_flag = '--no-ignore', -- flag toggled in `actions.toggle_ignore`
         toggle_hidden_flag = '--hidden', -- flag toggled in `actions.toggle_ignore`
+        toggle_follow_flag = '-L', -- flag toggled in `actions.toggle_follow`
+        hidden = true, -- enable hidden files by default
+        follow = false, -- do not follow symlinks by default
+        no_ignore = false, -- respect ".gitignore"  by default
         actions = {
           -- inherits from 'actions.files', here we can override
           -- or set bind to 'false' to disable a default action
           -- action to toggle `--no-ignore`, requires fd or rg installed
-          ['ctrl-g'] = false,
-          ['ctrl-r'] = { actions.toggle_ignore },
+          ['ctrl-g'] = { actions.toggle_ignore },
           -- uncomment to override `actions.file_edit_or_qf`
           --   ["default"]   = actions.file_edit,
           -- custom actions are available too
@@ -307,6 +310,9 @@ return {
         -- cmd            = "rg --vimgrep",
         grep_opts = '--binary-files=without-match --line-number --recursive --color=auto --perl-regexp -e',
         rg_opts = '--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --hidden --glob="!.git" --sort=path -e',
+        hidden = false, -- enable hidden files by default
+        follow = false, -- do not follow symlinks by default
+        no_ignore = false, -- respect ".gitignore"  by default
         -- Uncomment to use the rg config file `$RIPGREP_CONFIG_PATH`
         RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
         --
@@ -328,9 +334,9 @@ return {
         actions = {
           -- actions inherit from 'actions.files' and merge
           -- this action toggles between 'grep' and 'live_grep'
-          ['ctrl-g'] = { actions.grep_lgrep },
+          ['ctrl-s'] = { actions.grep_lgrep },
           -- uncomment to enable '.gitignore' toggle for grep
-          ['ctrl-r'] = { actions.toggle_ignore },
+          ['ctrl-g'] = { actions.toggle_ignore },
         },
         no_header = false, -- hide grep|cwd header?
         no_header_i = false, -- hide interactive header?

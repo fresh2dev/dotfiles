@@ -57,19 +57,17 @@ return { -- LSP Configuration & Plugins
           map('gra', vim.lsp.buf.code_action, 'Code Actions', { 'n', 'x' })
           map('<C-Space>', vim.lsp.buf.code_action, 'Code Actions', { 'n', 'x' })
           map('<leader>ca', vim.lsp.buf.code_action, 'Code Actions', { 'n', 'x' })
-
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
+          map('gri', ':FzfLua lsp_implementations<CR>', '[G]oto [I]mplementation')
           map('gI', ':FzfLua lsp_implementations<CR>', '[G]oto [I]mplementation')
-
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
           -- map('<leader>D', ':FzfLua lsp_typedefs<CR>', 'Type [D]efinition')
-          --
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          -- map('<leader>ds', ':FzfLua lsp_document_symbols<CR>', '[D]ocument [S]ymbols')
+          map('gO', ':FzfLua lsp_document_symbols<CR>', '[D]ocument [S]ymbols')
 
           -- -- Fuzzy find all the symbols in your current workspace.
           -- --  Similar to document symbols, except searches over your entire project.

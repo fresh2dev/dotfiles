@@ -181,7 +181,9 @@ return {
 
         -- Hunk range textobject to be used inside operator
         -- Works also in Visual mode if mapping differs from apply and reset
-        textobject = 'gd',
+        -- textobject = 'gd',
+        -- TODO: think of an intuitive, non-conflicting value to use here.
+        textobject = '',
 
         -- Go to hunk range in corresponding direction
         goto_first = '[H',
