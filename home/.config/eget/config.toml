@@ -262,6 +262,12 @@ tag           = "0.5.26"
 # file          = "*"
 # target        = "~/.local/bin/"
 
+["quarylabs/sqruff"]
+tag           = "v0.24.3"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
 ["kubernetes/kompose"]
 tag           = "v1.32.0"
 # asset_filters = [".tar.gz", "^.tar.gz.tar.gz"]
