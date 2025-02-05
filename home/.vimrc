@@ -173,10 +173,10 @@ nnoremap <silent> <expr> <Up> (v:count == 0 ? 'gk' : 'k')
 xnoremap <silent> <expr> <Up> (v:count == 0 ? 'gk' : 'k')
 
 " " Smart way to resize windows.
-nmap <C-Up> :resize +2<CR>
-nmap <C-Down> :resize -2<CR>
-nmap <C-Left> :vertical resize -2<CR>
-nmap <C-Right> :vertical resize +2<CR>
+" nmap <C-Up> :resize +2<CR>
+" nmap <C-Down> :resize -2<CR>
+" nmap <C-Left> :vertical resize -2<CR>
+" nmap <C-Right> :vertical resize +2<CR>
 
 " Search inside visual selection
 xnoremap g/ <esc>/\%V

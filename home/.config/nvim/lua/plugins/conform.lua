@@ -24,6 +24,8 @@ return {
         rust = { 'rustfmt' },
         markdown = { 'mdformat' },
         sql = { 'sqruff' },
+        go = { 'gofmt' },
+        gomod = { 'gofmt' },
         -- Use the "_" filetype to run formatters on filetypes that don't
         -- have other formatters configured.
         -- ['_'] = { 'trim_whitespace', 'trim_newlines' },

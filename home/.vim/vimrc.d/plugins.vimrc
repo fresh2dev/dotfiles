@@ -86,8 +86,8 @@ cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' 
 
 " Git-related mappings
 " Open Fugitive with git log split right.
+nnoremap <leader>G :0Git \| normal i<CR>
 nnoremap <leader>gg :Git \| vertical Git log --graph --oneline --decorate \| wincmd p \| normal i<CR>
-nnoremap <leader>gG :0Git \| normal i<CR>
 " Open new tab containing Fugitive with git log split bottom.
 nnoremap <leader>gt :tabnew \| 0Git \| Git log --graph --oneline --decorate \| wincmd p \| normal i<CR>
 " Close all windows and open Fugitive with git log split bottom.
@@ -104,11 +104,7 @@ nnoremap <leader>gd :tab split \| Gvdiffsplit \| wincmd l<CR>
 " "Git Revisions" Populate quickfix with past revisions of current file.
 nnoremap <leader>gr :1,$GcLog!<CR>
 xnoremap <leader>gr :GcLog!<CR>
-nnoremap <leader>gss :Git stash save<CR>
-nnoremap <leader>gsp :Git stash pop<CR>
-nnoremap <leader>gsa :Git stash apply<CR>
-nnoremap <leader>gsx :Git stash clear<CR>
-nnoremap <leader>gS :Git fetch --all \| Git pull \| Git fetch origin main:main \| Git rebase main<CR>
+nnoremap <leader>gS :Git sync<CR>
 nnoremap <leader>gp :Git push -u origin<CR>
 nnoremap <leader>gP :Git push -fu origin<CR>
 
@@ -128,12 +124,7 @@ let g:conflict_marker_enable_mappings = 0
 nnoremap ]x :ConflictMarkerNextHunk<CR>
 nnoremap [x :ConflictMarkerPrevHunk<CR>
 
-nnoremap <leader>dG :diffget<CR>
-nnoremap <leader>dgh :ConflictMarkerOurselves<CR>
-nnoremap <leader>dgl :ConflictMarkerThemselves<CR>
-nnoremap <leader>dga :ConflictMarkerBoth<CR>
-nnoremap <leader>dgA :ConflictMarkerBoth!<CR>
-nnoremap <leader>dgd :ConflictMarkerNone<CR>
+nnoremap <leader>dg :diffget<CR>
 
 " Heuristically set buffer options
 Plug 'https://github.com/tpope/vim-sleuth', { 'commit': '1cc4557420f215d02c4d2645a748a816c220e99b' }
