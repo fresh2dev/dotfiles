@@ -54,11 +54,13 @@ if command -v viddy &>/dev/null; then
   alias watch="viddy"
 fi
 
-export VISUAL="nvim"
-export EDITOR=$VISUAL
-alias e='$EDITOR'
-alias v='$VISUAL'
-alias nv="nvim"
+if [ -n "$NVIM" ]; then
+  alias nvim='nvr -cc split --remote-wait \+"set bufhidden=wipe"'
+fi
+export VISUAL=nvim
+export EDITOR=nvim
+alias e=$EDITOR
+alias v=$VISUAL
 
 alias g=git
 alias G=git
@@ -103,6 +105,8 @@ export RIPGREP_CONFIG_PATH="$HOME/.config/ripgreprc"
 export GIT_CLIFF_CONFIG="$HOME/.config/git-cliff/cliff.toml"
 export EGET_CONFIG="$HOME/.config/eget/config.toml"
 export YAMLFIX_CONFIG_PATH="$HOME/.config/yamlfix"
+export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/theme.yml"
+alias lg=lazygit
 
 alias act-up='DOCKER_HOST="unix:///var/run/user/$(id -u)/podman/podman.sock" act --workflows .gitea/workflows --defaultbranch $(git config --global --get init.defaultBranch) --container-daemon-socket "unix:///var/run/user/$(id -u)/podman/podman.sock" --container-options="--pid=host --privileged" --bind'
 

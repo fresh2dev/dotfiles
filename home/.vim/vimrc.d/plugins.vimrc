@@ -66,8 +66,10 @@ Plug 'https://github.com/tpope/vim-fugitive', { 'commit': '0444df68cd1cdabc7453d
 autocmd VimEnter * silent! Gcd
 
 " Quit fugitive with `q`:
-" autocmd FileType fugitive,fugitiveblame nmap <buffer> q gq
 autocmd FileType fugitive,fugitiveblame,floggraph nmap <buffer> q gq
+" always delete hidden buffers of these types,
+" so git never waits for them to close.
+autocmd FileType gitcommit,gitrebase set bufhidden=delete
 autocmd FileType git nmap <buffer> q :close<CR>
 " `<CR>` opens blame in new split:
 autocmd FileType fugitiveblame nmap <buffer> <CR> o

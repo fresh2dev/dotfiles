@@ -76,7 +76,7 @@ plugins {
         // Enabled at start?
         is_enabled true
         // Lock when any open these programs open.
-        triggers "nvim|vim|git|fzf|zoxide|atuin|nano README.md"
+        triggers "vim|nvim|git|fzf|zoxide|atuin|git|lazygit"
         // Reaction to input occurs after this many seconds.
         // (An existing scheduled reaction prevents additional reactions.)
         reaction_seconds "0.3"
