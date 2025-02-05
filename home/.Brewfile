@@ -20,13 +20,14 @@ cask_args appdir: "~/Applications" if OS.mac?
 
 brew "go@1.23"
 
+brew "rustup"
+# `rustup default stable`
+# `ln -s $(dirname $(rustup which cargo))/* "${CARGO_HOME:-~/.cargo}/bin/"`
+
 brew "curl"
 brew "wget"
-brew "eget"
 brew "zsh"
 brew "vim"
-brew "eza"
-brew "btop"
 brew "neovim"
 
 brew "kubernetes-cli"
@@ -41,19 +42,12 @@ brew "pandoc"
 brew "sshpass"
 brew "openssl@3"
 
-brew "yt-dlp"
-brew "lychee"
-
 brew "figlet"
 brew "boxes"
 brew "lolcat"
 
 brew "lua-language-server"
 brew "universal-ctags"
-
-cask "alacritty"
-cask "neovide"
-cask "gitup"
 
 cask "angry-ip-scanner"
 cask "db-browser-for-sqlite"
