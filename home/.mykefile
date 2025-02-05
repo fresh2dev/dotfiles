@@ -94,6 +94,9 @@ def apps_upgrade(
         cargo_install("tealdeer@1.7.1")
         cargo_install("koji@3.2.0")
         cargo_install("sqruff@0.24.3")
+        cargo_install("git-graph@0.6.0")
+        cargo_install("gfold@4.6.0")
+
         # cargo_install(
         #     "--git",
         #     "https://github.com/feel-ix-343/markdown-oxide",

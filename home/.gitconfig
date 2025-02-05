@@ -23,7 +23,7 @@
     light = false
     navigate = true
     line-numbers = true
-    side-by-side = true
+    side-by-side = false
 [color]
     ui = true
     pager = true
@@ -53,10 +53,6 @@
     colorMoved = default
     algorithm = histogram
 [alias]
-    aliases = "!f() { \
-                git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /; \
-            }; f"
-
     is-repo = !git status --porcelain >/dev/null 2>&1
 
     pwd = !(git is-repo && git rev-parse --show-toplevel) || pwd
@@ -65,51 +61,19 @@
                 git is-repo && test -z \"$(git status --porcelain)\"; \
             }; f"
 
-    find = "!f() { \
-        fd '.git' --type d --hidden \"$@\" --exec dirname | grep -v '\\.git/modules/\\?' | sort -u; \
-        }; f"
-    f = find
+    fd = !gfold --display-mode classic
 
     authors = shortlog --summary --numbered --email --all
 
-    ##################################################
-    # List branches.
-    ##################################################
-    b = branch
-
-    track-origin = "!f() { \
-        git fetch --all --prune && \
-        git branch --format='%(refname:short)' | while read -r x; do \
-            git branch $x -u origin/$x $@; \
-        done; \
+    ref = rev-parse --short=8 HEAD
+    # Init commit sha
+    ref0 = "!f() { \
+                git rev-list --all --max-parents=0 HEAD | tail -n1 | cut -c 1-7; \
             }; f"
 
-    ##################################################
-    # Forcefully delete branch from remotes and local.
-    # "brrm" == "branch remove"
-    # > git brrm <branch>
-    ##################################################
-    b-rm = "!f() { \
-                git remote | while read -r remote; do \
-                    git push --delete $remote ${1} || true; \
-                done \
-                && git branch -D ${1:?}; \
-            }; f"
-
-    ##################################################
-    # Print the current branch.
-    # "pwb" == "present-working branch"
-    # > git pwb
-    ##################################################
-    pwb = branch --show-current
-
-    ##################################################
-    # Print default branch as defined in .gitconfig.
-    # "b-default" == "default branch"
-    # > git b-default
-    ##################################################
-    b-default = config --global --get init.defaultBranch
-
+    # Rewrite author emails according to .gitmailmap.
+    # Requires `git-filter-repo`
+    mailmap = !([ -f "$HOME/.gitmailmap" ] || echo 'New Name <new@mail.com> <old@mail.com>' > "$HOME/.gitmailmap") && ${EDITOR:-vim} "$HOME/.gitmailmap" && git filter-repo --force --mailmap "$HOME/.gitmailmap"
 
     ##################################################
     # Revert/undo/BURN uncommitted and untracked.
@@ -118,310 +82,110 @@
     burn = !git reset --hard && git clean -fd
 
     ##################################################
-    # Run git pre-commit script
-    # > git pre-commit
+    # Branch ops
     ##################################################
-    ; pre-commit = "!f() { \
-    ;     sh $(git config --global --get core.hooksPath)/pre-commit; \
-    ;         }; f"
-    pre-commit = !pre-commit run --all-files
-    pc = pre-commit
+    b = branch --show-current
+    ba = branch
+    bd = branch --delete
+
+    co = checkout
+    cob = switch --create
 
     ##################################################
-    # Commit
+    # Commit ops
     ##################################################
-    c = commit
+    cc = commit
+    cvc = commit --verbose
+    ca = commit --amend
+    cva = command --verbose --amend
+    ce = command --amend --no-edit
+    cf = fixup
+    cs = squash
+    cr = revert
+    crc = revert --no-edit
+    crn = revert --no-commit
+    cm = merge --commit
+
+    ##################################################
+    # Stash ops
+    ##################################################
+    czz = stash push
+    czw = stash push --keep-index
+    czs = stash push --staged
+    cza = stash apply --index
+    czp = stash pop --index
+    czl = stash list
+    czd = stash drop
+    czx = stash clear
+
+    ##################################################
+    # Push ops
+    ##################################################
     p = push
     po = push origin -u
-
-    squash = "!f() { \
-        git commit --no-edit --squash ${1:-HEAD} && git rbi ${1:-HEAD~}~; \
-            }; f"
-    sq = squash
-    fixup = "!f() { \
-        git commit --no-edit --fixup ${1:-HEAD} && git rbi ${1:-HEAD~}~; \
-            }; f"
-    fu = fixup
-
-    ##################################################
-    # Print latest commit SHA.
-    # "c-sha" == "commit sha"
-    # > git c-sha
-    ##################################################
-    c-sha = rev-parse --short=8 HEAD
-
-    ##################################################
-    # Print first commit SHA.
-    # "c-sha0" == "commit sha zero"
-    # > git c-sha0
-    ##################################################
-    c-sha0 = "!f() { \
-                git rev-list --all --max-parents=0 HEAD | tail -n1 | cut -c 1-7; \
-            }; f"
-
-    ##################################################
-    # Checkout ref.
-    # "cho" == "checkout"
-    # > git cho <name>
-    ##################################################
-    cho = checkout
-
-    ##################################################
-    # Checkout new branch.
-    # "chob" == "checkout branch"
-    # > git chob <name>
-    ##################################################
-    chob = switch --create
-
-    ##################################################
-    # Checkout new branch; destroy if already exists.
-    # "chox" == "checkout branch destroy"
-    # > git chox <name>
-    ##################################################
-    chox = switch --force-create
-
-    ##################################################
-    # Alias for 'git cherry-pick'
-    # "cp" == "cherry pick"
-    # > git cp ...
-    ##################################################
-    cp = cherry-pick
-    rb = rebase
-    rbi = rebase --autosquash --interactive
-    sync = !git fetch --all --prune && (git pull origin $(git pwb) &>/dev/null || true) && git fetch origin main:main && git rebase main
-
-    ##################################################
-    # Init the repo, commit all changes, and
-    # creating both 'default' and 'dev' branches.
-    # "init-commit" == "init quick"
-    # > git init-commit
-    ##################################################
-    init-commit = ![ ! -d ".git" ] && git init && git add . && (git pre-commit || true) && git commit -m 'init [skip ci]' && git chob dev
-
-    ##################################################
-    # Show compact diff.
-    # "dif" == "short diff"
-    # > git dif
-    ##################################################
-    dif = diff --compact-summary
-
-    ##################################################
-    # Show diff of a single file in 2-pane difftool.
-    # "diff2" == "diff 2-pane"
-    # > git diff2 <file>
-    ##################################################
-    diff2 = "!f() { \
-                git difftool --no-prompt ${1:?}; \
-            }; f"
-
-    ##################################################
-    # Show reachable commits in a graph.
-    # "g" == "graph"
-    # > git g
-    ##################################################
-    # https://stackoverflow.com/a/34467298
-    graph = log --graph --decorate --oneline
-    g = graph
-    ga = graph --all
-    od = "!f() { \
-        git g ${1:-$(git pwb)} --not ${2:-origin/$(git pwb)}; \
-        }; f"
-
-    l = log --graph --decorate --abbrev-commit --format=format:'%C(bold yellow)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
-    la = l --all
-    lv = log --pretty=fuller
-    ld = gd
-
-    ##################################################
-    # List current status, diffs, and graph of recent.
-    # "ls" == "list"
-    # > git ls
-    ##################################################
-    ls = "!f() { \
-                printf '___\nSTAGED:\n' && git stgdif \
-                && printf '___\nUNSTAGED:\n' && git dif \
-                && printf '___\nUNTRACKED:\n' && git ls-untracked \
-                && printf '___\nSTASHED:\n' && git stash list \
-                && printf '___\nUNPUSHED:\n' && git od \
-                && printf '___\nRECENT:\n' && git g -n3 \
-                && printf '___\n'; \
-            }; f"
-
-    ##################################################
-    # Watch current status, diffs, and graph of recent.
-    # "w" == "watch"
-    # > git w
-    ##################################################
-    watch = !viddy -n 3 --no-title 'echo $(date +%T) && git ls && echo "TREE:" && git g --all -n 10'
-
-    ##################################################
-    # List untracked files.
-    # "ls-untracked" == "list untracked"
-    # > git ls-untracked
-    ##################################################
-    ls-untracked = ls-files --others --exclude-standard
-
-    ##################################################
-    # Merge branch.
-    # "mgc" == "merge"
-    # > git mg <branch>
-    ##################################################
-    mg = merge --no-ff --commit --no-edit --stat
-
-    mg-ff = merge --ff-only --commit --no-edit --stat
-
-    ##################################################
-    # Print the URL of the given remote.
-    # "rem" == "remote"
-    # > git rem <remote>
-    ##################################################
-    rem = "!f() { \
-                git config --get \"remote.${1:-origin}.url\"; \
-            }; f"
-
-    ##################################################
-    # Print the project name of this repo,
-    # according to the given remote.
-    # "proj" == "project"
-    # > git proj <remote>
-    ##################################################
-    proj = "!f() { \
-                git rem $@ | rev | cut -d'/' -f1,2 | rev; \
-            }; f"
-
-    ##################################################
-    # Push to all remotes
-    # > git up
-    ##################################################
     push-everywhere = "!f() { \
                 git remote | while read -r remote; do \
                     echo -n \"${remote}: \" && git push $remote $@; \
                 done; \
             }; f"
-
-    push-releases = "!f() { \
-                git push-everywhere $(git b-default) $@ \
-                && git push-everywhere --tags $@; \
-            }; f"
+    pe = push-everywhere
 
     ##################################################
-    # Stash all
-    # "sa" == "stash all"
-    # > git sa
+    # Rebase ops
     ##################################################
-    sa = stash --include-untracked
+    ri = rebase --interactive
+    rf = rebase --autosquash
+    rr = rebase --continue
+    rs = rebase --skip
+    ra = rebase --abort
+    re = rebase --edit-todo
 
     ##################################################
-    # Stash unstaged
-    # "su" == "stash unstaged"
-    # > git su
+    # Fetch ops
     ##################################################
-    su = sa --keep-index
+    f = fetch
+    fa = fetch --all --prune
+
+    sync = !git fetch --all --prune && (git pull origin $(git b) &>/dev/null || true) && git fetch origin main:main && git rebase main
 
     ##################################################
-    # List stashes.
-    # "sl" == "stash list"
-    # > git sl
+    # Merge ops
     ##################################################
-    sl = stash list -p
+    m = merge
+    mf = merge --ff-only --no-commit --stat
+    ms = merge --squash --no-commit --stat
+    cmf = merge --ff-only --commit --stat
+    cms = merge --squash --commit --stat
 
     ##################################################
-    # Stash pop
-    # "sp" == "stash pop"
-    # > git sp
+    # Log / Graph ops
     ##################################################
-    sp = stash pop
+    g = log --graph --decorate --oneline
+    ga = log --graph --decorate --oneline --all
+    gl = log --graph --decorate --oneline --all --decorate-refs-exclude=refs/remotes
+    gla = log --graph --decorate --oneline --all --decorate-refs-exclude=refs/remotes --all
+    gac = log --graph --decorate --oneline --all --pretty=oneline --no-abbrev
+    l = log --graph --decorate --abbrev-commit --format=format:'%C(bold yellow)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    la = log --graph --decorate --abbrev-commit --format=format:'%C(bold yellow)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'all
 
     ##################################################
-    # List removed stashes.
-    # "sr" == "stash recover"
-    # > git sr
+    # Tag ops
     ##################################################
-    sr = !git fsck --unreachable | grep commit | cut -d\\  -f3 | xargs git log --merges --no-walk --grep=WIP
+    t = tag
+    # List tags, sorted by version.
+    tv = tag --list --sort=-v:refname
+    # List tags, verbose.
+    tvv = tag --list --format='%(refname:lstrip=2) -> %(objectname:short) - %(contents:lines=1)' --sort=-creatordate;
 
-    ##################################################
-    # Clear/DESTROY all stashes.
-    # "sx" == "stash destroy"
-    # > git sx
-    ##################################################
-    sx = stash clear
-
-    ##################################################
-    # Interactively add modifications to stage.
-    # "stgi" == "stage interactive"
-    # > git stgi
-    ##################################################
-    stgi = stage --patch
-
-    ##################################################
-    # Show diff of files in stage.
-    # "stgdiff" == "stage diff"
-    # > git stgdiff
-    ##################################################
-    stgdiff = diff --staged
-
-    ##################################################
-    # Show short diff of files in stage.
-    # "stgdif" == "stage short diff"
-    # > git stgdif
-    ##################################################
-    stgdif = stgdiff --compact-summary
-
-    ##################################################
-    # List tags.
-    # "tag-ls" == "tag list"
-    # > git tagls
-    ##################################################
-    tag-ls = tag --list --format='%(refname:lstrip=2) -> %(objectname:short) - %(contents:lines=1)' --sort=-creatordate;
-
-    ##################################################
     # List latest tag preceeding HEAD.
-    # "taglsl" == "tag list latest"
-    # > git taglsl
-    ##################################################
-    tag-latest = !git tag --sort=committerdate | tail -n1
+    tl = !git tag --sort=committerdate | tail -n1
 
-    ##################################################
-    # Remove a tag.
-    # "tagrm" == "tag remove"
-    # > git tagrm <tag>
-    ##################################################
-    tag-rm = "!f() { \
+    # Remove a tag from local and remotes.
+    td = "!f() { \
                 git remote | while read -r remote; do \
                     git push --delete $remote ${1} || true; \
                 done \
                 && git tag --delete ${1:?}; \
             }; f"
 
-    ##################################################
-    # List tags, sorted by version.
-    # > git tag-sort
-    ##################################################
-    tag-sort = tag --list --sort=-v:refname
 
-    ##################################################
-    # Rewrite author emails according to .gitmailmap.
-    # > git mailmap
-    ##################################################
-    # requires: sudo apt install git-filter-repo
-    mailmap = !([ -f "$HOME/.gitmailmap" ] || echo 'New Name <new@mail.com> <old@mail.com>' > "$HOME/.gitmailmap") && ${EDITOR:-vim} "$HOME/.gitmailmap" && git filter-repo --force --mailmap "$HOME/.gitmailmap"
-
-
-    # `git merge-repo FlyLikeAPenguin:fix-function-as-type git@github.com:FlyLikeAPenguin/argparse-tui.git`
-    # `git rebase-repo FlyLikeAPenguin:fix-function-as-type git@github.com:FlyLikeAPenguin/argparse-tui.git`
-    repo-operation = "!f() { \
-        operation=$1; \
-        user_branch=$2; \
-        remote_url=$3; \
-        shift 3; \
-        remote_name=$(echo $user_branch | cut -d\":\" -f1); \
-        branch_name=$(echo $user_branch | cut -d\":\" -f2); \
-        git remote remove $remote_name 2>/dev/null; \
-        git remote add $remote_name $remote_url && \
-        git fetch $remote_name $branch_name && \
-        git $operation $@ $remote_name/$branch_name; \
-        git remote remove $remote_name; \
-        }; f"
-    
-    merge-repo = "!git repo-operation merge"
-    rebase-repo = "!git repo-operation rebase"

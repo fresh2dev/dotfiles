@@ -2,13 +2,30 @@ return {
   'https://github.com/sindrets/diffview.nvim',
   cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
   keys = {
-    { '<leader>gD', ':DiffviewOpen<CR>', mode = 'n', desc = '[G]it [D]iff View' },
+    { '<leader>gd', ':DiffviewOpen<CR>', mode = 'n', desc = '[G]it [D]iff View' },
     -- { '<leader>gR', ':DiffviewFileHistory %<CR>', mode = 'n', desc = '[G]it [F]ile History for File or Selection' },
     { '<leader>gR', ':DiffviewFileHistory %<CR>', mode = 'n', desc = '[G]it [F]ile History' },
   },
   config = function()
     local actions = require 'diffview.actions'
     require('diffview').setup {
+      hooks = {
+        view_opened = function()
+          -- Close the file panel when a new view opens.
+          require('diffview.actions').close()
+        end,
+      },
+      view = {
+        merge_tool = {
+          layout = 'diff3_mixed',
+        },
+      },
+      file_panel = {
+        listing_style = 'list',
+        win_config = {
+          width = 25,
+        },
+      },
       keymaps = {
         disable_defaults = true, -- Disable the default keymaps
         view = {
@@ -68,9 +85,9 @@ return {
           { 'n', 'l', actions.select_entry, { desc = 'Open the diff for the selected entry' } },
           { 'n', '<2-LeftMouse>', actions.select_entry, { desc = 'Open the diff for the selected entry' } },
           { 'n', '-', actions.toggle_stage_entry, { desc = 'Stage / unstage the selected entry' } },
-          { 'n', 's', actions.toggle_stage_entry, { desc = 'Stage / unstage the selected entry' } },
-          { 'n', 'S', actions.stage_all, { desc = 'Stage all entries' } },
-          { 'n', 'U', actions.unstage_all, { desc = 'Unstage all entries' } },
+          -- { 'n', 's', actions.toggle_stage_entry, { desc = 'Stage / unstage the selected entry' } },
+          -- { 'n', 'S', actions.stage_all, { desc = 'Stage all entries' } },
+          -- { 'n', 'U', actions.unstage_all, { desc = 'Unstage all entries' } },
           { 'n', 'X', actions.restore_entry, { desc = 'Restore entry to the state on the left side' } },
           { 'n', 'L', actions.open_commit_log, { desc = 'Open the commit log panel' } },
           { 'n', 'zo', actions.open_fold, { desc = 'Expand fold' } },
