@@ -17,6 +17,8 @@ stty -ixon
 # ref: https://github.com/alacritty/alacritty/issues/3494#issuecomment-601664944
 bindkey "^[[3~" delete-char
 
+export TERM="xterm-256color"
+
 # Start Zellij
 if [ -z "$ZELLIJ_SESSION_NAME" ] && [ -z "$ZELLIJ_PROMPTED" ]; then
   read "resp?Start ZelliJ? (Y/n) "

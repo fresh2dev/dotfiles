@@ -4,104 +4,8 @@ show_hash    = false
 upgrade_only = true
 target       = "~/.local/bin"
 
-# ["zyedidia/eget"]
-# tag           = "v1.3.4"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-# ["jetpack-io/devbox"]
-# tag           = "0.10.7"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-# ["neovide/neovide"]
-# tag           = "0.13.3"
-# # asset_filters = [".tar.gz", "^.zip"]
-# # file          = "*"
-# # target        = "~/.local/bin/"
-
-["BurntSushi/ripgrep"]
-tag           = "14.1.1"
-# asset_filters = [".tar.gz", "^.zip"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["junegunn/fzf"]
-tag           = "v0.58.0"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["sharkdp/fd"]
-tag           = "v10.2.0"
-# asset_filters = ["musl"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["sharkdp/bat"]
-tag           = "v0.25.0"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["sharkdp/pastel"]
-tag           = "v0.10.0"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["dandavison/delta"]
-tag           = "0.18.2"
-# asset_filters = ["musl"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-# ["eza-community/eza"]
-# tag           = "v0.19.0"
-# asset_filters = ["musl.tar.gz"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["koalaman/shellcheck"]
-tag           = "v0.10.0"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["mvdan/sh"]
-tag           = "v3.10.0"
-# asset_filters = []
-# file          = "*"
-target        = "~/.local/bin/shfmt"
-
-["crate-ci/typos"]
-tag           = "v1.29.5"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["JohnnyMorganz/StyLua"]
-tag           = "v2.0.2"
-# asset_filters = ["musl"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["atuinsh/atuin"]
-tag           = "v18.4.0"
-asset_filters = ["tar.gz"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["aristocratos/btop"]
-tag           = "v1.3.2"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["orf/gping"]
-tag           = "gping-v1.19.0"
+["astral-sh/uv"]
+tag           = "0.6.2"
 # asset_filters = ["musl"]
 # file          = "*"
 # target        = "~/.local/bin/"
@@ -112,21 +16,15 @@ tag           = "jq-1.7.1"
 # file          = "*"
 # target        = "~/.local/bin/"
 
-["charmbracelet/gum"]
-tag           = "v0.15.2"
-asset_filters = [".tar.gz", "^sbom"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["charmbracelet/glow"]
-tag           = "v2.0.0"
+["koalaman/shellcheck"]
+tag           = "v0.10.0"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
 
-["charmbracelet/mods"]
-tag           = "v1.7.0"
-asset_filters = [".tar.gz", "^sbom"]
+["JohnnyMorganz/StyLua"]
+tag           = "v2.0.2"
+# asset_filters = ["musl"]
 # file          = "*"
 # target        = "~/.local/bin/"
 
@@ -138,66 +36,12 @@ tag           = "2024-12-18"
 
 ["Feel-ix-343/markdown-oxide"]
 tag           = "v0.25.0"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["sxyazi/yazi"]
-tag           = "v0.4.2"
-# asset_filters = ["musl"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["ajeetdsouza/zoxide"]
-tag           = "v0.9.6"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["starship/starship"]
-tag           = "v1.22.1"
-# asset_filters = ["musl"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-# ["neovim/neovim"]
-# tag           = "v0.10.1"
-# # asset_filters = []
-# # file          = "*"
-# # target        = "~/.local/bin/"
-
-["gohugoio/hugo"]
-tag           = "v0.142.0"
-asset_filters = ["_extended_", ".tar.gz", "^withdeploy"]
+asset_filters = ['.tar.gz']
 # file          = "*"
 # target        = "~/.local/bin/"
 
 ["direnv/direnv"]
 tag           = "v2.35.0"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-# ["openfaas/faas-cli"]
-# tag           = "0.16.21"
-# # asset_filters = []
-# # file          = "*"
-# # target        = "~/.local/bin/"
-
-["orhun/git-cliff"]
-tag           = "v2.8.0"
-asset_filters = ["^.sha512", "^.sig"]
-# file          = "*"
-target        = "~/.local/bin/git-cliff"
-
-# ["moncho/dry"]
-# tag           = "v0.11.2"
-# # asset_filters = []
-# # file          = "*"
-# # target        = "~/.local/bin/"
-
-["sachaos/viddy"]
-tag           = "v1.3.0"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
@@ -208,41 +52,11 @@ tag           = "v0.2.71"
 # file          = "*"
 # target        = "~/.local/bin/"
 
-["zellij-org/zellij"]
-tag           = "v0.41.2"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["helmwave/helmwave"]
-tag           = "v0.41.8"
-asset_filters = ["helmwave_"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["hairyhenderson/gomplate"]
-tag           = "v4.3.0"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-# ["arttor/helmify"]
-# tag           = "v0.4.10"
-# # asset_filters = []
-# # file          = "*"
-# # target        = "~/.local/bin/"
-
 ["hadolint/hadolint"]
 tag           = "v2.12.0"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
-
-# ["devspace-sh/devspace"]
-# tag           = "v6.3.12"
-# # asset_filters = []
-# # file          = "*"
-# # target        = "~/.local/bin/"
 
 ["marp-team/marp-cli"]
 tag           = "v4.1.1"
@@ -250,41 +64,17 @@ tag           = "v4.1.1"
 # file          = "*"
 # target        = "~/.local/bin/"
 
-["mikefarah/yq"]
-tag           = "v4.45.1"
-asset_filters = [".tar.gz"]
-file          = "yq_*"
-target        = "~/.local/bin/yq"
-
-["astral-sh/uv"]
-tag           = "0.5.26"
-# asset_filters = ["musl"]
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["quarylabs/sqruff"]
-tag           = "v0.24.3"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
-
-["kubernetes/kompose"]
-tag           = "v1.32.0"
-# asset_filters = [".tar.gz", "^.tar.gz.tar.gz"]
-# file          = "*"
-target        = "~/.local/bin/kompose"
-
-["hetznercloud/cli"]
-tag           = "v1.50.0"
-# asset_filters = [".tar.gz", "^.tar.gz.tar.gz"]
-file          = "hcloud"
-# target        = "~/.local/bin/hcloud"
-
 ["cli/cli"]
 tag           = "v2.66.0"
 # asset_filters = [".tar.gz", "^.tar.gz.tar.gz"]
 file          = "gh"
 # target        = "~/.local/bin/gh"
+
+# ["jetpack-io/devbox"]
+# tag           = "0.10.7"
+# asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
 
 # ["ahmetb/kubectx"]
 # tag           = "v0.9.5"
@@ -321,12 +111,6 @@ file          = "gh"
 # # asset_filters = []
 # # file          = "*"
 # target        = "~/.local/bin/kubectl-kexp"
-
-["derailed/k9s"]
-tag           = "v0.32.7"
-asset_filters = [".tar.gz", "^sbom"]
-# file          = "*"
-# target        = "~/.local/bin/"
 
 # ["kubescape/kubescape"]
 # tag           = "v3.0.3"
@@ -376,12 +160,6 @@ asset_filters = [".tar.gz", "^sbom"]
 # # file          = "*"
 # target        = "~/.local/bin/kubectl-deprecations"
 
-# ["komodorio/helm-dashboard"]
-# tag           = "v1.3.3"
-# # asset_filters = []
-# # file          = "*"
-# target        = "~/.local/bin/helm-dashboard"
-
 # ["https://get.helm.sh/helm-v3.14.4-linux-amd64.tar.gz"]
 # # asset_filters = []
 # file          = "helm"
@@ -391,10 +169,4 @@ asset_filters = [".tar.gz", "^sbom"]
 # # asset_filters = []
 # # file          = "*"
 # # target        = "~/.local/bin/"
-
-["cococonscious/koji"]
-tag           = "v3.2.0"
-# asset_filters = [".tar.gz", "^.tar.gz."]
-# file          = "*"
-# target        = "~/.local/bin/koji"
 

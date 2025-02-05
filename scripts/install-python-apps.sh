@@ -13,10 +13,10 @@ ln -sf "$BIN_DIR/python3.13" "$BIN_DIR/python3"
 ln -sf "$BIN_DIR/python3" "$BIN_DIR/python"
 
 uv tool install --upgrade myke
-# uv tool install --upgrade hostbutter
-# uv tool install --upgrade figbox
 
-myke os upgrade
+myke --help
+
+# myke apps upgrade
 
 # uv tool install --upgrade pipx
 #

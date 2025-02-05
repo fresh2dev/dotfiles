@@ -1,51 +1,223 @@
 #!/usr/bin/env python3
+from pathlib import Path
 
 
 import myke
+from sh import brew, uv, go, eget, cargo, python
+from typing import Optional, Annotated
+import os
+import sys
 
-#  @myke.shell_task(parents=("os"))
-#  def install_pyenv():
-#      return [
-#          'export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"',
-#          '[ -d "$PYENV_ROOT" ] || git clone --depth=1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}"'
-#          '"$PYENV_ROOT/bin/pyenv" install --skip-existing 3.7 3.8 3.9 3.10 3.11 3.12',
-#      ]
+brew = brew.bake(_fg=True)
+eget = eget.bake(_fg=True)
+go = go.bake(_fg=True)
+cargo = cargo.bake(_fg=True)
+uv = uv.bake(_fg=True)
+python = python.bake(_fg=True)
 
 
-@myke.shell_task(parents=("os"))
-def upgrade():
-    # TODO: install/upgrade eget apps
-    return [
-        "brew bundle --file ~/.Brewfile",
-        "uv tool install --upgrade --force --python 3.12 aider-chat",
-        # General Tools
-        "uv tool install --upgrade --force asciinema",
-        "uv tool install --upgrade --force b2",
-        "uv tool install --upgrade --force copier",
-        "uv tool install --upgrade --force grip",
+@myke.task(parents=("scripts"))
+def rename_dirty_files(
+    *args: str, dry_run: Annotated[bool, myke.arg("--dry-run/--no-dry-run")] = True
+):
+    from urllib.parse import unquote
+
+    if not args:
+        if not sys.stdin.isatty():
+            args = sys.stdin  # type: ignore
+        else:
+            args = tuple(str(x) for x in Path.cwd().glob("*.*") if x.is_file())
+
+    for x in args:
+        path: Path = Path(x.rstrip(os.linesep))
+        new_path: Path = path.parent / unquote(path.name).strip().strip("\"'")
+        if not path.name == new_path.name:
+            if new_path.exists():
+                raise FileExistsError(new_path)
+
+            print(path.relative_to(Path.cwd()))
+            print("-->", new_path.relative_to(Path.cwd()))
+
+            if not dry_run:
+                path.rename(new_path)
+
+
+@myke.task(parents=("apps"), name="upgrade")
+def apps_upgrade(
+    include_brew: Annotated[Optional[bool], myke.arg("--brew")] = None,
+    include_rust: Annotated[Optional[bool], myke.arg("--rust")] = None,
+    include_python: Annotated[Optional[bool], myke.arg("--python")] = None,
+    include_go: Annotated[Optional[bool], myke.arg("--go")] = None,
+    include_eget: Annotated[Optional[bool], myke.arg("--eget")] = None,
+):
+    if not any(
+        [
+            include_brew,
+            include_python,
+            include_go,
+            include_go,
+            include_rust,
+            include_eget,
+        ]
+    ):
+        include_brew = include_rust = include_python = include_go = True
+        include_eget = False
+
+    if include_brew:
+        brew("bundle", "install", "--upgrade", "--file", "~/.Brewfile")
+
+    if include_rust:
+        cargo_install = cargo.bake("binstall", "-y")
+        cargo("install", "cargo-binstall")
+        cargo("install", "cargo-cache")
+        cargo_install("ripgrep@14.1.1")
+        cargo_install("bat@0.25.0")
+        cargo_install("pastel@0.10.0")
+        cargo_install("git-delta@0.18.2")
+        cargo_install("typos-cli@1.29.5")
+        cargo_install("atuin@18.4.0")
+        cargo_install("bottom@0.10.2")
+        cargo_install("gping@1.19.0")
+        cargo_install("du-dust@1.1.1")
+        cargo_install("inlyne@0.5.0")
+        cargo_install("git-cliff@2.8.0")
+        cargo_install("zoxide@0.9.6")
+        cargo_install("eza@0.20.19")
+        cargo_install("starship@1.22.1")
+        cargo_install("yazi-fm@0.4.2", "yazi-cli@0.4.2")
+        cargo_install("viddy@1.3.0")
+        cargo_install("zellij@0.41.2")
+        cargo_install("tokei@13.0.0-alpha.8")
+        cargo_install("lychee@0.18.0")
+        cargo_install("alacritty@0.15.0")
+        cargo_install("neovide@0.14.0")
+        cargo_install("tealdeer@1.7.1")
+        cargo_install("koji@3.2.0")
+        cargo_install("sqruff@0.24.3")
+        # cargo_install(
+        #     "--git",
+        #     "https://github.com/feel-ix-343/markdown-oxide",
+        #     "markdown-oxide@0.25.0",
+        # )
+
+    if include_go:
+        go_install = go.bake("install")
+        go_install("github.com/zyedidia/eget@v1.3.4")
+        go_install("golang.org/x/tools/gopls@latest")
+        go_install("golang.org/x/tools/cmd/goimports@latest")
+        go_install("mvdan.cc/gofumpt@latest")
+        go_install("mvdan.cc/sh/v3/cmd/shfmt@latest")
+        go_install("github.com/jesseduffield/lazygit@v0.45.2")
+        go_install("honnef.co/go/tools/cmd/staticcheck@latest")
+        go_install("github.com/junegunn/fzf@v0.59.0")
+        go_install("github.com/danielmiessler/fabric@v1.4.131")
+        go_install("github.com/charmbracelet/gum@v0.15.2")
+        go_install("github.com/charmbracelet/glow@latest")
+        go_install("github.com/hairyhenderson/gomplate/v4/cmd/gomplate@v4.3.0")
+        go_install("github.com/helmwave/helmwave/cmd/helmwave@v0.41.8")
+        go_install("github.com/derailed/k9s@v0.32.7")
+        go_install("github.com/hetznercloud/cli/cmd/hcloud@v1.50.0")
+        go_install("github.com/kubernetes/kompose@v1.32.0")
+        go_install("github.com/mikefarah/yq/v4@v4.45.1")
+        go_install(
+            "github.com/charmbracelet/mods@9ad048aa5517843894d91bb8571e6c41d7ab774a"
+        )
+        go_install(
+            "-tags",
+            "extended",
+            "github.com/gohugoio/hugo@v0.142.0",
+            _env={**os.environ, "CGO_ENABLED": "1"},
+        )
+        # https://golangci-lint.run
+        # go_install("github.com/golangci/golangci-lint/cmd/golangci-lint@v1.63.4")
+
+    if include_python:
+        uv_install = uv.bake("tool", "install", "--upgrade", "--force")
+        uv_install("--python=3.12", "aider-chat")
+        uv_install("asciinema")
+        uv_install("b2")
+        uv_install("copier")
+        # uv_install("grip")
+        uv_install("git-filter-repo")
+        uv_install("jupyterlab")
+        uv_install("pyinfra")
+        uv_install("pre-commit")
+        uv_install("yamllint")
+        uv_install("poetry")
+        uv_install("basedpyright")
+        uv_install("ruff")
+        uv_install("--with", "tox-uv", "tox")
+        uv_install("docsig")
+        uv_install("yt-dlp[default]")
+        uv_install("neovim-remote")
+        uv_install("mac-cleanup")
+        uv_install(
+            "--with",
+            "mdformat-mkdocs",
+            "--with",
+            "mdformat-tables",
+            "--with",
+            "mdformat-admon",
+            "--with",
+            "mdformat-deflist",
+            "--with",
+            "mdformat-footnote",
+            "--with",
+            "mdformat-frontmatter",
+            "--with",
+            "mdformat-ruff",
+            "--with",
+            "mdformat-shfmt",
+            "mdformat",
+        )
+        uv_install(
+            "--with",
+            "mkdocs-material",
+            "--with",
+            "mkdocs-jupyter",
+            "--with",
+            "mkdocstrings[python]",
+            "--with",
+            "black",
+            "--with",
+            "mkdocs-include-dir-to-nav",
+            "mkdocs",
+        )
         # pipx upgrade --install figbox
-        "uv tool install --upgrade --force git-filter-repo",
-        # pipx upgrade --install gnome-extensions-cli
         # pipx upgrade --install hostbutter
-        "uv tool install --upgrade --force jupyterlab",
-        "uv tool install --upgrade --force --with mkdocs-material --with mkdocs-jupyter --with 'mkdocstrings[python]' --with black --with mkdocs-include-dir-to-nav mkdocs",
-        "uv tool install --upgrade --force --with mdformat-mkdocs --with mdformat-tables --with mdformat-admon --with mdformat-deflist --with mdformat-footnote --with mdformat-frontmatter --with mdformat-ruff --with mdformat-shfmt mdformat",
-        "uv tool install --upgrade --force pyinfra",
-        "uv tool install --upgrade --force pre-commit",
         # pipx upgrade --install myke
-        # uv tool install --upgrade yamlfix
-        "uv tool install --upgrade --force yamllint",
-        # Python Dev Tools
-        "uv tool install --upgrade --force basedpyright",
-        "uv tool install --upgrade --force ruff",
-        "uv tool install --with tox-uv --upgrade --force tox",
-        "uv tool install --upgrade --force docsig",
-        # "pipx install -f --include-deps 'ansible==9.*'",
-        # "pipx install -f --include-deps 'jupyterlab'",
-    ]
+        # pipx upgrade --install ripgrep-ext
+
+    if include_eget:
+        # TODO: install/upgrade eget apps
+        raise NotImplementedError
 
 
-#  @myke.shell_task(
+@myke.task(parents=("apps"), name="cache-clear")
+def cache_clear(
+    include_brew: Annotated[Optional[bool], myke.arg("--brew")] = None,
+    include_rust: Annotated[Optional[bool], myke.arg("--rust")] = None,
+    include_python: Annotated[Optional[bool], myke.arg("--python")] = None,
+    include_go: Annotated[Optional[bool], myke.arg("--go")] = None,
+):
+    if not any([include_brew, include_python, include_go, include_go, include_rust]):
+        include_brew = include_python = include_go = include_eget = True
+
+    if include_brew:
+        brew("cleanup")
+
+    if include_rust:
+        cargo("cargo", "cache", "--autoclean-expensive")
+
+    if include_go:
+        go("clean", "--cache")
+
+    if include_python:
+        uv("cache", "clean")
+        python("-m", "pip", "cache", "purge")
+
+
+#  @myke.task(
 #      parents=("os"), env_update={"EGET_BIN": str(Path.home() / ".local" / "bin")}
 #  )
 #  def install_eget_apps():
@@ -99,7 +271,7 @@ def upgrade():
 #      ]
 
 
-#  @myke.shell_task(parents=("os"))
+#  @myke.task(parents=("os"))
 #  def install_distrobox():
 #      return [
 #          "[ -d /tmp/distrobox ] || git clone --depth=1 https://www.github.com/89luca89/distrobox.git /tmp/distrobox",
@@ -108,22 +280,7 @@ def upgrade():
 #      ]
 
 
-#  @myke.shell_task(parents=("os"))
-#  def update():
-#      install_pyenv()
-#      return [
-#          "devbox global update",
-#      ]
-
-
-#  @myke.shell_task(parents=("os"))
-#  def hello(name):
-#      return [
-#          f"echo Hello {name}",
-#      ]
-
-
-@myke.task(name="fix", parents=("py"))
+@myke.task(parents=("py"), name="fix")
 def py_fix(*args: str):
     import json
     import subprocess

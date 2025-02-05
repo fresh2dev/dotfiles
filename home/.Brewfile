@@ -20,13 +20,14 @@ cask_args appdir: "~/Applications" if OS.mac?
 
 brew "go@1.23"
 
+brew "rustup"
+# `rustup default stable`
+# `ln -s $(dirname $(rustup which cargo))/* "${CARGO_HOME:-~/.cargo}/bin/"`
+
 brew "curl"
 brew "wget"
-brew "eget"
 brew "zsh"
 brew "vim"
-brew "eza"
-brew "btop"
 brew "neovim"
 
 brew "kubernetes-cli"
@@ -41,19 +42,12 @@ brew "pandoc"
 brew "sshpass"
 brew "openssl@3"
 
-brew "yt-dlp"
-brew "lychee"
-
 brew "figlet"
 brew "boxes"
 brew "lolcat"
 
 brew "lua-language-server"
 brew "universal-ctags"
-
-cask "alacritty"
-cask "neovide"
-cask "gitup"
 
 cask "angry-ip-scanner"
 cask "db-browser-for-sqlite"
@@ -68,6 +62,18 @@ cask "mullvadvpn"
 
 cask "font-im-writing-nerd-font"
 
+cask "lm-studio"
+cask "jan"
+
+# cask "ollama"
+# Expose server with:
+# (On Mac)
+# `launchctl setenv OLLAMA_HOST "0.0.0.0:11434"`
+# (On Linux)
+# `systemctl edit ollama.service`
+# [Service]
+# Environment="OLLAMA_HOST=0.0.0.0:11434"
+
 if OS.linux?
     brew "xclip"
 
@@ -80,16 +86,24 @@ elsif OS.mac?
     brew "coreutils"
 
     cask "orbstack"
+    cask "boltai"
+    # cask "ollamac"
+
     cask "vmware-fusion"
-    # cask "karabiner-elements"
+    # cask "karabiner-elements"  # Removed in favor of `SuperKey`
     cask "keycastr"
     cask "pearcleaner"
 
     cask "scroll-reverser"
+
     cask "orion"
 
     # https://librewolf.net/docs/faq/#why-is-librewolf-marked-as-broken
     # cask "librewolf", args: {'no-quarantine': true} if OS.mac?
+
+    cask "amethyst"
+    cask "alt-tab"
+    cask "stats"
 
     # Licensed MacOS apps:
     cask "airbuddy"
