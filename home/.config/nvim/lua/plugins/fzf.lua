@@ -16,6 +16,7 @@ return {
     { '<leader>fg', ':FzfLua git_bcommit<CR>', mode = 'n', desc = '[F]ZF [G]it Commits for Buffer' },
     { '<leader>fs', ':FzfLua live_grep_glob<CR>', mode = 'n', desc = '[F]ZF Grep [S]earch' },
     { '<leader>fS', ':FzfLua live_grep_glob resume=true<CR>', mode = 'n', desc = '[F]ZF Resume Grep [S]earch' },
+    { '<leader>fs', ':FzfLua grep_visual<CR>', mode = 'x', desc = '[F]ZF Grep [S]earch Selection' },
     -- Disabled in favor of `legendary.nvim`
     { '<leader>fc', ':FzfLua commands<CR>', mode = 'n', desc = '[F]ZF File [C]hanges' },
     { '<leader>fC', ':FzfLua command_history<CR>', mode = 'n', desc = '[F]ZF File [C]hanges' },
@@ -33,7 +34,7 @@ return {
     { '<leader>fd', ':FzfLua diagnostics_document<CR>', mode = 'n', { desc = '[F]ZF Document [D]iagnostics' } },
     { '<leader>fD', ':FzfLua diagnostics_workspace<CR>', mode = 'n', { desc = '[F]ZF Workspace [D]iagnostics' } },
     { '<leader>fq', ':FzfLua quickfix<CR>', mode = 'n', { desc = '[F]ZF [Q]uickfix' } },
-    { '<leader>fQ', ':FzfLua loclist<CR>', mode = 'n', { desc = '[F]ZF [Q]uickfix Stack' } },
+    { '<leader>fQ', ':FzfLua lgrep_quickfix<CR>', mode = 'n', { desc = '[F]ZF [Q]uickfix Contents' } },
   },
   config = function()
     local fzf = require 'fzf-lua'

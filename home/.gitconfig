@@ -44,12 +44,21 @@
 [push]
     autoSetupRemote = true
 [merge]
+    tool = diffview
     conflictStyle = zdiff3
-    tool = vimdiff3
     autoStash = true
-[diff]
+[mergetool]
     prompt = false
-    tool = vimdiff3
+    keepBackup = false
+[mergetool "diffview"]
+  cmd = nvim -c "DiffviewOpen" "$MERGE"
+[diff]
+    tool = nvimdiff
+[difftool]
+    prompt = false
+[difftool "nvimdiff"]
+    ; TODO: Why do I have to explicitly call `diffthis`?
+    cmd = nvim -d "$LOCAL" "$REMOTE" -c 'windo diffthis'
     colorMoved = default
     algorithm = histogram
 [alias]

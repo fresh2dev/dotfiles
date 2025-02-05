@@ -70,6 +70,9 @@ set incsearch
 " Don't redraw while executing macros (good performance config)
 set lazyredraw
 
+" Don't evaluate modelines
+set nomodeline
+
 " For regular expressions turn magic on
 set magic
 
@@ -173,10 +176,10 @@ nnoremap <silent> <expr> <Up> (v:count == 0 ? 'gk' : 'k')
 xnoremap <silent> <expr> <Up> (v:count == 0 ? 'gk' : 'k')
 
 " " Smart way to resize windows.
-nmap <C-Up> :resize +2<CR>
-nmap <C-Down> :resize -2<CR>
-nmap <C-Left> :vertical resize -2<CR>
-nmap <C-Right> :vertical resize +2<CR>
+" nmap <C-Up> :resize +2<CR>
+" nmap <C-Down> :resize -2<CR>
+" nmap <C-Left> :vertical resize -2<CR>
+" nmap <C-Right> :vertical resize +2<CR>
 
 " Search inside visual selection
 xnoremap g/ <esc>/\%V

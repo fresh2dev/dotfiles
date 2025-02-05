@@ -167,6 +167,20 @@ return { -- LSP Configuration & Plugins
             },
           },
         },
+        gopls = {
+          -- cmd = {...},
+          filetypes = { 'go', 'gomod' },
+          -- capabilities = {},
+          settings = {
+            gopls = {
+              analyses = {
+                unusedparams = true,
+              },
+              staticcheck = true,
+              gofumpt = true,
+            },
+          },
+        },
         -- marksman = {
         --   filetypes = { 'markdown' },
         -- },

@@ -6,10 +6,10 @@ return {
   config = function()
     local lint = require 'lint'
     lint.linters_by_ft = {
-      markdown = { 'typos' },
-      dockerfile = { 'hadolint' },
-      yaml = { 'yamllint' },
-      sh = { 'shellcheck' },
+      -- markdown = { 'typos' },
+      -- dockerfile = { 'hadolint' },
+      -- yaml = { 'yamllint' },
+      -- sh = { 'shellcheck' },
     }
 
     -- Create autocommand which carries out the actual linting

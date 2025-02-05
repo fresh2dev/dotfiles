@@ -5,7 +5,9 @@ return {
     keys = {
       { 'zl', "<cmd>lua require('fold-cycle').open()<CR>", mode = 'n', { silent = true } },
       { 'zh', "<cmd>lua require('fold-cycle').close()<CR>", mode = 'n', { silent = true } },
-      { '<Tab>', "<cmd>lua require('fold-cycle').open()<CR>", mode = 'n', { silent = true } },
+      -- Mapping tab overrides the native behavior of `<C-I>` =/
+      -- { '<C-I>', '<C-I>', mode = 'n', { silent = true } },
+      -- { '<Tab>', "<cmd>lua require('fold-cycle').open()<CR>", mode = 'n', { silent = true } },
       { '<BS>', "<cmd>lua require('fold-cycle').close()<CR>", mode = 'n', { silent = true } },
     },
     opts = {
