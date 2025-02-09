@@ -106,7 +106,7 @@ layout {
                 border_format   "#[fg=#6C7086]{char}"
                 border_position "top"
 
-                hide_frame_for_single_pane "true"
+                // hide_frame_for_single_pane "true"  // Handled by `zjframes`
 
                 mode_normal        "#[bg=#8aadf4,fg=#181926,bold] NORMAL#[bg=#181926,fg=#8aadf4]"
                 mode_locked        "#[bg=#6e738d,fg=#181926,bold] LOCKED #[bg=#181926,fg=#6e738d]"
@@ -141,14 +141,14 @@ layout {
                 tab_fullscreen_indicator " 󰊓"
                 tab_floating_indicator   " 󰹙"
 
-                command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                command_git_branch_format      "#[fg=blue] {stdout} "
-                command_git_branch_interval    "10"
-                command_git_branch_rendermode  "static"
+                // command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
+                // command_git_branch_format      "#[fg=blue] {stdout} "
+                // command_git_branch_interval    "10"
+                // command_git_branch_rendermode  "static"
 
-                datetime        "#[fg=#6C7086,bold] {format} "
-                datetime_format "%A, %d %b %Y %H:%M"
-                datetime_timezone "Europe/Berlin"
+                // datetime        "#[fg=#6C7086,bold] {format} "
+                // datetime_format "%A, %d %b %Y %H:%M"
+                // datetime_timezone "Europe/Berlin"
             }
         }
         children

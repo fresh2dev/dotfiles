@@ -8,54 +8,11 @@ plugins {
     zjframes location="file:~/.config/zellij/plugins/zjframes.wasm" {
         hide_frame_for_single_pane       "true"
         hide_frame_except_for_search     "true"
+        hide_frame_except_for_scroll     "true"
         hide_frame_except_for_fullscreen "true"
     }
 
-    status-bar location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-        format_left "{tabs}"
-        format_right  "#[fg=#89B4FA,bold]{session} | {mode} "
-        // format_center "{tabs}"
-        // format_right  "{command_git_branch} {datetime}"
-        // format_right  "{datetime}"
-        format_space  ""
-
-        border_enabled  "false"
-        border_char     "─"
-        border_format   "#[fg=#6C7086]{char}"
-        border_position "bottom"
-
-        // hide_frame_for_single_pane "true"
-
-        mode_normal        "#[fg=green,bold]{name}"
-        mode_locked        "#[fg=orange,bold]{name}"
-
-        // formatting for inactive tabs
-        tab_normal              "#[fg=#6C7086] [{index}] {name} "
-        tab_normal_fullscreen   "#[fg=#6C7086] [{index}] {name} [] "
-        tab_normal_sync         "#[fg=#6C7086] [{index}] {name} <> "
-
-        // formatting for the current active tab
-        tab_active              "#[fg=#9399B2,bold] [{index}] {name} {floating_indicator}"
-        tab_active_fullscreen   "#[fg=#9399B2,bold] [{index}] {name} {fullscreen_indicator}"
-        tab_active_sync         "#[fg=#9399B2,bold] [{index}] {name} {sync_indicator}"
-
-        // separator between the tabs
-        tab_separator           "#[fg=#6C7086,bg=#181825] | "
-
-        // indicators
-        tab_sync_indicator       "<> "
-        tab_fullscreen_indicator "[] "
-        tab_floating_indicator   "⬚ "
-
-        // command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-        // command_git_branch_format      "#[fg=blue] {stdout} "
-        // command_git_branch_interval    "10"
-        // command_git_branch_rendermode  "static"
-
-        // datetime        "#[fg=#6C7086,bold] {format} "
-        // datetime_format "%A, %d %b %Y %H:%M"
-        // datetime_timezone "America/Chicago"
-    }
+    status-bar location="file:~/.config/zellij/plugins/zjstatus.wasm"
 
     strider location="zellij:strider"
     compact-bar location="zellij:compact-bar"
@@ -86,7 +43,7 @@ plugins {
 }
 load_plugins {
     autolock
-    // zjframes
+    zjframes
 }
 
 // If you'd like to override the default keybindings completely, be sure to change "keybinds" to "keybinds clear-defaults=true"
