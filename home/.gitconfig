@@ -39,6 +39,7 @@
     rebase = true
 [rebase]
     autoStash = true
+    updateRefs = true
 ; [branch "main"]
 ;     mergeoptions = --no-ff
 [push]
@@ -85,10 +86,9 @@
     mailmap = !([ -f "$HOME/.gitmailmap" ] || echo 'New Name <new@mail.com> <old@mail.com>' > "$HOME/.gitmailmap") && ${EDITOR:-vim} "$HOME/.gitmailmap" && git filter-repo --force --mailmap "$HOME/.gitmailmap"
 
     ##################################################
-    # Revert/undo/BURN uncommitted and untracked.
-    # > git burn
+    # Revert/undo/nuke unstaged and untracked.
     ##################################################
-    burn = !git reset --hard && git clean -fd
+    nuke = !git reset --hard && git restore .
 
     ##################################################
     # Branch ops
