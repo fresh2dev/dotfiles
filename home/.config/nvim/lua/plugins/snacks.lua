@@ -7,9 +7,8 @@ return {
     { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Git Browse", mode = { "n", "v" } },
     { "<leader>fr", function() Snacks.picker.recent({ filter = { cwd = true }}) end, desc = "Recent (cwd)" },
     { "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" },
-    { "<leader>fy", function() Snacks.picker.cliphist() end, desc = "Projects" },
     { "<leader>fu", function() Snacks.picker.undo() end, desc = "Undotree" },
-    -- { "<leader>gf", function() Snacks.picker.git_log_file() end, { desc = "Git Current File History" }},
+    -- { "<leader>fy", function() Snacks.picker.cliphist() end, desc = "Projects" },  -- Specific to Linux.
   },
   init = function()
     vim.g.snacks_animate = true
