@@ -1,4 +1,22 @@
 # https://github.com/Aider-AI/aider/blob/main/aider/models.py
+
+- name: lm_studio/deepseek-r1-distill-qwen-14b
+  weak_model_name: null
+  remove_reasoning: think
+
+- name: lm_studio/deepseek-r1-distill-qwen-7b
+  weak_model_name: null
+  remove_reasoning: think
+
+- name: lm_studio/deepseek-r1-distill-llama-8b
+  weak_model_name: null
+  remove_reasoning: think
+
+- name: ollama_chat/deepseek-r1:8b
+  weak_model_name: null
+  extra_params:
+    num_ctx: 4096
+  remove_reasoning: think
+
 - name: "gpt-4o"
-  edit_format: "whole"
   weak_model_name: "gpt-4o-mini"

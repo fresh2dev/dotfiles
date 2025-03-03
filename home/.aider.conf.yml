@@ -1,14 +1,15 @@
 ---
-model: gpt-4o
-4o: true
+model: lm_studio/deepseek-r1-distill-qwen-7b
 dark-mode: true
-pretty: true
-stream: false
-show-diffs: false
+edit-format: 'diff'
+# pretty: true
+# stream: true
+# show-diffs: true
 git: false
-map-tokens: 2048
-map-multiplier-no-files: 0
+# map-tokens: 2048
+# map-multiplier-no-files: 2
 aiderignore: '.gitignore'
+model-metadata-file: '~/.aider.model.metadata.json'
 gitignore: false
 yes-always: true
 auto-commits: false
@@ -20,3 +21,4 @@ lint: false
 # 'test-cmd': 'python:pytest'
 vim: true
 check-update: false
+# reasoning-effort: 'high'

@@ -4,3 +4,4 @@ test_command("aider")
 
 link(".aider.conf.yml")
 link(".aider.model.settings.yml")
+link(".aider.model.metadata.json")

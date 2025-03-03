@@ -1,19 +1,25 @@
 # Default model (gpt-3.5-turbo, gpt-4, ggml-gpt4all-j...).
-default-model: gpt-4o
+default-model: deepseek-r1
 # Text to append when using the -f flag.
 format-text:
   markdown: 'Format the response as markdown without enclosing backticks.'
   json: 'Format the response as json without enclosing backticks.'
 # List of predefined system messages that can be used as roles.
 roles:
-  developer:
-    - "file:///Users/donald/.config/mods/fabric/patterns/coding_master/system.md"
-  writer:
-    - "file:///Users/donald/.config/mods/fabric/patterns/improve_writing/system.md"
+  "default": []
+  "shell":
+    - you are a shell expert
+    - you do not explain anything
+    - you simply output one liners to solve the problems you're asked
+    - you do not provide any explanation whatsoever, ONLY the command
+  # developer:
+  #   - "file:///Users/donald/.config/mods/fabric/patterns/coding_master/system.md"
+  # writer:
+  #   - "file:///Users/donald/.config/mods/fabric/patterns/improve_writing/system.md"
 # Ask for the response to be formatted as markdown unless otherwise set.
 format: false
 # System role to use.
-role: "developer"
+role: default
 # Render output as raw text when connected to a TTY.
 raw: false
 # Quiet mode (hide the spinner while loading and stderr messages for success).
@@ -43,15 +49,35 @@ max-input-chars: 12250
 # Aliases and endpoints for OpenAI compatible REST API.
 apis:
   openai:
-    base-url: https://api.openai.com/v1
-    api-key: ~
-    api-key-env: OPENAI_API_KEY
+    base-url: http://127.0.0.1:1234/v1
+    api-key: NONE
+    api-key-env: ~
+    # base-url: https://api.openai.com/v1
+    # api-key-env: OPENAI_API_KEY
     models:
-      gpt-4o:
-        aliases: ["4o"]
-        max-input-chars: 392000
-        fallback: gpt-4
-      gpt-4:
-        aliases: ["4"]
-        max-input-chars: 24500
-        fallback: ~
+      deepseek-r1-distill-qwen-14b:
+        aliases: ["deepseek-r1", "deepseek", "r1", "14b"]
+        max-input-chars: 8192
+      deepseek-r1-distill-qwen-7b:
+        aliases: ["deepseek-r1-micro", "deepseek-micro", "r1-micro", "7b"]
+        max-input-chars: 8192
+      deepseek-r1-distill-llama-8b:
+        aliases: ["8b"]
+        max-input-chars: 8192
+  #     gpt-4o:
+  #       aliases: ["4o"]
+  #       max-input-chars: 392000
+  #       fallback: gpt-4
+  #     gpt-4:
+  #       aliases: ["4"]
+  #       max-input-chars: 24500
+  #       fallback: ~
+  # ollama:
+  #   base-url: http://localhost:11434/api
+  #   models:
+  #     deepseek-r1:14b:
+  #       aliases: ["deepseek-r1", "deepseek", "r1", "14b"]
+  #       max-input-chars: 8192
+  #     deepseek-r1:8b-llama-distill-q4_K_M:
+  #       aliases: ["deepseek-r1-micro", "deepseek-micro", "r1-micro", "8b"]
+  #       max-input-chars: 8192
