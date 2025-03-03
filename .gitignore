@@ -5,4 +5,5 @@
 home/.config/karabiner/assets/
 home/.config/karabiner/automatic_backups/
 home/.config/nvim/.vim/
+home/.config/yazi/plugins/
 home/.config/zellij/plugins/*.wasm
