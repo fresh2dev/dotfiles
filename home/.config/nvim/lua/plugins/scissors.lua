@@ -11,7 +11,7 @@ return {
       desc = 'Add Snippet',
     },
     {
-      '<leader>fY',
+      '<leader>fy',
       function()
         require('scissors').editSnippet()
       end,

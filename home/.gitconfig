@@ -14,7 +14,7 @@
     autocrlf = false
     fileMode = false
     ; hooksPath = /home/donald/.githooks
-    editor = vim
+    editor = nvim
     pager = delta
 [interactive]
     diffFilter = delta --color-only --features=interactive

@@ -1,11 +1,11 @@
 return {
   {
-    'https://github.com/echasnovski/mini.basics',
+    'https://github.com/nvim-mini/mini.basics',
     version = '*',
     lazy = false,
     config = true,
     opts = {
-      options = { basic = false, extra_ui = false, win_borders = 'double' },
+      options = { basic = false, extra_ui = false, win_borders = 'bold' },
       mappings = { basic = false, option_toggle_prefix = '', windows = false, move_with_alt = false },
       autocommands = {
         basic = false,
@@ -17,7 +17,7 @@ return {
     },
   },
   {
-    'https://github.com/echasnovski/mini.map',
+    'https://github.com/nvim-mini/mini.map',
     lazy = false,
     version = '*',
     keys = {
@@ -76,67 +76,67 @@ return {
       -- })
     end,
   },
-  {
-    'https://github.com/echasnovski/mini.cursorword',
-    version = '*',
-    lazy = false,
-    opts = {},
-    config = function(_, opts)
-      require('mini.cursorword').setup { opts }
-      vim.cmd 'hi! link MiniCursorword Visual'
-      vim.cmd 'hi! link MiniCursorwordCurrent CursorLine'
-    end,
-  },
-  {
-    'https://github.com/echasnovski/mini.operators',
-    version = '*',
-    lazy = false,
-    config = function()
-      require('mini.operators').setup {
-        -- Each entry configures one operator.
-        -- `prefix` defines keys mapped during `setup()`: in Normal mode
-        -- to operate on textobject and line, in Visual - on selection.
-
-        -- Evaluate text and replace with output
-        evaluate = {
-          prefix = '',
-          -- Function which does the evaluation
-          func = nil,
-        },
-
-        -- Exchange text regions
-        exchange = {
-          prefix = '',
-          -- Whether to reindent new text to match previous indent
-          reindent_linewise = true,
-        },
-
-        -- Multiply (duplicate) text
-        multiply = {
-          prefix = '',
-          -- Function which can modify text before multiplying
-          func = nil,
-        },
-
-        -- Replace text with register
-        replace = {
-          -- prefix = '',
-          prefix = '<leader>p',
-          -- Whether to reindent new text to match previous indent
-          reindent_linewise = true,
-        },
-
-        -- Sort text
-        sort = {
-          prefix = 'gs',
-          -- Function which does the sort
-          func = nil,
-        },
-      }
-    end,
-  },
   -- {
-  --   'https://github.com/echasnovski/mini.visits',
+  --   'https://github.com/nvim-mini/mini.cursorword',
+  --   version = '*',
+  --   lazy = false,
+  --   opts = {},
+  --   config = function(_, opts)
+  --     require('mini.cursorword').setup { opts }
+  --     vim.cmd 'hi! link MiniCursorword Visual'
+  --     vim.cmd 'hi! link MiniCursorwordCurrent CursorLine'
+  --   end,
+  -- },
+  -- {
+  --   'https://github.com/nvim-mini/mini.operators',
+  --   version = '*',
+  --   lazy = false,
+  --   config = function()
+  --     require('mini.operators').setup {
+  --       -- Each entry configures one operator.
+  --       -- `prefix` defines keys mapped during `setup()`: in Normal mode
+  --       -- to operate on textobject and line, in Visual - on selection.
+  --
+  --       -- Evaluate text and replace with output
+  --       evaluate = {
+  --         prefix = '',
+  --         -- Function which does the evaluation
+  --         func = nil,
+  --       },
+  --
+  --       -- Exchange text regions
+  --       exchange = {
+  --         prefix = '', -- 'cx' -- This is done with `substitute.nvim`
+  --         -- Whether to reindent new text to match previous indent
+  --         reindent_linewise = true,
+  --       },
+  --
+  --       -- Multiply (duplicate) text
+  --       multiply = {
+  --         prefix = '',
+  --         -- Function which can modify text before multiplying
+  --         func = nil,
+  --       },
+  --
+  --       -- Replace text with register
+  --       replace = {
+  --         -- prefix = '',
+  --         prefix = '', -- <leader>p', -- This is done with `substitute.nvim`
+  --         -- Whether to reindent new text to match previous indent
+  --         reindent_linewise = true,
+  --       },
+  --
+  --       -- Sort text
+  --       sort = {
+  --         prefix = '', -- gs -- used for nvim-substitute
+  --         -- Function which does the sort
+  --         func = nil,
+  --       },
+  --     }
+  --   end,
+  -- },
+  -- {
+  --   'https://github.com/nvim-mini/mini.visits',
   --   version = '*',
   --   lazy = false,
   --   config = true,
@@ -151,7 +151,7 @@ return {
   --   },
   -- },
   {
-    'https://github.com/echasnovski/mini.diff',
+    'https://github.com/nvim-mini/mini.diff',
     version = '*',
     lazy = false,
     -- No need to copy this inside `setup()`. Will be used automatically.
@@ -199,7 +199,7 @@ return {
     end,
   },
   {
-    'https://github.com/echasnovski/mini.files',
+    'https://github.com/nvim-mini/mini.files',
     -- version = '*',
     lazy = false,
     dependencies = {
@@ -316,7 +316,7 @@ return {
     end,
   },
   {
-    'https://github.com/echasnovski/mini.ai',
+    'https://github.com/nvim-mini/mini.ai',
     version = '*',
     lazy = false,
     config = true,
@@ -347,7 +347,7 @@ return {
     },
   },
   {
-    'https://github.com/echasnovski/mini.splitjoin',
+    'https://github.com/nvim-mini/mini.splitjoin',
     version = '*',
     lazy = false,
     config = true,
@@ -362,7 +362,7 @@ return {
     },
   },
   {
-    'https://github.com/echasnovski/mini.comment',
+    'https://github.com/nvim-mini/mini.comment',
     version = '*',
     lazy = false,
     dependencies = {
@@ -382,7 +382,7 @@ return {
     },
   },
   {
-    'https://github.com/echasnovski/mini.surround',
+    'https://github.com/nvim-mini/mini.surround',
     version = '*',
     lazy = false,
     config = function()
@@ -439,46 +439,46 @@ return {
       -- vim.keymap.set('n', 'ss', 'sa_', { remap = true })
     end,
   },
+  -- {
+  --   'https://github.com/nvim-mini/mini.pairs',
+  --   -- version = '*',
+  --   lazy = false,
+  --   config = true,
+  --   opts = {
+  --     -- In which modes mappings from this `config` should be created
+  --     modes = { insert = true, command = false, terminal = false },
+  --
+  --     -- Global mappings. Each right hand side should be a pair information, a
+  --     -- table with at least these fields (see more in |MiniPairs.map|):
+  --     -- - <action> - one of 'open', 'close', 'closeopen'.
+  --     -- - <pair> - two character string for pair to be used.
+  --     -- {neigh_pattern} `(string|nil)` Pattern for two neighborhood characters.
+  --     --   Character "\r" indicates line start, "\n" - line end.
+  --     -- By default pair is not inserted after `\`, quotes are not recognized by
+  --     -- `<CR>`, `'` does not insert pair after a letter.
+  --     -- Only parts of tables can be tweaked (others will use these defaults).
+  --     mappings = {
+  --       -- Only autopair at EOL.
+  --       -- ['('] = { action = 'open', pair = '()', neigh_pattern = '.\n' },
+  --       -- ['['] = { action = 'open', pair = '[]', neigh_pattern = '.\n' },
+  --       -- ['{'] = { action = 'open', pair = '{}', neigh_pattern = '.\n' },
+  --
+  --       ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\].' },
+  --       ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\].' },
+  --       ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\].' },
+  --
+  --       [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].' },
+  --       [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].' },
+  --       ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].' },
+  --
+  --       ['"'] = false,
+  --       ["'"] = false,
+  --       ['`'] = false,
+  --     },
+  --   },
+  -- },
   {
-    'https://github.com/echasnovski/mini.pairs',
-    -- version = '*',
-    lazy = false,
-    config = true,
-    opts = {
-      -- In which modes mappings from this `config` should be created
-      modes = { insert = true, command = false, terminal = false },
-
-      -- Global mappings. Each right hand side should be a pair information, a
-      -- table with at least these fields (see more in |MiniPairs.map|):
-      -- - <action> - one of 'open', 'close', 'closeopen'.
-      -- - <pair> - two character string for pair to be used.
-      -- {neigh_pattern} `(string|nil)` Pattern for two neighborhood characters.
-      --   Character "\r" indicates line start, "\n" - line end.
-      -- By default pair is not inserted after `\`, quotes are not recognized by
-      -- `<CR>`, `'` does not insert pair after a letter.
-      -- Only parts of tables can be tweaked (others will use these defaults).
-      mappings = {
-        -- Only autopair at EOL.
-        -- ['('] = { action = 'open', pair = '()', neigh_pattern = '.\n' },
-        -- ['['] = { action = 'open', pair = '[]', neigh_pattern = '.\n' },
-        -- ['{'] = { action = 'open', pair = '{}', neigh_pattern = '.\n' },
-
-        ['('] = { action = 'open', pair = '()', neigh_pattern = '[^\\].' },
-        ['['] = { action = 'open', pair = '[]', neigh_pattern = '[^\\].' },
-        ['{'] = { action = 'open', pair = '{}', neigh_pattern = '[^\\].' },
-
-        [')'] = { action = 'close', pair = '()', neigh_pattern = '[^\\].' },
-        [']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].' },
-        ['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].' },
-
-        ['"'] = false,
-        ["'"] = false,
-        ['`'] = false,
-      },
-    },
-  },
-  {
-    'https://github.com/echasnovski/mini.indentscope',
+    'https://github.com/nvim-mini/mini.indentscope',
     version = '*',
     lazy = false,
     config = function()
@@ -525,7 +525,7 @@ return {
     end,
   },
   -- {
-  --   'https://github.com/echasnovski/mini.move',
+  --   'https://github.com/nvim-mini/mini.move',
   --   version = '*',
   --   lazy = false,
   --   config = true,
@@ -553,7 +553,7 @@ return {
   --   },
   -- },
   -- {
-  --   'https://github.com/echasnovski/mini.tabline',
+  --   'https://github.com/nvim-mini/mini.tabline',
   --   version = '*',
   --   lazy = false,
   --   config = true,
@@ -576,7 +576,7 @@ return {
   --   },
   -- },
   -- {
-  --   'https://github.com/echasnovski/mini.map',
+  --   'https://github.com/nvim-mini/mini.map',
   --   version = '*',
   --   lazy = false,
   --   keys = {
@@ -632,7 +632,7 @@ return {
   --   end,
   -- },
   -- {
-  --   'https://github.com/echasnovski/mini.animate',
+  --   'https://github.com/nvim-mini/mini.animate',
   --   lazy = false,
   --   config = true,
   --   opts = function()
@@ -674,7 +674,7 @@ return {
   --   end,
   -- },
   -- {
-  --   'https://github.com/echasnovski/mini.starter',
+  --   'https://github.com/nvim-mini/mini.starter',
   --   version = '*',
   --   lazy = false,
   --   opts = {
@@ -713,7 +713,7 @@ return {
   --         local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
   --         -- local pad_footer = string.rep(' ', 8)
   --         starter.config.footer = '⚡ Neovim loaded ' .. stats.count .. ' plugins in ' .. ms .. 'ms'
-  --         -- INFO: based on @echasnovski's recommendation (thanks a lot!!!)
+  --         -- INFO: based on @nvim-mini's recommendation (thanks a lot!!!)
   --         if vim.bo[ev.buf].filetype == 'ministarter' then
   --           pcall(starter.refresh)
   --         end

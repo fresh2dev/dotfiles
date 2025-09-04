@@ -5,49 +5,55 @@ upgrade_only = true
 target       = "~/.local/bin"
 
 ["astral-sh/uv"]
-tag           = "0.6.2"
+tag           = "0.8.13"
 # asset_filters = ["musl"]
 # file          = "*"
 # target        = "~/.local/bin/"
 
-["jqlang/jq"]
-tag           = "jq-1.7.1"
-# asset_filters = []
-# file          = "*"
-# target        = "~/.local/bin/"
+# ["jqlang/jq"]
+# tag           = "jq-1.7.1"
+# # asset_filters = []
+# # file          = "*"
+# # target        = "~/.local/bin/"
 
 ["koalaman/shellcheck"]
-tag           = "v0.10.0"
+tag           = "v0.11.0"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
 
 ["JohnnyMorganz/StyLua"]
-tag           = "v2.0.2"
+tag           = "v2.1.0"
 # asset_filters = ["musl"]
 # file          = "*"
 # target        = "~/.local/bin/"
 
-["artempyanykh/marksman"]
-tag           = "2024-12-18"
-# asset_filters = [".tar.gz"]
-# file          = "*"
-# target        = "~/.local/bin/"
+# ["artempyanykh/marksman"]
+# tag           = "2024-12-18"
+# # asset_filters = [".tar.gz"]
+# # file          = "*"
+# # target        = "~/.local/bin/"
 
 ["Feel-ix-343/markdown-oxide"]
-tag           = "v0.25.0"
+tag           = "v0.25.5"
 asset_filters = ['.tar.gz']
 # file          = "*"
 # target        = "~/.local/bin/"
 
+["quantumsheep/sshs"]
+tag           = "4.7.2"
+asset_filters = []
+# file          = "*"
+# target        = "~/.local/bin/"
+
 ["direnv/direnv"]
-tag           = "v2.35.0"
+tag           = "v2.37.1"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
 
 ["nektos/act"]
-tag           = "v0.2.71"
+tag           = "v0.2.80"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
@@ -59,13 +65,13 @@ tag           = "v2.12.0"
 # target        = "~/.local/bin/"
 
 ["marp-team/marp-cli"]
-tag           = "v4.1.1"
+tag           = "v4.2.3"
 # asset_filters = []
 # file          = "*"
 # target        = "~/.local/bin/"
 
 ["cli/cli"]
-tag           = "v2.66.0"
+tag           = "v2.76.2"
 # asset_filters = [".tar.gz", "^.tar.gz.tar.gz"]
 file          = "gh"
 # target        = "~/.local/bin/gh"

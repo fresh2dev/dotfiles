@@ -68,5 +68,5 @@ $ pyinfra @local deploys/components/vim.py
 Or apply to a remote SSH server:
 
 ```sh
-$ pyinfra @ssh/192.168.1.123 --user <username> deploys/collections/server.py
+$ pyinfra @ssh/192.168.1.123 --user <username >deploys/collections/server.py
 ```

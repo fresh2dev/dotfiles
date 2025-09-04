@@ -15,7 +15,7 @@ return {
   dependencies = { 'https://github.com/nvim-tree/nvim-web-devicons' },
   opts = {
     options = {
-      theme = 'catppuccin',
+      -- theme = 'catppuccin',
       component_separators = { left = '|', right = '|' },
       section_separators = { left = '', right = '' },
       ignore_focus = { 'dashboard', 'neo-tree' },
@@ -39,7 +39,7 @@ return {
       lualine_x = {
         { wordcount, cond = is_markdown },
         { readingtime, cond = is_markdown },
-        'diagnostics',
+        -- 'diagnostics',
         { 'filetype', colored = true, icon_only = false },
       },
       lualine_y = { 'progress' },

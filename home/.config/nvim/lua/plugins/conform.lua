@@ -1,7 +1,6 @@
 -- Lightweight yet powerful formatter plugin
 return {
   'https://github.com/stevearc/conform.nvim',
-  version = 'v8',
   lazy = false,
   event = { 'BufWritePre' },
   cmd = { 'ConformInfo', 'ConformEnable', 'ConformDisable', 'ConformToggle' },
@@ -35,9 +34,9 @@ return {
         shfmt = {
           prepend_args = { '-s', '-i', '2' },
         },
-        -- ruff_fix = {
-        --   prepend_args = { '--fixable=COM,I001' },
-        -- },
+        ruff_fix = {
+          append_args = { '--select=E,W,COM,I001', '--fixable=E,W,COM,I001' },
+        },
       },
     }
 

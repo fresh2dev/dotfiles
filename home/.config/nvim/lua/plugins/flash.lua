@@ -1,6 +1,5 @@
 return { -- flash.nvim lets you navigate your code with search labels, enhanced character motions, and Treesitter integration.
   'https://github.com/folke/flash.nvim',
-  version = 'v2',
   event = 'VeryLazy',
   -- stylua: ignore
   keys = {

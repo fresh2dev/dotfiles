@@ -19,20 +19,39 @@ bindkey "^[[3~" delete-char
 
 export TERM="xterm-256color"
 
-# Start Zellij
-if [ -z "$ZELLIJ_SESSION_NAME" ] && [ -z "$ZELLIJ_PROMPTED" ]; then
-  read "resp?Start ZelliJ? (Y/n) "
-  resp=${resp:-Y}
+if [ -n "$NVIM" ]; then
+  alias nvim='nvr -cc split --remote-wait \+"set bufhidden=wipe"'
+fi
+export VISUAL=nvim
+export EDITOR=nvim
+
+if [ -z "$ZELLIJ_SESSION_NAME" ] \
+  && [ -z "$ZELLIJ_PROMPTED" ] \
+  && [ -z "$NVIM" ] \
+  && [ -z "$VSCODE_INJECTION" ] \
+  && [ "$TERM_PROGRAM" != "QuakeNotch" ]
+then
   export ZELLIJ_PROMPTED=1
 
-  if [[ $resp =~ ^[Yy]$ ]]; then
-    zellij list-sessions || true
-    read "resp?Session Name: "
-    if [[ $resp =~ ^[0-9]+$ ]]; then
-      zellij attach --index "${resp}"
-    else
-      zellij attach -c "${resp:-unnamed}"
-    fi
+  local choice
+  local sessions
+  sessions=$(zellij list-sessions --no-formatting 2>/dev/null || true)
+
+  local create_default="unnamed"
+  local create_none="<None>"
+  local create_new="<New>"
+
+  choice=$( (echo "$create_default"; echo "$create_none"; echo "$create_new"; echo "$sessions") | gum choose --header="Zellij Session" )
+
+  if [ "$choice" = "$create_none" ]; then
+    choice=""
+  elif [ "$choice" = "$create_new" ]; then
+    choice=$(gum input --placeholder "New Session Name")
+    choice="${choice:-$create_default}"
+  fi
+
+  if [ -n "$choice" ]; then
+    zellij attach -c "$choice"
     exit
   fi
 fi
@@ -46,32 +65,26 @@ alias devbox-recompute='eval "$(devbox global shellenv --recompute)"'
 alias devbox-edit='$EDITOR $(devbox global path)'
 alias devbox-cleanup='devbox run -- nix store gc --extra-experimental-features nix-command'
 
-if ! command -v pbcopy &>/dev/null; then
-  alias pbcopy="xclip -selection clipboard"
-fi
-
-if command -v viddy &>/dev/null; then
-  alias watch="viddy"
-fi
-
-if [ -n "$NVIM" ]; then
-  alias nvim='nvr -cc split --remote-wait \+"set bufhidden=wipe"'
-fi
-export VISUAL=nvim
-export EDITOR=nvim
 alias e=$EDITOR
 alias v=$VISUAL
+alias vq='$VISUAL -c "cbuffer | copen | wincmd p | bdelete! | cc"'
+
+alias vg='$EDITOR -c "normal 1 go"'
+alias v0='$EDITOR -c "normal 1 0"'
+alias fs='$EDITOR -c "normal 1 fs"'
+alias ff='$EDITOR -c "normal 1 ff"'
+alias fr='$EDITOR -c "normal 1 fr"'
 
 alias g=git
 alias G=git
-alias vg='$EDITOR -c "normal 1 go"'
-alias vf='$EDITOR -c "normal 1 fR"'
-
 alias q=exit
 alias x=exit
 alias so=source
 
-alias currentmillis='date +%s%3N'
+alias zj=zellij
+alias lg=lazygit
+
+alias currentmillis='echo $(($(date +%s) * 1000))'
 
 alias tolower="tr '[:upper:]' '[:lower:]'"
 alias toupper="tr '[:lower:]' '[:upper:]'"
@@ -80,23 +93,77 @@ alias randint='echo $((RANDOM % 10))'
 if command -v eza &>/dev/null; then
   alias ls='eza --classify --group-directories-first --git --git-repos'
 fi
+alias l='ls -a1'
 alias ll='ls -lA'
 alias lt='ls --tree'
 
 if command -v bat &>/dev/null; then
   alias cat=bat
-  alias less=bat
 fi
 
-command -v code &>/dev/null || alias code='codium'
+if command -v gum &>/dev/null; then
+  alias pause='gum confirm "Continue?"'
+  alias less='gum pager'
+  export PAGER='less'
+fi
+
+if ! command -v pbcopy &>/dev/null; then
+  alias pbcopy="xclip -selection clipboard"
+fi
+
+if command -v viddy &>/dev/null; then
+  alias watch="viddy"
+fi
+
+if ! command -v code &>/dev/null; then
+  if command -v cursor &>/dev/null; then
+    alias code='cursor'
+  elif command -v codium &>/dev/null; then
+    alias code='codium'
+  fi
+fi
+
+if ! command -v betterdisplaycli &>/dev/null; then
+  for prefix in "$HOME" ""; do
+    x="${prefix}/Applications/BetterDisplay.app/Contents/MacOS/BetterDisplay"
+    if [ -f "$x" ]; then
+      alias betterdisplaycli="$x"
+      break
+    fi
+  done
+fi
+
+# # enter an interactive chat conversation using mods
+# if command -v mods &>/dev/null; then
+#   alias ai='mods --ask-model --editor'
+#
+#   alias ai-roles='mods --list-roles'
+#   alias ai-config='mods --settings'
+#
+#   ai-models() {
+#     yq -r ".apis[].models[].aliases[0]" "$(mods --dirs | grep 'Configuration:' | cut -d' ' -f2-)/mods.yml"
+#   }
+#
+#   ai-chat() {
+#     # pick a model alias from your config
+#     model=$(ai-models | gum choose --header "Select a model:")
+#
+#     if [ -n "$model" ]; then
+#       # Continue conversation.
+#       while mods --model "$model" --prompt-args --editor --continue-last && gum confirm 'Continue chat?'; do :; done
+#     fi
+#   }
+# fi
+
+alias ai='aider --model $(aider --list-models "openrouter" | grep "/" | cut -d" " -f2- | fzf) --watch'
 
 install_yapx_zsh_completion() {
   $1 --print-shell-completion zsh | grep -v '\--print-shell-completion' | sudo tee /usr/local/share/zsh/site-functions/_$1
 }
 
 export FZF_DEFAULT_COMMAND='rg --files'
-export FZF_DEFAULT_OPTS='--bind alt-a:select-all,alt-d:deselect-all,tab:toggle+down,shift-tab:toggle --layout=reverse --preview-window=bottom,40%,border-top --highlight-line'
-export _ZO_FZF_OPTS="$FZF_DEFAULT_OPTS --border=none --preview-window=hidden"
+export FZF_DEFAULT_OPTS='--bind alt-a:select-all,alt-d:deselect-all,ctrl-n:down,ctrl-p:up,ctrl-y:toggle-down,ctrl-space:toggle-down --layout=reverse'
+export _ZO_FZF_OPTS="$FZF_DEFAULT_OPTS --border=none"
 export _ZO_EXCLUDE_DIRS="$HOME:/tmp:/var/*:/mnt/*"
 export _ZO_MAXAGE=1000
 
@@ -106,9 +173,12 @@ export GIT_CLIFF_CONFIG="$HOME/.config/git-cliff/cliff.toml"
 export EGET_CONFIG="$HOME/.config/eget/config.toml"
 export YAMLFIX_CONFIG_PATH="$HOME/.config/yamlfix"
 export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/theme.yml"
-alias lg=lazygit
 
-alias act-up='DOCKER_HOST="unix:///var/run/user/$(id -u)/podman/podman.sock" act --workflows .gitea/workflows --defaultbranch $(git config --global --get init.defaultBranch) --container-daemon-socket "unix:///var/run/user/$(id -u)/podman/podman.sock" --container-options="--pid=host --privileged" --bind'
+if command -v podman &>/dev/null; then
+  alias act-up='DOCKER_HOST="unix:///var/run/user/$(id -u)/podman/podman.sock" act --workflows .gitea/workflows --defaultbranch $(git config --global --get init.defaultBranch) --container-daemon-socket "unix:///var/run/user/$(id -u)/podman/podman.sock" --container-options="--pid=host --privileged" --bind --container-architecture linux/amd64'
+else
+  alias act-up='act --workflows .gitea/workflows --defaultbranch $(git config --global --get init.defaultBranch) --container-options="--pid=host --privileged" --container-architecture linux/amd64'
+fi
 
 # add devbox bits to zsh
 fpath+=($DEVBOX_GLOBAL_PREFIX/share/zsh/site-functions $DEVBOX_GLOBAL_PREFIX/share/zsh/$ZSH_VERSION/functions $DEVBOX_GLOBAL_PREFIX/share/zsh/vendor-completions)
@@ -140,12 +210,6 @@ if [ -d "$HOME/.zsh/fzf-tab" ]; then
   zstyle ':fzf-tab:*' fzf-pad 4
   zstyle ':fzf-tab:*' fzf-min-height 4
   source ~/.zsh/fzf-tab/fzf-tab.plugin.zsh
-fi
-
-if [ -d "$HOME/.zsh/forgit" ]; then
-  export FORGIT_NO_ALIASES=1 FORGIT_FZF_DEFAULT_OPTS='--preview-window=bottom,60%,border-top'
-  source ~/.zsh/forgit/forgit.plugin.sh
-  export PATH="$PATH:$FORGIT_INSTALL_DIR/bin"
 fi
 
 FZF_CTRL_T_COMMAND= FZF_ALT_C_COMMAND= eval "$(fzf --zsh)"
@@ -210,14 +274,28 @@ if [ -d "$HOME/.zsh/zsh-vi-mode" ]; then
   fi
 fi
 
-# starship
-eval "$(starship init zsh)"
-# zoxide
-eval "$(zoxide init zsh)"
-# direnv
-eval "$(direnv hook zsh)"
-# # pipx
-# eval "$(register-python-argcomplete pipx)"
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+fi
+
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+
+  function zo() {
+    result="$(zoxide query --interactive -- "$@")" \
+      && pushd $result \
+      && (zellij action new-tab --layout default --name "$(basename "$result")" || true) \
+      && popd
+  }
+fi
+
+
+if command -v direnv &>/dev/null; then
+  eval "$(direnv hook zsh)"
+  if [ -f '.envrc' ]; then
+    direnv allow .
+  fi
+fi
 
 if command -v kubectl &>/dev/null; then
   alias kc='kubectl'
@@ -235,245 +313,11 @@ if [ -n "$ZELLIJ_SESSION_NAME" ]; then
     fi
   }
   add-zsh-hook chpwd set_zellij_tab_name
+  # Also, run it now.
+  set_zellij_tab_name
 fi
 
-## Custom stuff
-curl-ping() {
-  while true; do
-    printf "%s " $(date +%T)
-    curl -sIL -m 1 ${1:?} | grep '^HTTP'
-    sleep ${2:-1s}
-  done
-}
-
-touch-all() {
-  find $(pwd) -exec touch -a -m -t "$(date '+%Y%m%d')0500.00" "{}" +
-}
-
-alias md2html="pandoc --from=gfm --to=html --standalone --self-contained"
-
-webm2gif() {
-  ffmpeg -y -i "$1" -vf palettegen _tmp_palette.png
-  ffmpeg -y -i "$1" -i _tmp_palette.png -filter_complex paletteuse -r 10 "${1%.webm}.gif"
-  rm _tmp_palette.png
-}
-
-cam-ls() {
-  gphoto2 --auto-detect && v4l2-ctl --list-devices
-}
-
-cam-init() {
-  (sudo modprobe --first-time v4l2loopback exclusive_caps=1 max_buffers=2 || true) &&
-    (pkill -f gphoto2 || true) &&
-    gphoto2 --stdout autofocusdrive=1 --capture-movie | ffmpeg -i - -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 ${1:-/dev/video2}
-}
-
-cam-view() {
-  vlc v4l2://${1:-/dev/video2}
-}
-
-dns-restart() {
-  sudo sed -i "s/^#*\s*DNSStubListener=.*/DNSStubListener=no/g" '/etc/systemd/resolved.conf' &&
-    sudo systemctl restart systemd-resolved &&
-    resolvectl flush-caches
-}
-
-dns-ls() {
-  grep -i '^[a-z]\+=' '/etc/systemd/resolved.conf'
-}
-
-dns-set() {
-  ping -c1 $1 >/dev/null &&
-    sudo sed -i "s/^#*\s*DNS=.*/DNS=${1}/g" '/etc/systemd/resolved.conf' &&
-    dnsrestart
-}
-
-dns-rm() {
-  sudo sed -i "s/^#*\s*DNS=/#DNS=/g" '/etc/systemd/resolved.conf' &&
-    dnsrestart
-}
-
-new-secret() {
-  # https://www.authelia.com/docs/configuration/secrets.html
-  LENGTH="${1:-64}"
-  CHAR_CLASS="${2:-[:alnum:][:punct:]}"
-
-  tr -cd "$CHAR_CLASS" </dev/urandom |
-    fold -w "${LENGTH}" |
-    head -n 1 |
-    tr -d '\n'
-}
-
-new-secret-alnum() {
-  newsecret "$1" "[:alnum:]"
-}
-
-new-secret-alnum-lower() {
-  newsecret "$1" "[:digit:][:lower:]"
-}
-
-tsname() {
-  # Prepend the current timestamp to a base name.
-  # Optionally, the 1st argument is the base name, else it is a random UUID.
-  NAME="${1:-$(uuidgen | tail -c 12)}"
-  echo "$(currentmillis)_${NAME}"
-}
-
-alias pbtype="xclip -selection clipboard -t TARGETS -o"
-
-cbpaste() {
-  OUT_FILE="${1:?}"
-  shift
-  xclip -selection clipboard $@ -o >"$OUT_FILE"
-}
-
-cbpastetype() {
-  F_EXT="${1:-tmp}"
-  F_TYPE="${2:-text/plain}"
-  OUT_PATH="${3}"
-
-  if [ -z "$OUT_PATH" ]; then
-    OUT_PATH="$(tsname).${F_EXT}"
-  fi
-
-  F_NAME="$OUT_PATH"
-
-  if [ -d "$CBPASTE_DIR" ]; then
-    OUT_PATH="${CBPASTE_DIR}/${OUT_PATH}"
-  fi
-
-  xclip -selection clipboard -t "$F_TYPE" -o >"$OUT_PATH"
-
-  echo "$OUT_PATH"
-}
-
-cbpastepng() {
-  cbpastetype 'png' 'image/png' "$1"
-}
-
-cbpastebmp() {
-  output="$(cbpastetype 'bmp' 'image/bmp' "$1")"
-  mogrify -format png "$output" && rm "$output"
-  echo "${output%.bmp}.png"
-}
-
-cbpastesvg() {
-  cbpastetype 'svg' 'text/plain' "$1"
-}
-
-b2ls() {
-  # List files in bucket.
-  b2 ls "$@" "${B2_BUCKET_NAME}"
-}
-
-b2lsid() {
-  # Given filename, list file id.
-  b2ls --long --recursive --version |
-    awk -v filename="$1" '{ if ($6 == filename) { print $1 } }'
-}
-
-b2rm() {
-  # Given filename, remove file.
-  b2lsid $@ | xargs b2 delete-file-version
-}
-
-b2push() {
-  # Upload file to bucket.
-  # Optionally, 2nd argument becomes the remote file name.
-  b2 file upload "${B2_BUCKET_NAME}" "$1" "${2:-$(basename $1)}"
-}
-
-b2pushts() {
-  # Upload file to bucket with current timestamp as the filename.
-  # Optionally, 2nd argument becomes the suffix of the remote file name.
-  b2 file upload "${B2_BUCKET_NAME}" "$1" "$(tsname "${2:-$(basename $1)}")"
-}
-
-b2pull() {
-  # Given filename, download file.
-  b2 file download "b2://${B2_BUCKET_NAME}/$1" "$1"
-}
-
-b2cp() {
-  # Given filename, download a file, then re-upload it with a new name.
-  # The 2nd argument becomes the new remote file name.
-  pushd /tmp
-  b2pull ${1:?}
-  b2push $1 ${2:?}
-  rm $1
-  popd
-}
-
-b2mvts() {
-  # Given filename, download a file, then re-upload it with a new name,
-  # prefixed with the current timestamp.
-  # Optionally, the 2nd argument becomes the suffix of the new remote file name.
-  pushd /tmp
-  b2pull ${1:?}
-  b2pushts $1 $2
-  rm $1
-  popd
-}
-
-b2pushimg() {
-  # Assumes the clipboard contains an image (bmp or png),
-  # and uploads this image.
-  FILE=""
-  if pbtype | grep -q 'image/bmp'; then
-    FILE="$(cbpastebmp $@)"
-  else
-    FILE="$(cbpastepng $@)"
-  fi
-  b2push "$FILE"
-}
-
-b2pushsvg() {
-  # Assumes the clipboard contains an image (svg),
-  # and uploads this image.
-  FILE="$(cbpastesvg $@)"
-  b2push "$FILE"
-}
-
-b2pushall() {
-  # Push all files from current directory to remote bucket.
-  # Requires that the current directory name be the same as the remote bucket.
-  PWD_NAME="$(basename $PWD)"
-  B2_BUCKET="${1:-$B2_BUCKET_NAME}"
-  [ -z "${1}" ] || shift
-  if [ "$PWD_NAME" != "${B2_BUCKET:?}" ]; then
-    echo "Current dir name '$PWD_NAME' != '${B2_BUCKET}'; aborting."
-  else
-    b2 sync "${PWD}" "b2://${B2_BUCKET}" $@
-  fi
-}
-b2pullall() {
-  # Pull all files from current directory to remote bucket.
-  # Requires that the current directory name be the same as the remote bucket.
-  PWD_NAME="$(basename $PWD)"
-  B2_BUCKET="${1:-$B2_BUCKET_NAME}"
-  [ -z "${1}" ] || shift
-  if [ "$PWD_NAME" != "${B2_BUCKET:?}" ]; then
-    echo "Current dir name '$PWD_NAME' != '${B2_BUCKET}'; aborting."
-  else
-    b2 sync "b2://${B2_BUCKET}" "${PWD}" $@
-  fi
-}
-b2mirrorup() {
-  # Mirror a local directory to a remote bucket (push, replace newer, and delete extra).
-  # Requires that the current directory name be the same as the remote bucket.
-  b2pushall "${1}" --replaceNewer --delete $@
-}
-b2mirrordown() {
-  # Mirror a remote bucket to a local directory (push, replace newer, and delete extra).
-  # Requires that the current directory name be the same as the remote bucket.
-  b2pullall "${1}" --replaceNewer --delete $@
-}
-
 ##
-
-# if [ -f '.envrc' ]; then
-#   direnv allow .
-# fi
 
 # # START PROFILING
 # zmodload zsh/zprof

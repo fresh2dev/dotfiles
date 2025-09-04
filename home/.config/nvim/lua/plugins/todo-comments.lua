@@ -69,6 +69,26 @@ return {
       desc = 'Insert NOTE comment',
     },
     {
+      'ma',
+      'O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>AI: ',
+      desc = 'Insert AI comment',
+    },
+    {
+      '<leader>ai',
+      'O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>AI: ',
+      desc = 'Insert AI comment',
+    },
+    {
+      'mA',
+      'm`O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>AI!<esc>``<cmd>write<cr>',
+      desc = 'Mark with AI!',
+    },
+    {
+      '<leader>aI',
+      'm`O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>AI!<esc>``<cmd>write<cr>',
+      desc = 'Mark with AI!',
+    },
+    {
       'm.',
       function()
         require('todo-comments').jump_next { keywords = { 'TODO' } }

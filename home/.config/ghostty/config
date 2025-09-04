@@ -1,0 +1,387 @@
+# off | check | download
+auto-update = check
+# stable | tip
+auto-update-channel = tip  
+
+cursor-invert-fg-bg = true
+
+# Font
+font-size = 14
+font-family = MesloLGL Nerd Font
+font-thicken = true
+
+window-title-font-family = iMWritingQuat Nerd Font
+
+cursor-style = bar
+cursor-style-blink = false
+cursor-click-to-move = false
+mouse-hide-while-typing = true
+
+# Theme
+# https://iterm2colorschemes.com
+theme = Mathias
+# theme = Vague
+# theme = UltraDark
+# theme = Monokai Remastered
+# theme = Nightlion v1
+# theme = PaulMillr
+# theme = Nightlion v2
+# theme = Nocturnal Winter
+# theme = Monokai Soda
+# theme = moonfly
+# theme = Molokai
+# theme = LiquidCarbonTransparentInverse
+# theme = Kibble
+# theme = MaterialDarker
+# theme = Framer
+# theme = IRIX Console
+# theme = IR_Black
+# theme = GitHub-Dark-High-Contrast
+# theme = GitHub-Dark-Colorblind
+# theme = Brogrammer
+# theme = Dark+
+# theme = Dark Modern
+
+# Configure a preference for window decorations. This setting specifies
+# a _preference_; the actual OS, desktop environment, window manager, etc.
+# may override this preference. Ghostty will do its best to respect this
+# preference but it may not always be possible.
+# 
+# Valid values:
+# 
+#   * `none` - All window decorations will be disabled. Titlebar,
+#     borders, etc. will not be shown. On macOS, this will also disable
+#     tabs (enforced by the system).
+# 
+#   * `auto` - Automatically decide to use either client-side or server-side
+#     decorations based on the detected preferences of the current OS and
+#     desktop environment. This option usually makes Ghostty look the most
+#     "native" for your desktop.
+# 
+#   * `client` - Prefer client-side decorations.
+# 
+#   * `server` - Prefer server-side decorations. This is only relevant
+#     on Linux with GTK, either on X11, or Wayland on a compositor that
+#     supports the `org_kde_kwin_server_decoration` protocol (e.g. KDE Plasma,
+#     but almost any non-GNOME desktop supports this protocol).
+# 
+#     If `server` is set but the environment doesn't support server-side
+#     decorations, client-side decorations will be used instead.
+# 
+# The default value is `auto`.
+# 
+# For the sake of backwards compatibility and convenience, this setting also
+# accepts boolean true and false values. If set to `true`, this is equivalent
+# to `auto`. If set to `false`, this is equivalent to `none`.
+# This is convenient for users who live primarily on systems that don't
+# differentiate between client and server-side decorations (e.g. macOS and
+# Windows).
+# 
+# The "toggle_window_decorations" keybind action can be used to create
+# a keybinding to toggle this setting at runtime. This will always toggle
+# back to "auto" if the current value is "none" (this is an issue
+# that will be fixed in the future).
+# 
+# Changing this configuration in your configuration and reloading will
+# only affect new windows. Existing windows will not be affected.
+# 
+# macOS: To hide the titlebar without removing the native window borders
+#        or rounded corners, use `macos-titlebar-style = hidden` instead.
+window-decoration = auto
+
+unfocused-split-opacity = 0.98
+
+# The color to dim the unfocused split. Unfocused splits are dimmed by
+# rendering a semi-transparent rectangle over the split. This sets the color of
+# that rectangle and can be used to carefully control the dimming effect.
+# 
+# This will default to the background color.
+# 
+# Specified as either hex (`#RRGGBB` or `RRGGBB`) or a named X11 color.
+unfocused-split-fill = 
+
+# The color of the split divider. If this is not set, a default will be chosen.
+# Specified as either hex (`#RRGGBB` or `RRGGBB`) or a named X11 color.
+split-divider-color = limegreen
+
+
+# Key bindings. The format is `trigger=action`. Duplicate triggers will
+# overwrite previously set values. The list of actions is available in
+# the documentation or using the `ghostty +list-actions` command.
+# 
+# Trigger: `+`-separated list of keys and modifiers. Example: `ctrl+a`,
+# `ctrl+shift+b`, `up`.
+# 
+# Valid keys are currently only listed in the
+# [Ghostty source code](https://github.com/ghostty-org/ghostty/blob/d6e76858164d52cff460fedc61ddf2e560912d71/src/input/key.zig#L255).
+# This is a documentation limitation and we will improve this in the future.
+# A common gotcha is that numeric keys are written as words: e.g. `one`,
+# `two`, `three`, etc. and not `1`, `2`, `3`. This will also be improved in
+# the future.
+# 
+# Valid modifiers are `shift`, `ctrl` (alias: `control`), `alt` (alias: `opt`,
+# `option`), and `super` (alias: `cmd`, `command`). You may use the modifier
+# or the alias. When debugging keybinds, the non-aliased modifier will always
+# be used in output.
+# 
+# Note: The fn or "globe" key on keyboards are not supported as a
+# modifier. This is a limitation of the operating systems and GUI toolkits
+# that Ghostty uses.
+# 
+# Some additional notes for triggers:
+# 
+#   * modifiers cannot repeat, `ctrl+ctrl+a` is invalid.
+# 
+#   * modifiers and keys can be in any order, `shift+a+ctrl` is *weird*,
+#     but valid.
+# 
+#   * only a single key input is allowed, `ctrl+a+b` is invalid.
+# 
+#   * the key input can be prefixed with `physical:` to specify a
+#     physical key mapping rather than a logical one. A physical key
+#     mapping responds to the hardware keycode and not the keycode
+#     translated by any system keyboard layouts. Example: "ctrl+physical:a"
+# 
+# You may also specify multiple triggers separated by `>` to require a
+# sequence of triggers to activate the action. For example,
+# `ctrl+a>n=new_window` will only trigger the `new_window` action if the
+# user presses `ctrl+a` followed separately by `n`. In other software, this
+# is sometimes called a leader key, a key chord, a key table, etc. There
+# is no hardcoded limit on the number of parts in a sequence.
+# 
+# Warning: If you define a sequence as a CLI argument to `ghostty`,
+# you probably have to quote the keybind since `>` is a special character
+# in most shells. Example: ghostty --keybind='ctrl+a>n=new_window'
+# 
+# A trigger sequence has some special handling:
+# 
+#   * Ghostty will wait an indefinite amount of time for the next key in
+#     the sequence. There is no way to specify a timeout. The only way to
+#     force the output of a prefix key is to assign another keybind to
+#     specifically output that key (e.g. `ctrl+a>ctrl+a=text:foo`) or
+#     press an unbound key which will send both keys to the program.
+# 
+#   * If a prefix in a sequence is previously bound, the sequence will
+#     override the previous binding. For example, if `ctrl+a` is bound to
+#     `new_window` and `ctrl+a>n` is bound to `new_tab`, pressing `ctrl+a`
+#     will do nothing.
+# 
+#   * Adding to the above, if a previously bound sequence prefix is
+#     used in a new, non-sequence binding, the entire previously bound
+#     sequence will be unbound. For example, if you bind `ctrl+a>n` and
+#     `ctrl+a>t`, and then bind `ctrl+a` directly, both `ctrl+a>n` and
+#     `ctrl+a>t` will become unbound.
+# 
+#   * Trigger sequences are not allowed for `global:` or `all:`-prefixed
+#     triggers. This is a limitation we could remove in the future.
+# 
+# Action is the action to take when the trigger is satisfied. It takes the
+# format `action` or `action:param`. The latter form is only valid if the
+# action requires a parameter.
+# 
+#   * `ignore` - Do nothing, ignore the key input. This can be used to
+#     black hole certain inputs to have no effect.
+# 
+#   * `unbind` - Remove the binding. This makes it so the previous action
+#     is removed, and the key will be sent through to the child command
+#     if it is printable. Unbind will remove any matching trigger,
+#     including `physical:`-prefixed triggers without specifying the
+#     prefix.
+# 
+#   * `csi:text` - Send a CSI sequence. e.g. `csi:A` sends "cursor up".
+# 
+#   * `esc:text` - Send an escape sequence. e.g. `esc:d` deletes to the
+#     end of the word to the right.
+# 
+#   * `text:text` - Send a string. Uses Zig string literal syntax.
+#     e.g. `text:\x15` sends Ctrl-U.
+# 
+#   * All other actions can be found in the documentation or by using the
+#     `ghostty +list-actions` command.
+# 
+# Some notes for the action:
+# 
+#   * The parameter is taken as-is after the `:`. Double quotes or
+#     other mechanisms are included and NOT parsed. If you want to
+#     send a string value that includes spaces, wrap the entire
+#     trigger/action in double quotes. Example: `--keybind="up=csi:A B"`
+# 
+# There are some additional special values that can be specified for
+# keybind:
+# 
+#   * `keybind=clear` will clear all set keybindings. Warning: this
+#     removes ALL keybindings up to this point, including the default
+#     keybindings.
+# 
+# The keybind trigger can be prefixed with some special values to change
+# the behavior of the keybind. These are:
+# 
+#   * `all:` - Make the keybind apply to all terminal surfaces. By default,
+#     keybinds only apply to the focused terminal surface. If this is true,
+#     then the keybind will be sent to all terminal surfaces. This only
+#     applies to actions that are surface-specific. For actions that
+#     are already global (e.g. `quit`), this prefix has no effect.
+# 
+#   * `global:` - Make the keybind global. By default, keybinds only work
+#     within Ghostty and under the right conditions (application focused,
+#     sometimes terminal focused, etc.). If you want a keybind to work
+#     globally across your system (e.g. even when Ghostty is not focused),
+#     specify this prefix. This prefix implies `all:`. Note: this does not
+#     work in all environments; see the additional notes below for more
+#     information.
+# 
+#   * `unconsumed:` - Do not consume the input. By default, a keybind
+#     will consume the input, meaning that the associated encoding (if
+#     any) will not be sent to the running program in the terminal. If
+#     you wish to send the encoded value to the program, specify the
+#     `unconsumed:` prefix before the entire keybind. For example:
+#     `unconsumed:ctrl+a=reload_config`. `global:` and `all:`-prefixed
+#     keybinds will always consume the input regardless of this setting.
+#     Since they are not associated with a specific terminal surface,
+#     they're never encoded.
+# 
+#   * `performable:` - Only consume the input if the action is able to be
+#     performed. For example, the `copy_to_clipboard` action will only
+#     consume the input if there is a selection to copy. If there is no
+#     selection, Ghostty behaves as if the keybind was not set. This has
+#     no effect with `global:` or `all:`-prefixed keybinds. For key
+#     sequences, this will reset the sequence if the action is not
+#     performable (acting identically to not having a keybind set at
+#     all).
+# 
+#     Performable keybinds will not appear as menu shortcuts in the
+#     application menu. This is because the menu shortcuts force the
+#     action to be performed regardless of the state of the terminal.
+#     Performable keybinds will still work, they just won't appear as
+#     a shortcut label in the menu.
+# 
+# Keybind triggers are not unique per prefix combination. For example,
+# `ctrl+a` and `global:ctrl+a` are not two separate keybinds. The keybind
+# set later will overwrite the keybind set earlier. In this case, the
+# `global:` keybind will be used.
+# 
+# Multiple prefixes can be specified. For example,
+# `global:unconsumed:ctrl+a=reload_config` will make the keybind global
+# and not consume the input to reload the config.
+# 
+# Note: `global:` is only supported on macOS. On macOS,
+# this feature requires accessibility permissions to be granted to Ghostty.
+# When a `global:` keybind is specified and Ghostty is launched or reloaded,
+# Ghostty will attempt to request these permissions. If the permissions are
+# not granted, the keybind will not work. On macOS, you can find these
+# permissions in System Preferences -> Privacy & Security -> Accessibility.
+
+# Disable all built-in keybindings
+keybind = clear
+
+keybind = global:super+enter=toggle_quick_terminal
+
+# TODO: jump-to-prompt workflow
+#keybind = alt+e=write_screen_file:paste
+#keybind = super+left_bracket=goto_split:previous
+keybind = super+n=new_window
+#keybind = super+right_bracket=goto_split:next
+keybind = super+comma=open_config
+keybind = super+up=jump_to_prompt:1
+# keybind = alt+e=write_screen_file:open
+# keybind = alt+grave_accent=new_split:down
+# keybind = alt+h=goto_split:left
+# keybind = alt+i=inspector:toggle
+# keybind = alt+j=goto_split:down
+# keybind = alt+k=goto_split:up
+# keybind = alt+l=goto_split:right
+keybind = super+h=esc:b
+# keybind = alt+left_bracket=previous_tab
+# keybind = alt+left_bracket=previous_tab
+# keybind = alt+m=toggle_split_zoom
+# keybind = alt+n=new_split:right
+keybind = super+physical:eight=goto_tab:8
+keybind = super+physical:five=goto_tab:5
+keybind = super+physical:four=goto_tab:4
+keybind = super+physical:one=goto_tab:1
+keybind = super+physical:seven=goto_tab:7
+keybind = super+physical:six=goto_tab:6
+keybind = super+physical:three=goto_tab:3
+keybind = super+physical:two=goto_tab:2
+keybind = super+w=close_surface
+keybind = super+q=quit
+# keybind = super+w=close_all_windows
+# keybind = super+w=close_tab
+# keybind = alt+shift+down=resize_split:down,100
+# keybind = alt+shift+left=resize_split:left,100
+# keybind = alt+shift+right=resize_split:right,100
+# keybind = alt+shift+up=resize_split:up,100
+keybind = super+l=esc:f
+# keybind = alt+right_bracket=next_tab
+keybind = super+period=reload_config
+keybind = ctrl+alt+super+m=toggle_fullscreen
+keybind = super+t=new_tab
+keybind = super+shift+right_bracket=next_tab
+keybind = super+u=scroll_page_up
+keybind = super+d=scroll_page_down
+keybind = super+up=jump_to_prompt:-1
+# keybind = alt+v=new_split:right
+# keybind = alt+w>equal=equalize_splits
+# keybind = alt+w>q=close_window
+keybind = shift+down=adjust_selection:down
+keybind = shift+end=adjust_selection:end
+keybind = shift+home=adjust_selection:home
+keybind = shift+left=adjust_selection:left
+keybind = shift+page_down=adjust_selection:page_down
+keybind = shift+page_up=adjust_selection:page_up
+keybind = shift+right=adjust_selection:right
+keybind = shift+up=adjust_selection:up
+keybind = super+a=select_all
+keybind = super+backspace=text:\x15
+keybind = super+c=copy_to_clipboard
+keybind = super+end=scroll_to_bottom
+keybind = super+equal=increase_font_size:1
+keybind = super+home=scroll_to_top
+keybind = super+k=clear_screen
+keybind = super+left=text:\x01
+keybind = super+minus=decrease_font_size:1
+keybind = super+page_down=scroll_page_down
+keybind = super+physical:nine=last_tab
+keybind = super+plus=increase_font_size:1
+keybind = super+right=text:\x05
+keybind = super+shift+down=jump_to_prompt:1
+keybind = super+shift+up=jump_to_prompt:-1
+keybind = super+shift+v=paste_from_selection
+keybind = super+v=paste_from_clipboard
+keybind = super+zero=reset_font_size
+
+# Confirms that a surface should be closed before closing it.
+# 
+# This defaults to `true`. If set to `false`, surfaces will close without
+# any confirmation. This can also be set to `always`, which will always
+# confirm closing a surface, even if shell integration says a process isn't
+# running.
+confirm-close-surface = true
+
+# Whether or not to quit after the last surface is closed.
+# 
+# This defaults to `false` on macOS since that is standard behavior for
+# a macOS application. On Linux, this defaults to `true` since that is
+# generally expected behavior.
+# 
+# On Linux, if this is `true`, Ghostty can delay quitting fully until a
+# configurable amount of time has passed after the last window is closed.
+# See the documentation of `quit-after-last-window-closed-delay`.
+quit-after-last-window-closed = false
+quit-after-last-window-closed-delay = 
+
+quick-terminal-position = top
+quick-terminal-animation-duration = 0.2
+quick-terminal-autohide = true
+quick-terminal-size = 80%, 80%
+
+# "remain" or "move" quick-terminal when moving macos spaces
+quick-terminal-space-behavior = remain
+
+# The style of the macOS titlebar. Available values are: "native",
+# "transparent", "tabs", and "hidden".
+macos-titlebar-style = transparent
+
+macos-option-as-alt = true
+# macos-icon = retro
+

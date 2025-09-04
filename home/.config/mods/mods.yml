@@ -1,5 +1,4 @@
-# Default model (gpt-3.5-turbo, gpt-4, ggml-gpt4all-j...).
-default-model: deepseek-r1
+default-model: 2
 # Text to append when using the -f flag.
 format-text:
   markdown: 'Format the response as markdown without enclosing backticks.'
@@ -17,67 +16,57 @@ roles:
   # writer:
   #   - "file:///Users/donald/.config/mods/fabric/patterns/improve_writing/system.md"
 # Ask for the response to be formatted as markdown unless otherwise set.
-format: false
+format: true
 # System role to use.
 role: default
 # Render output as raw text when connected to a TTY.
 raw: false
 # Quiet mode (hide the spinner while loading and stderr messages for success).
-quiet: true
-# Temperature (randomness) of results, from 0.0 to 2.0.
-temp: 1.0
-# TopP, an alternative to temperature that narrows response, from 0.0 to 1.0.
-topp: 1.0
+quiet: false
+# # Temperature (randomness) of results, from 0.0 to 2.0.
+# temp: 1.0
+# # TopP, an alternative to temperature that narrows response, from 0.0 to 1.0.
+# topp: 1.0
 # Turn off the client-side limit on the size of the input into the model.
 no-limit: false
 # Wrap formatted output at specific width (default is 80)
 word-wrap: 88
 # Include the prompt from the arguments in the response.
-include-prompt-args: false
+include-prompt-args: true
 # Include the prompt from the arguments and stdin, truncate stdin to specified number of lines.
-include-prompt: 0
+include-prompt: 10
 # Maximum number of times to retry API calls.
 max-retries: 2
-# Your desired level of fanciness.
-fanciness: 0
+# # Your desired level of fanciness.
+# fanciness: 0
 # Text to show while generating.
 status-text: Generating
 # Default character limit on input to model.
 max-input-chars: 12250
 # Maximum number of tokens in response.
-# max-tokens: 100
+max-tokens: 300
 # Aliases and endpoints for OpenAI compatible REST API.
 apis:
-  openai:
-    base-url: http://127.0.0.1:1234/v1
-    api-key: NONE
-    api-key-env: ~
-    # base-url: https://api.openai.com/v1
-    # api-key-env: OPENAI_API_KEY
+  openrouter:
+    base-url: https://openrouter.ai/api/v1
+    api_key:
+    api-key-env: OPENROUTER_API_KEY
     models:
-      deepseek-r1-distill-qwen-14b:
-        aliases: ["deepseek-r1", "deepseek", "r1", "14b"]
-        max-input-chars: 8192
-      deepseek-r1-distill-qwen-7b:
-        aliases: ["deepseek-r1-micro", "deepseek-micro", "r1-micro", "7b"]
-        max-input-chars: 8192
-      deepseek-r1-distill-llama-8b:
-        aliases: ["8b"]
-        max-input-chars: 8192
-  #     gpt-4o:
-  #       aliases: ["4o"]
-  #       max-input-chars: 392000
-  #       fallback: gpt-4
-  #     gpt-4:
-  #       aliases: ["4"]
-  #       max-input-chars: 24500
-  #       fallback: ~
-  # ollama:
-  #   base-url: http://localhost:11434/api
-  #   models:
-  #     deepseek-r1:14b:
-  #       aliases: ["deepseek-r1", "deepseek", "r1", "14b"]
-  #       max-input-chars: 8192
-  #     deepseek-r1:8b-llama-distill-q4_K_M:
-  #       aliases: ["deepseek-r1-micro", "deepseek-micro", "r1-micro", "8b"]
-  #       max-input-chars: 8192
+      deepseek/deepseek-chat-v3-0324:
+        aliases: [1, "deepseek-v3", "deepseek-chat"]
+      # google/gemini-2.5-flash:
+      #   aliases: [2, "chat", "gemini-2.5-flash"]
+      deepseek/deepseek-r1:
+        aliases: [3, "deepseek-r1", "r1"]
+      anthropic/claude-sonnet-4:
+        aliases: [4, "claude-sonnet-4"]
+      # google/gemini-2.5-pro:
+      #   aliases: [5, "code", "gemini-2.5-pro"]
+  google:
+    api_key:
+    api-key-env: GEMINI_API_KEY
+    models: # https://ai.google.dev/gemini-api/docs/models/gemini
+      gemini-2.5-flash:
+        aliases: [2, "chat"]
+      gemini-2.5-pro:
+        aliases: [5, "code"]

@@ -17,7 +17,6 @@ return {
   },
   {
     'https://github.com/kevinhwang91/nvim-ufo',
-    version = 'v1',
     lazy = false,
     keys = {
       { 'zc' },

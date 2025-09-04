@@ -20,14 +20,14 @@ return {}
 --
 -- return {
 --   'https://github.com/b0o/incline.nvim',
---   enabled = true,
+--   lazy = false,
 --   config = function()
 --     require('incline').setup {
 --       debounce_threshold = { falling = 500, rising = 250 },
 --       window = {
 --         placement = {
 --           vertical = 'bottom',
---           horizontal = 'center',
+--           horizontal = 'right',
 --         },
 --         padding = 0,
 --         padding_char = ' ',
@@ -59,11 +59,11 @@ return {}
 --             filename,
 --             gui = modified,
 --             guibg = '#2e2e2e',
---             guifg = props.focused == true and 'cyan' or 'lightgray',
+--             guifg = props.focused == true and '#89b4fa' or 'lightgray',
 --           },
 --         }
 --
---         -- If focused, don't show LSP diags.
+--         -- If focused, show LSP diags.
 --         if props.focused == true then
 --           local diagnostics = get_diagnostic_label(props)
 --           if #diagnostics > 0 then

@@ -1,4 +1,34 @@
 return {}
+-- return {
+--   'https://github.com/frankroeder/parrot.nvim',
+--   dependencies = {
+--     'ibhagwan/fzf-lua',
+--     'nvim-lua/plenary.nvim',
+--     -- optionally include "folke/noice.nvim" or "rcarriga/nvim-notify" for beautiful notifications
+--   },
+--   config = function()
+--     require('parrot').setup {
+--       providers = {
+--         custom = {
+--           style = 'openai',
+--           api_key = os.getenv 'OPENROUTER_API_KEY',
+--           endpoint = 'https://openrouter.ai/api/v1/chat/completions',
+--           models = { 'deepseek/deepseek-r1' },
+--           -- topic = {
+--           --   model = 'google/gemini-2.0-pro-exp-02-05:free',
+--           --   params = { max_tokens = 64 },
+--           -- },
+--           -- params = {
+--           --   chat = {
+--           --     max_tokens = 8000,
+--           --     temperature = 1,
+--           --   },
+--           -- },
+--         },
+--       },
+--     }
+--   end,
+-- }
 -- return { -- ChatGPT plugin
 --   'https://github.com/robitx/gp.nvim',
 --   init = function()

@@ -4,7 +4,7 @@ return {
   lazy = true,
   cmd = { 'Outline', 'OutlineOpen' },
   keys = {
-    { '<leader>tco', ':Outline!<CR>', desc = '[T]oggle [O]utline' },
+    { '<leader>to', ':Outline!<CR>', desc = '[T]oggle [O]utline' },
     { '<leader>co', ':OutlineOpen<CR>', desc = '[C]ode [O]utline' },
   },
   opts = {

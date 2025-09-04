@@ -1,7 +1,11 @@
 ---
-model: lm_studio/deepseek-r1-distill-qwen-7b
+architect: false
+# model: openrouter/deepseek/deepseek-r1
+# editor-model: openrouter/anthropic/claude-sonnet-4
+model: gemini/gemini-2.5-pro
+# editor-model: gemini/gemini-2.5-pro
 dark-mode: true
-edit-format: 'diff'
+# edit-format: 'diff'
 # pretty: true
 # stream: true
 # show-diffs: true
@@ -9,8 +13,9 @@ git: false
 # map-tokens: 2048
 # map-multiplier-no-files: 2
 aiderignore: '.gitignore'
-model-metadata-file: '~/.aider.model.metadata.json'
 gitignore: false
+cache-prompts: false
+notifications: true
 yes-always: true
 auto-commits: false
 dirty-commits: false

@@ -1,5 +1,6 @@
 // src: https://github.com/wiraki/dotfiles/blob/main/private_dot_config/zellij/layouts/default.kdl
 layout {
+
     swap_tiled_layout name="vertical" {
         tab max_panes=5 {
             pane split_direction="vertical" {
@@ -94,10 +95,12 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="status-bar" {
-                format_left   "{mode}#[bg=#181926] {tabs}"
+                // format_left   "{mode}#[bg=#181926] {tabs}"
+                format_left   "{mode} {tabs}"
                 format_center ""
-                format_right  "{swap_layout} #[bg=#181926,fg=#494d64] Zellij: #[bg=#181926,fg=#494d64]{session}"
-                format_space  "#[bg=#181926]"
+                format_right  "{swap_layout} #[fg=#494d64] Zellij: #[fg=#494d64]{session}"
+                // format_space  "#[bg=#181926]"
+                // format_space  "#[bg=#000]"
                 format_hide_on_overlength "true"
                 format_precedence "lrc"
 
@@ -108,33 +111,34 @@ layout {
 
                 // hide_frame_for_single_pane "true"  // Handled by `zjframes`
 
-                mode_normal        "#[bg=#8aadf4,fg=#181926,bold] NORMAL#[bg=#181926,fg=#8aadf4]"
-                mode_locked        "#[bg=#6e738d,fg=#181926,bold] LOCKED #[bg=#181926,fg=#6e738d]"
-                mode_resize        "#[bg=#8aadf4,fg=#181926,bold] RESIZE#[bg=#181926,fg=#8aadf4]"
-                mode_pane          "#[bg=#8aadf4,fg=#181926,bold] PANE#[bg=#181926,fg=#8aadf4]"
-                mode_tab           "#[bg=#8aadf4,fg=#181926,bold] TAB#[bg=#181926,fg=#8aadf4]"
-                mode_scroll        "#[bg=#8aadf4,fg=#181926,bold] SCROLL#[bg=#181926,fg=#8aadf4]"
-                mode_enter_search  "#[bg=#8aadf4,fg=#181926,bold] ENT-SEARCH#[bg=#181926,fg=#8aadf4]"
-                mode_search        "#[bg=#8aadf4,fg=#181926,bold] SEARCHARCH#[bg=#181926,fg=#8aadf4]"
-                mode_rename_tab    "#[bg=#8aadf4,fg=#181926,bold] RENAME-TAB#[bg=#181926,fg=#8aadf4]"
-                mode_rename_pane   "#[bg=#8aadf4,fg=#181926,bold] RENAME-PANE#[bg=#181926,fg=#8aadf4]"
-                mode_session       "#[bg=#8aadf4,fg=#181926,bold] SESSION#[bg=#181926,fg=#8aadf4]"
-                mode_move          "#[bg=#8aadf4,fg=#181926,bold] MOVE#[bg=#181926,fg=#8aadf4]"
-                mode_prompt        "#[bg=#8aadf4,fg=#181926,bold] PROMPT#[bg=#181926,fg=#8aadf4]"
-                mode_tmux          "#[bg=#f5a97f,fg=#181926,bold] TMUX#[bg=#181926,fg=#f5a97f]"
+                mode_normal        "#[bg=#8aadf4,fg=#181926,bold] NORMAL#[fg=#8aadf4]"
+                mode_locked        "#[bg=#6e738d,fg=#181926,bold] LOCKED #[fg=#6e738d]"
+                mode_resize        "#[bg=#8aadf4,fg=#181926,bold] RESIZE#[fg=#8aadf4]"
+                mode_pane          "#[bg=#8aadf4,fg=#181926,bold] PANE#[fg=#8aadf4]"
+                mode_tab           "#[bg=#8aadf4,fg=#181926,bold] TAB#[fg=#8aadf4]"
+                mode_scroll        "#[bg=#8aadf4,fg=#181926,bold] SCROLL#[fg=#8aadf4]"
+                mode_enter_search  "#[bg=#8aadf4,fg=#181926,bold] ENT-SEARCH#[fg=#8aadf4]"
+                mode_search        "#[bg=#8aadf4,fg=#181926,bold] SEARCHARCH#[fg=#8aadf4]"
+                mode_rename_tab    "#[bg=#8aadf4,fg=#181926,bold] RENAME-TAB#[fg=#8aadf4]"
+                mode_rename_pane   "#[bg=#8aadf4,fg=#181926,bold] RENAME-PANE#[fg=#8aadf4]"
+                mode_session       "#[bg=#8aadf4,fg=#181926,bold] SESSION#[fg=#8aadf4]"
+                mode_move          "#[bg=#8aadf4,fg=#181926,bold] MOVE#[fg=#8aadf4]"
+                mode_prompt        "#[bg=#8aadf4,fg=#181926,bold] PROMPT#[fg=#8aadf4]"
+                mode_tmux          "#[bg=#f5a97f,fg=#181926,bold] TMUX#[fg=#f5a97f]"
 
                 // formatting for inactive tabs
-                tab_active              "#[bg=#181926,fg=#a6da95]#[bg=#a6da95,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#a6da95,bold] {name}{floating_indicator}#[bg=#181926,fg=#363a4f,bold]"
-                tab_active_fullscreen   "#[bg=#181926,fg=#a6da95]#[bg=#a6da95,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#a6da95,bold] {name}{fullscreen_indicator}#[bg=#181926,fg=#363a4f,bold]"
-                tab_active_sync         "#[bg=#181926,fg=#a6da95]#[bg=#a6da95,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#a6da95,bold] {name}{sync_indicator}#[bg=#181926,fg=#363a4f,bold]"
+                tab_active              "#[fg=#a6da95]#[bg=#a6da95,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#a6da95,bold] {name}{floating_indicator}#[fg=#363a4f,bold]"
+                tab_active_fullscreen   "#[fg=#a6da95]#[bg=#a6da95,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#a6da95,bold] {name}{fullscreen_indicator}#[fg=#363a4f,bold]"
+                tab_active_sync         "#[fg=#a6da95]#[bg=#a6da95,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#a6da95,bold] {name}{sync_indicator}#[fg=#363a4f,bold]"
 
                 // formatting for the current active tab
-                tab_normal              "#[bg=#181926,fg=#6e738d]#[bg=#6e738d,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#6e738d,bold] {name}{floating_indicator}#[bg=#181926,fg=#363a4f,bold]"
-                tab_normal_fullscreen   "#[bg=#181926,fg=#6e738d]#[bg=#6e738d,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#6e738d,bold] {name}{fullscreen_indicator}#[bg=#181926,fg=#363a4f,bold]"
-                tab_normal_sync         "#[bg=#181926,fg=#6e738d]#[bg=#6e738d,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#6e738d,bold] {name}{sync_indicator}#[bg=#181926,fg=#363a4f,bold]"
+                tab_normal              "#[fg=#6e738d]#[bg=#6e738d,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#6e738d,bold] {name}{floating_indicator}#[fg=#363a4f,bold]"
+                tab_normal_fullscreen   "#[fg=#6e738d]#[bg=#6e738d,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#6e738d,bold] {name}{fullscreen_indicator}#[fg=#363a4f,bold]"
+                tab_normal_sync         "#[fg=#6e738d]#[bg=#6e738d,fg=#1e2030,bold]{index} #[bg=#363a4f,fg=#6e738d,bold] {name}{sync_indicator}#[fg=#363a4f,bold]"
 
                 // separator between the tabs
-                tab_separator           "#[bg=#181926] "
+                // tab_separator           "#[bg=#181926] "
+                tab_separator           " "
 
                 // indicators
                 tab_sync_indicator       " "

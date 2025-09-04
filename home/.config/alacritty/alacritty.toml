@@ -1,14 +1,18 @@
 [general]
-import = ["~/.config/alacritty/themes/themes/catppuccin_macchiato.toml"]
+import = ["~/.config/alacritty/themes/themes/carbonfox.toml"]
+# import = ["~/.config/alacritty/themes/themes/catppuccin_macchiato.toml"]
 
 [env]
 TERM = "xterm-256color"
 
 [font]
-size = 16
+size = 14
 
 [font.normal]
-family = "iMWritingMono Nerd Font"
+family = "MesloLGL Nerd Font"
+# family = "iMWritingMono Nerd Font"
+# family = "SauceCodePro Nerd Font"
+# style = "Regular"
 
 [window]
 # decorations = "None"

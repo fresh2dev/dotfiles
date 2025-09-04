@@ -29,6 +29,13 @@ return {
       { '<leader>gh', group = '[G]it [H]unk' },
       { '<leader>q', group = '[Q]uit' },
       { '<leader>t', group = '[T]oggle' },
+      -- Abolish.nvim mappings
+      { 'crs', group = 'coerce to snake_case' },
+      { 'crm', group = 'coerce to MixedCase' },
+      { 'crc', group = 'coerce to camelCase' },
+      { 'cru', group = 'coerce to UPPER_CASE' },
+      { 'cr-', group = 'coerce to dash-case' },
+      { 'cr.', group = 'coerce to dot-case' },
     },
   },
 }

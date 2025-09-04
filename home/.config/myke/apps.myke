@@ -1,0 +1,358 @@
+import os
+from shutil import which
+from typing import Annotated, Optional
+
+import myke
+
+brew = myke.bake("brew")
+eget = myke.bake("eget")
+
+go = myke.bake("go")
+go_install = myke.bake(["go", "install"])
+
+dotnet = myke.bake("dotnet")
+dotnet_install = myke.bake(["dotnet", "tool", "install", "--global"])
+
+cargo = myke.bake("cargo")
+cargo_binstall = myke.bake(["cargo", "binstall", "-y"])
+
+uv = myke.bake("uv")
+uv_install = myke.bake(["uv", "tool", "install", "--upgrade", "--force"])
+
+rustup = myke.bake(["rustup"])
+from pathlib import Path
+
+wrangler = myke.bake("wrangler")
+
+pip = myke.bake(["python", "-m", "pip"])
+
+
+@myke.task(parents=("apps"), name="upgrade")
+def apps_upgrade(
+    include_brew: Annotated[Optional[bool], myke.arg("--brew")] = None,
+    include_rust: Annotated[Optional[bool], myke.arg("--rust")] = None,
+    include_python: Annotated[Optional[bool], myke.arg("--python")] = None,
+    include_go: Annotated[Optional[bool], myke.arg("--go")] = None,
+    include_dotnet: Annotated[Optional[bool], myke.arg("--dotnet")] = None,
+    include_eget: Annotated[Optional[bool], myke.arg("--eget")] = None,
+):
+    if not any(
+        [
+            include_brew,
+            include_python,
+            include_go,
+            include_go,
+            include_rust,
+            include_dotnet,
+            include_eget,
+        ],
+    ):
+        include_brew = include_rust = include_python = include_dotnet = include_go = (
+            True
+        )
+        include_eget = False
+
+    if include_brew:
+        brew(["bundle", "install", "--upgrade", "--file", "~/.Brewfile"])
+        brew(["cu", "--all", "--yes"])
+
+    if include_rust:
+        rustup(["default", "stable"])
+        rustup(["component", "add", "rust-analyzer"])
+        rustup(["component", "add", "rustfmt"])
+        rustup(["update"])
+        rustup_bin_path = Path(
+            rustup(["which", "cargo"], capture_output=True, text=True).stdout.strip(),
+        )
+        cargo_bin_path = (
+            Path(p) if (p := os.getenv("CARGO_HOME")) else Path.home() / ".cargo"
+        )
+        cargo_bin_path.mkdir(exist_ok=True)
+        for exe in rustup_bin_path.glob("*"):
+            exe.symlink_to(cargo_bin_path / exe.name)
+
+        if which("cargo-binstall"):
+            cargo_binstall("cargo-cache")
+        else:
+            cargo(["install", "cargo-binstall"])
+
+        # https://github.com/matthiaskrgr/cargo-cache
+        cargo_binstall("cargo-cache")
+        # https://github.com/BurntSushi/ripgrep
+        cargo_binstall("ripgrep@14.1.1")
+        # https://github.com/sharkdp/bat
+        cargo_binstall("bat@0.25.0")
+        # https://github.com/sharkdp/pastel
+        cargo_binstall("pastel@0.10.0")
+        # https://github.com/dandavison/delta
+        cargo_binstall("git-delta@0.18.2")
+        # https://github.com/atuinsh/atuin
+        cargo_binstall("atuin@18.6.1")
+        # https://github.com/ClementTsang/bottom
+        cargo_binstall("bottom@0.10.2")
+        # https://github.com/orf/gping
+        cargo_binstall("gping@1.19.0")
+        # https://github.com/Inlyne-Project/inlyne
+        cargo_binstall("inlyne@0.5.0")
+        # https://github.com/ajeetdsouza/zoxide
+        cargo_binstall("zoxide@0.9.8")
+        # https://github.com/eza-community/eza
+        cargo_binstall("eza@0.21.4")
+        # https://github.com/starship/starship
+        cargo_binstall("starship@1.23.0")
+        # https://github.com/sachaos/viddy
+        cargo_binstall("viddy@1.3.0")
+        # https://github.com/zellij-org/zellij
+        cargo_binstall("zellij@0.43.1")
+        # https://github.com/XAMPPRocky/tokei
+        cargo_binstall("tokei@13.0.0-alpha.8")
+        # https://github.com/lycheeverse/lychee
+        cargo_binstall("lychee@0.18.0")
+        # https://github.com/cococonscious/koji
+        cargo_binstall("koji@3.2.0")
+        # https://github.com/mlange-42/git-graph
+        cargo_binstall("git-graph@0.6.0")
+        # https://github.com/nickgerace/gfold
+        cargo_binstall("gfold@2025.4.0")
+        # https://github.com/Byron/dua-cli
+        cargo_binstall("dua-cli@2.30.1")
+        # https://github.com/erikjuhani/basalt
+        cargo_binstall("basalt-tui@0.5.0")
+        # https://github.com/NQMVD/needs
+        cargo_binstall("needs")
+
+        # https://github.com/feel-ix-343/markdown-oxide
+        cargo_binstall(
+            [
+                "--git",
+                "https://github.com/feel-ix-343/markdown-oxide",
+                "markdown-oxide@0.25.5",
+            ],
+        )
+
+    if include_go:
+        go_install("golang.org/x/tools/gopls@latest")
+        go_install("golang.org/x/tools/cmd/goimports@latest")
+        # https://github.com/mvdan/gofumpt
+        go_install("mvdan.cc/gofumpt@latest")
+        # https://github.com/mvdan/sh
+        go_install("mvdan.cc/sh/v3/cmd/shfmt@latest")
+        # https://github.com/zyedidia/eget
+        go_install("github.com/zyedidia/eget@v1.3.4")
+        # https://github.com/jesseduffield/lazygit
+        go_install("github.com/jesseduffield/lazygit@v0.53.0")
+        # https://github.com/dominikh/go-tools#installation
+        go_install("honnef.co/go/tools/cmd/staticcheck@latest")
+        # https://github.com/junegunn/fzf
+        go_install("github.com/junegunn/fzf@v0.63.0")
+        # https://github.com/charmbracelet/gum
+        go_install("github.com/charmbracelet/gum@v0.16.2")
+        # https://github.com/charmbracelet/glow
+        go_install("github.com/charmbracelet/glow@latest")
+        # https://github.com/hairyhenderson/gomplate
+        go_install("github.com/hairyhenderson/gomplate/v4/cmd/gomplate@v4.3.2")
+        # https://github.com/helmwave/helmwave
+        go_install("github.com/helmwave/helmwave/cmd/helmwave@v0.42.1")
+        # https://github.com/derailed/k9s
+        go_install("github.com/derailed/k9s@v0.50.6")
+        # https://github.com/kubernetes/kompose
+        go_install("github.com/kubernetes/kompose@v1.32.0")
+        # https://github.com/mikefarah/yq
+        go_install("github.com/mikefarah/yq/v4@v4.45.4")
+        # # https://github.com/shenwei356/rush
+        # go_install("https://github.com/shenwei356/rush@v0.7.0")
+        # https://github.com/charmbracelet/mods
+        go_install(
+            "github.com/charmbracelet/mods@06764764fc46fdaf308569eb4e7cfa5e8f693683",
+        )
+        # https://github.com/gohugoio/hugo
+        go_install(
+            ["-tags", "extended", "github.com/gohugoio/hugo@v0.147.9"],
+            env={"CGO_ENABLED": "1"},
+        )
+        # https://github.com/gokcehan/lf
+        go_install(
+            ["-ldflags", "-s -w", "github.com/gokcehan/lf@latest"],
+            env={"CGO_ENABLED": "0"},
+        )
+        # https://github.com/knqyf263/pet
+        go_install("github.com/knqyf263/pet@latest")
+        # https://github.com/dhth/mult
+        go_install("github.com/dhth/mult@latest")
+
+    if include_dotnet:
+        # https://github.com/photo-cli/photo-cli
+        dotnet_install("photo-cli")
+
+    if include_python:
+        # https://github.com/Aider-AI/aider
+        uv_install(
+            ["--with", "google-generativeai", "--with", "audioop-lts", "aider-chat"],
+        )
+        # https://github.com/asciinema/asciinema
+        uv_install("asciinema")
+        # https://github.com/Backblaze/B2_Command_Line_Tool
+        uv_install("b2")
+        # https://github.com/copier-org/copier
+        uv_install("copier")
+        # https://github.com/newren/git-filter-repo
+        uv_install("git-filter-repo")
+        # https://github.com/jupyterlab/jupyterlab
+        uv_install("jupyterlab")
+        # https://github.com/pyinfra-dev/pyinfra
+        uv_install("pyinfra")
+        # https://github.com/pre-commit/pre-commit
+        uv_install("pre-commit")
+        # https://github.com/adrienverge/yamllint
+        uv_install("yamllint")
+        # https://github.com/python-poetry/poetry
+        uv_install("poetry")
+        # https://github.com/DetachHead/basedpyright
+        uv_install("basedpyright")
+        # https://github.com/astral-sh/ruff
+        uv_install("ruff")
+        # https://github.com/tox-dev/tox
+        uv_install(["--with", "tox-uv", "tox"])
+        # https://github.com/jshwi/docsig
+        uv_install("docsig")
+        # https://github.com/yt-dlp/yt-dlp
+        uv_install("yt-dlp[default]")
+        # https://github.com/mhinz/neovim-remote
+        uv_install("neovim-remote")
+        # https://github.com/mac-cleanup/mac-cleanup-py
+        uv_install("mac-cleanup")
+        # https://github.com/nosarthur/gita
+        uv_install("gita")
+        # https://github.com/casey/just
+        uv_install("rust-just")
+        # https://github.com/quarylabs/sqruff
+        uv_install("sqruff")
+        # https://github.com/orhun/git-cliff
+        uv_install("git-cliff")
+        # https://github.com/crate-ci/typos
+        uv_install("typos")
+        # https://github.com/hukkin/mdformat
+        uv_install(
+            [
+                "--with",
+                "mdformat-mkdocs",
+                "--with",
+                "mdformat-tables",
+                "--with",
+                "mdformat-admon",
+                "--with",
+                "mdformat-deflist",
+                "--with",
+                "mdformat-footnote",
+                "--with",
+                "mdformat-frontmatter",
+                "--with",
+                "mdformat-ruff",
+                "--with",
+                "mdformat-shfmt",
+                "mdformat",
+            ],
+        )
+        # https://github.com/mkdocs/mkdocs
+        uv_install(
+            [
+                "--with",
+                "mkdocs-material",
+                "--with",
+                "mkdocs-jupyter",
+                "--with",
+                "mkdocstrings[python]",
+                "--with",
+                "black",
+                "--with",
+                "mkdocs-include-dir-to-nav",
+                "mkdocs",
+            ],
+        )
+        # pipx upgrade --install figbox
+        # pipx upgrade --install hostbutter
+        # pipx upgrade --install myke
+        # pipx upgrade --install ripgrep-ext
+        uv_install("markitdown[pdf,audio-transcription,youtube-transcription]")
+
+    if include_eget:
+        # TODO: install/upgrade eget apps
+        raise NotImplementedError
+
+
+@myke.task(parents=("apps"), name="cache-clear")
+def cache_clear(
+    include_brew: Annotated[Optional[bool], myke.arg("--brew")] = None,
+    include_rust: Annotated[Optional[bool], myke.arg("--rust")] = None,
+    include_python: Annotated[Optional[bool], myke.arg("--python")] = None,
+    include_go: Annotated[Optional[bool], myke.arg("--go")] = None,
+):
+    if not any([include_brew, include_python, include_go, include_go, include_rust]):
+        include_brew = include_python = include_go = include_eget = True
+
+    if include_brew:
+        brew(["cleanup"])
+
+    if include_rust:
+        cargo(["cargo", "cache", "--autoclean-expensive"])
+
+    if include_go:
+        go(["clean", "--cache"])
+
+    if include_python:
+        uv(["cache", "clean"])
+        pip(["cache", "purge"])
+
+
+#  @myke.task(
+#      parents=("os"), env_update={"EGET_BIN": str(Path.home() / ".local" / "bin")}
+#  )
+#  def install_eget_apps():
+#      return [
+#          "eget 'neovide/neovide' --tag='0.12.2'",
+#          "eget 'BurntSushi/ripgrep' --tag='14.1.0'",
+#          "eget 'junegunn/fzf' --tag='0.48.1'",
+#          "eget 'sharkdp/fd' --tag='v9.0.0'",
+#          "eget 'sharkdp/bat' --tag='v0.24.0'",
+#          "eget 'sharkdp/pastel' --tag='0.9.0'",
+#          "eget 'dandavison/delta' --tag='0.16.5'",
+#          "eget 'eza-community/eza' --tag='v0.17.2'",
+#          "eget 'charmbracelet/gum' --tag='v0.13.0'",
+#          "eget 'charmbracelet/glow' --tag='v1.5.1'",
+#          "eget 'charmbracelet/mods' --tag='v1.1.0'",
+#          "eget 'artempyanykh/marksman' --tag='2023-12-09'",
+#          "eget 'sxyazi/yazi' --tag='v0.2.1'",
+#          "eget 'ajeetdsouza/zoxide' --tag='0.9.2'",
+#          "eget 'starship/starship' --tag='v1.17.1'",
+#          "eget 'neovim/neovim' --tag='0.9.5'",
+#          "eget 'gohugoio/hugo' --tag='v0.121.2'",
+#          "eget 'harness/drone-cli' --tag='v1.7.0'",
+#          "eget 'direnv/direnv' --tag='v2.33.0'"
+#          "eget 'openfaas/faas-cli' --tag='0.16.21'",
+#          "eget 'orhun/git-cliff' --tag='v1.4.0'",
+#          "eget 'moncho/dry' --tag='v0.11.2'",
+#          "eget 'sachaos/viddy' --tag='v0.4.0'",
+#          "eget 'nektos/act' --tag='v0.2.59'",
+#          "eget 'helmwave/helmwave' --asset='.tar.gz' --tag='v0.35.2'",
+#          "eget 'arttor/helmify' --tag='v0.4.10'",
+#          "eget 'hadolint/hadolint' --tag='v2.12.0'",
+#          "eget 'devspace-sh/devspace' --tag='v6.3.12'",
+#          "eget 'alexellis/arkade' --tag='0.11.4'",
+#          "eget 'kubernetes/kompose' --tag='v1.32.0' --asset='.tar.gz' --to=$HOME/.local/bin/kompose",
+#          "eget 'ahmetb/kubectx' --tag='v0.9.5' --asset=kubectx --to=$HOME/.local/bin/kubectl-ctx",
+#          "eget 'ahmetb/kubectx' --tag='v0.9.5' --asset=kubens --to=$HOME/.local/bin/kubectl-ns",
+#          "eget 'keisku/kubectl-explore' --tag='v0.7.2' --to=$HOME/.local/bin/kubectl-explore",
+#          "eget 'corneliusweig/ketall' --tag='v1.3.8' --asset='ketall' --file='ketall*' --to=$HOME/.local/bin/kubectl-get_all",
+#          "eget 'vladimirvivien/ktop' --tag='v0.3.5' --asset=kubectl-ktop --file=kubectl-ktop --to=$HOME/.local/bin/kubectl-ktop",
+#          "eget 'iximiuz/kexp' --tag='v0.0.5' --to=$HOME/.local/bin/kubectl-kexp",
+#          "eget 'derailed/k9s' --tag='v0.31.7' --asset='.tar.gz' --asset='^sbom' --to=$HOME/.local/bin/kubectl-ui",
+#          "eget 'kubescape/kubescape' --tag='v3.0.3' --asset='.tar.gz' --to=$HOME/.local/bin/kubectl-kubescape",
+#          "eget 'derailed/popeye' --tag='v0.11.2' --to=$HOME/.local/bin/kubectl-popeye",
+#          "eget 'tohjustin/kube-lineage' --tag='v0.5.0' --to=$HOME/.local/bin/kubectl-get_lineage",
+#          "eget 'robscott/kube-capacity' --tag='v0.7.4' --to=$HOME/.local/bin/kubectl-capacity",
+#          "eget 'zegl/kube-score' --tag='v1.17.0' --to=$HOME/.local/bin/kubectl-score",
+#          "eget 'boz/kail' --tag='v0.17.4' --asset=v3 --to=$HOME/.local/bin/kubectl-tail",
+#          "eget 'ahmetb/kubectl-tree' --tag='v0.4.3' --to=$HOME/.local/bin/kubectl-tree",
+#          "eget 'kubepug/kubepug' --tag='v1.7.1' --asset='.tar.gz' --asset='^.tar.gz.' --to=$HOME/.local/bin/kubectl-deprecations",
+#          "eget 'komodorio/helm-dashboard' --tag='v1.3.3' --to=$HOME/.local/bin/helm-dashboard",
+#      ]

@@ -116,7 +116,6 @@ if has("gui_running")
   set guioptions-=T
   set guioptions-=e
   set t_Co=256
-  set guitablabel=%M\ %t
 endif
 
 " Set utf8 as standard encoding and en_US as the standard language
@@ -174,12 +173,6 @@ nnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 xnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 nnoremap <silent> <expr> <Up> (v:count == 0 ? 'gk' : 'k')
 xnoremap <silent> <expr> <Up> (v:count == 0 ? 'gk' : 'k')
-
-" " Smart way to resize windows.
-" nmap <C-Up> :resize +2<CR>
-" nmap <C-Down> :resize -2<CR>
-" nmap <C-Left> :vertical resize -2<CR>
-" nmap <C-Right> :vertical resize +2<CR>
 
 " Search inside visual selection
 xnoremap g/ <esc>/\%V
@@ -244,34 +237,33 @@ autocmd FileType netrw silent! unmap <buffer> <C-l>
 "                       - - - - - - - - - - - - - - - -                        |
 "                                                                              |
 " -----------------------------------------------------------------------------|
-if has('macunix')
-  command NeovideOpen :silent !open --new -b com.neovide.neovide
-endif
-
 if exists("g:neovide")
   " Put anything you want to happen only in Neovide here
   set linespace=0
 
-  let g:neovide_padding_top = 0
+  let g:neovide_padding_top = 50
   let g:neovide_padding_bottom = 0
   let g:neovide_padding_right = 0
   let g:neovide_padding_left = 0
 
-  let g:neovide_scroll_animation_length = 0.15
-  let g:neovide_cursor_animation_length = 0.03
-  let g:neovide_cursor_trail_size = 0.8
-  let g:neovide_cursor_antialiasing = v:true
+  " https://neovide.dev/faq.html#how-to-turn-off-all-animations
+  let g:neovide_position_animation_length = 0
+  let g:neovide_cursor_animation_length = 0.00
+  let g:neovide_cursor_trail_size = 0
   let g:neovide_cursor_animate_in_insert_mode = v:false
   let g:neovide_cursor_animate_command_line = v:false
+  let g:neovide_scroll_animation_far_lines = 0
+  let g:neovide_scroll_animation_length = 0.00
 
   let g:neovide_hide_mouse_when_typing = v:true
   let g:neovide_confirm_quit = v:true
 
   let g:neovide_fullscreen = v:false
-  let g:neovide_remember_window_size = v:false
+  let g:neovide_remember_window_size = v:true
   let g:neovide_profiler = v:false
 
-  let g:neovide_scale_factor=0.85
+  " https://neovide.dev/faq.html#how-can-i-dynamically-change-the-scale-at-runtime
+  let g:neovide_scale_factor=1.0
 
   function! ChangeScaleFactor(delta)
     let g:neovide_scale_factor = g:neovide_scale_factor * a:delta
@@ -279,6 +271,37 @@ if exists("g:neovide")
 
   nnoremap <expr><C-=> ChangeScaleFactor(1.15)
   nnoremap <expr><C--> ChangeScaleFactor(1/1.15)
+
+  if has('macunix')
+    command NeovideOpen :silent !open --new -b com.neovide.neovide
+
+    " https://neovide.dev/faq.html#how-can-i-use-cmd-ccmd-v-to-copy-and-paste
+    nnoremap <D-s> :w<CR>
+    vnoremap <D-c> "+y
+    nnoremap <D-v> "+P
+    vnoremap <D-v> "+P
+    cnoremap <D-v> <C-R>+
+    inoremap <D-v> <ESC>l"+Pli
+
+    " Open new instance using `cmd+n`
+    nnoremap <D-n> :NeovideOpen<CR>
+    xnoremap <D-n> :NeovideOpen<CR>
+    inoremap <D-n> :NeovideOpen<CR>
+    cnoremap <D-n> :NeovideOpen<CR>
+
+    " Quit using `cmd+w`
+    nnoremap <D-w> :quit<CR>
+    xnoremap <D-w> :quit<CR>
+    inoremap <D-w> :quit<CR>
+    cnoremap <D-w> :quit<CR>
+
+    " Force-quit using `cmd+q`
+    nnoremap <D-q> :quit!<CR>
+    xnoremap <D-q> :quit!<CR>
+    inoremap <D-q> :quit!<CR>
+    cnoremap <D-q> :quit!<CR>
+  endif
+
 endif
 
 " Shortcut [window] save and close window
@@ -425,28 +448,24 @@ tnoremap <C-u> <C-\><C-n>
 
 " Shortcut! :.!figbox surround line in ascii box (figbox)
 
-" open file at position in new split
-" Natively, `gs` is for the useless `sleep` command.
-" With this mapping, `gsp` is for "Go to file under cursor in new split"
-nnoremap gsp :wincmd F<CR>
-
-" `gp` to visual select last pasted text
+" Visual select last pasted text
 nnoremap gp `[v`]
+" Reindent last pasted text
+nmap g= gp=
+" Comment last pasted text
+nmap gcp gpgc
+" Comment and reindent last pasted text
+nmap gc= gcpg=
 
-" Account for my common typo when quitting
-command Q :q
-command Qa :qa
-command Wq :wq
-command Wqa :wqa
-
-" Toggle background
+" Dark background
 set background=dark
-" nnoremap <leader>tB :execute 'set background=' . (&background == 'dark' ? 'light' : 'dark')<CR>
-" Toggle wrap
-nnoremap <leader>tw :setlocal wrap! wrap?<CR>
 
 " Filetype configs
 autocmd BufNewFile,BufRead *.yml.tpl,*.yaml.tpl setlocal filetype=yaml
+" Justfiles are similar to Makefiles
+autocmd BufNewFile,BufRead justfile setlocal filetype=make
+" Mykefiles are Python files
+autocmd BufNewFile,BufRead *.myke,Mykefile,*.Mykefile,Mykefile.*,mykefile,*.mykefile setlocal filetype=python
 
 autocmd FileType python setlocal colorcolumn=88
 
@@ -598,8 +617,8 @@ else
   " Preview substitutions live, as you type!
   set inccommand=split
 
-  " Stabilize text on split
-  set splitkeep=screen
+  " " Stabilize text on split
+  " set splitkeep=screen
 
   " Global status bar
   set laststatus=3
@@ -610,6 +629,9 @@ else
   " Keep signcolumn on by default
   set signcolumn=yes
 
+  " Rounded borders
+  set winborder=rounded
+
   " Disable nvim "editorconfig" feature to resolve this issue
   " that it introduces with `vim-symlink`.
   " ref: https://github.com/aymericbeaumet/vim-symlink/issues/14
@@ -617,7 +639,7 @@ else
 
   augroup highlight_yank
     autocmd!
-    autocmd TextYankPost * lua require'vim.highlight'.on_yank { { higroup = 'Visual', timeout = 333 } }
+    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
   augroup END
 
   command! Dotfiles execute 'vs | edit ' . stdpath('config')

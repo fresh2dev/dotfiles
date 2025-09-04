@@ -1,6 +1,7 @@
-from deploys.utils import git_clone_or_pull, link, test_command
 from pyinfra import host
 from pyinfra.facts.server import Home, Kernel
+
+from deploys.utils import git_clone_or_pull, link, test_command
 
 test_command("mods")
 

@@ -2,7 +2,6 @@ return {
   {
     -- A clean, dark Neovim theme
     'https://github.com/folke/tokyonight.nvim',
-    version = 'v4',
     lazy = false,
     priority = 1000, -- Make sure to load this before all the other start plugins.
     -- init = function()
@@ -19,29 +18,31 @@ return {
     },
   },
   {
-    -- Soothing pastel theme for (Neo)vim
-    'https://github.com/catppuccin/nvim',
-    version = 'v1',
-    name = 'catppuccin',
+    'EdenEast/nightfox.nvim',
+    name = 'nightfox',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
-      vim.cmd.colorscheme 'catppuccin-mocha'
+      vim.cmd.colorscheme 'carbonfox'
     end,
-    opts = {
-      term_colors = true,
-      transparent_background = false,
-      -- color_overrides = {
-      --   mocha = {
-      --     base = '#000000',
-      --     mantle = '#000000',
-      --     crust = '#000000',
-      --   },
-      -- },
-    },
   },
-  {
-    -- Neovim plugin to improve the default vim.ui interfaces
-    'https://github.com/stevearc/dressing.nvim',
-    opts = {},
-  },
+  -- {
+  --   -- Soothing pastel theme for (Neo)vim
+  --   'https://github.com/catppuccin/nvim',
+  --   name = 'catppuccin',
+  --   priority = 1000, -- Make sure to load this before all the other start plugins.
+  --   -- init = function()
+  --   --   vim.cmd.colorscheme 'catppuccin-mocha'
+  --   -- end,
+  --   opts = {
+  --     term_colors = true,
+  --     transparent_background = false,
+  --     -- color_overrides = {
+  --     --   mocha = {
+  --     --     base = '#000000',
+  --     --     mantle = '#000000',
+  --     --     crust = '#000000',
+  --     --   },
+  --     -- },
+  --   },
+  -- },
 }

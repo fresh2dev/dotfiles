@@ -1,4 +1,4 @@
-local file_types = { 'markdown', 'markdown.mdx' }
+local file_types = { 'markdown', 'markdown.mdx', 'Avante' }
 
 -- Takes the word under the cursor and puts it in the appropriate spot in a link.
 -- If no word is under the cursor, insert the link syntax
@@ -49,7 +49,7 @@ return {
     },
     keys = {
       {
-        '<leader>tmr',
+        '<leader>tm',
         '<Cmd>RenderMarkdown toggle<CR>',
         mode = 'n',
         ft = file_types,
