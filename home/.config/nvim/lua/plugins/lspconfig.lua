@@ -211,12 +211,13 @@ return { -- LSP Configuration & Plugins
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+      local lsp_config = require 'lspconfig'
       for name, config in pairs(servers) do
         -- This handles overriding only values explicitly passed
         -- by the server configuration above. Useful when disabling
         -- certain features of an LSP (for example, turning off formatting for tsserver)
         config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, require('blink.cmp').get_lsp_capabilities(config.capabilities or {}))
-        require('lspconfig')[name].setup(config)
+        lsp_config[name].setup(config)
       end
     end,
   },

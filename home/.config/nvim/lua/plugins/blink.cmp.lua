@@ -145,7 +145,13 @@ return {
       sources = {
         -- list of enabled providers
         -- default = { 'avante', 'lsp', 'path', 'snippets', 'buffer' },
-        default = { 'avante', 'lsp', 'path', 'snippets', 'buffer' },
+        default = {
+          'avante',
+          'lsp',
+          'path',
+          'snippets',
+          'buffer',
+        },
 
         -- table of providers to configure
         providers = {

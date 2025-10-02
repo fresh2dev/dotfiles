@@ -1,5 +1,4 @@
 ---
-architect: false
 # model: openrouter/deepseek/deepseek-r1
 # editor-model: openrouter/anthropic/claude-sonnet-4
 model: gemini/gemini-2.5-pro
@@ -9,14 +8,14 @@ dark-mode: true
 # pretty: true
 # stream: true
 # show-diffs: true
-git: false
+git: true
 # map-tokens: 2048
 # map-multiplier-no-files: 2
 aiderignore: '.gitignore'
 gitignore: false
 cache-prompts: false
 notifications: true
-yes-always: true
+# yes-always: true
 auto-commits: false
 dirty-commits: false
 commit: false

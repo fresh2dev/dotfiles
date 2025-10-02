@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from shutil import which
 from typing import Annotated, Optional
 
@@ -7,22 +8,24 @@ import myke
 brew = myke.bake("brew")
 eget = myke.bake("eget")
 
-go = myke.bake("go")
+go = myke.bake(["go"])
 go_install = myke.bake(["go", "install"])
 
-dotnet = myke.bake("dotnet")
+dotnet = myke.bake(["dotnet"])
 dotnet_install = myke.bake(["dotnet", "tool", "install", "--global"])
 
-cargo = myke.bake("cargo")
+cargo = myke.bake(["cargo"])
 cargo_binstall = myke.bake(["cargo", "binstall", "-y"])
 
-uv = myke.bake("uv")
+uv = myke.bake(["uv"])
 uv_install = myke.bake(["uv", "tool", "install", "--upgrade", "--force"])
 
-rustup = myke.bake(["rustup"])
-from pathlib import Path
+npm = myke.bake(["npm"])
+npm_install = myke.bake(["npm", "install", "-g"])
 
-wrangler = myke.bake("wrangler")
+rustup = myke.bake(["rustup"])
+
+wrangler = myke.bake(["wrangler"])
 
 pip = myke.bake(["python", "-m", "pip"])
 
@@ -34,6 +37,7 @@ def apps_upgrade(
     include_python: Annotated[Optional[bool], myke.arg("--python")] = None,
     include_go: Annotated[Optional[bool], myke.arg("--go")] = None,
     include_dotnet: Annotated[Optional[bool], myke.arg("--dotnet")] = None,
+    include_node: Annotated[Optional[bool], myke.arg("--node")] = None,
     include_eget: Annotated[Optional[bool], myke.arg("--eget")] = None,
 ):
     if not any(
@@ -44,12 +48,13 @@ def apps_upgrade(
             include_go,
             include_rust,
             include_dotnet,
+            include_node,
             include_eget,
         ],
     ):
         include_brew = include_rust = include_python = include_dotnet = include_go = (
-            True
-        )
+            include_node
+        ) = True
         include_eget = False
 
     if include_brew:
@@ -274,6 +279,10 @@ def apps_upgrade(
         # pipx upgrade --install myke
         # pipx upgrade --install ripgrep-ext
         uv_install("markitdown[pdf,audio-transcription,youtube-transcription]")
+
+    if include_node:
+        npm_install("npm@latest")
+        npm_install("mcp-hub@latest")
 
     if include_eget:
         # TODO: install/upgrade eget apps

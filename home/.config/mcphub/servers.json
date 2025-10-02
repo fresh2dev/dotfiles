@@ -1,0 +1,64 @@
+{
+  "mcpServers": {
+    "context7": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "command": "npx",
+      "disabled": false
+    },
+    "fetch": {
+      "args": [
+        "mcp-server-fetch"
+      ],
+      "command": "uvx",
+      "disabled": true
+    },
+    "git": {
+      "args": [
+        "mcp-server-git",
+        "--repository",
+        "${cmd: git rev-parse --show-toplevel}"
+      ],
+      "command": "uvx",
+      "disabled": false
+    },
+    "github": {
+      "disabled": false,
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_TOKEN}"
+      },
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "memory": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "command": "npx",
+      "disabled": true
+    },
+    "sequentialthinking": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "command": "npx",
+      "disabled": true
+    },
+    "time": {
+      "args": [
+        "mcp-server-time",
+        "--local-timezone=America/Chicago"
+      ],
+      "command": "uvx",
+      "disabled": false
+    }
+  },
+  "nativeMCPServers": {
+    "neovim": {
+      "disabled": true
+    }
+  }
+}

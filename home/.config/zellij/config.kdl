@@ -2,7 +2,7 @@ keybinds clear-defaults=true {
     normal {
         bind "enter" {
             WriteChars "\r"
-            MessagePlugin "autolock"
+            MessagePlugin "automode"
         }
     }
     locked {
@@ -10,7 +10,7 @@ keybinds clear-defaults=true {
             SwitchToMode "normal"
         }
         bind "Alt Shift ." {
-            MessagePlugin "autolock" { payload "toggle"; }
+            MessagePlugin "automode" { payload "toggle"; }
             SwitchToMode "normal"
         }
     }
@@ -77,7 +77,7 @@ keybinds clear-defaults=true {
         bind "Alt l" { MoveFocus "right"; }
         bind "Alt Shift l" { MovePane "right"; }
         bind "Alt m" {
-            MessagePlugin "autolock" { payload "toggle"; }
+            MessagePlugin "automode" { payload "toggle"; }
             ToggleFocusFullscreen;
         }
         bind "Alt n" { NewPane; }
@@ -118,7 +118,7 @@ keybinds clear-defaults=true {
             SwitchToMode "locked"
         }
         bind "Alt Shift ." {
-            MessagePlugin "autolock" { payload "toggle"; }
+            MessagePlugin "automode" { payload "toggle"; }
             SwitchToMode "locked"
         }
 
@@ -148,7 +148,7 @@ keybinds clear-defaults=true {
 // changing these requires a restart to take effect
 plugins {
     about location="zellij:about"
-    autolock location="file:/Users/donald/sync/projects/zellij-autolock/target/wasm32-wasip1/release/zellij-autolock.wasm" {
+    automode location="file:/Users/donald/sync/projects/zellij-automode/target/wasm32-wasip1/release/zellij-automode.wasm" {
         is_enabled true
         lock_regex ".*"
         ignore_regex "^(zellij|sh|zsh|bash|fish|pwsh|ls|eza|starship|direnv|\\(atuin\\)|atuin history start.*)$"
@@ -182,7 +182,7 @@ plugins {
 // eg. "file:/path/to/my-plugin.wasm"
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
-    autolock
+    automode
     zjframes
 }
  

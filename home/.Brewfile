@@ -173,6 +173,8 @@ elsif OS.mac?
 
     # cask "lm-studio"
     cask "msty"
+    cask "voiceink"
+
 
     cask "leader-key"
 
@@ -185,7 +187,7 @@ elsif OS.mac?
     cask "vmware-fusion"
     # cask "karabiner-elements"  # Removed in favor of `SuperKey`
     cask "keycastr"
-    cask "pearcleaner"
+    # cask "pearcleaner"
 
     cask "scroll-reverser"
 

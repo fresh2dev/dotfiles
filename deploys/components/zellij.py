@@ -19,6 +19,6 @@ for url in (
     "https://github.com/dj95/zjstatus/releases/download/v0.20.2/zjframes.wasm",
     "https://github.com/karimould/zellij-forgot/releases/download/0.4.1/zellij_forgot.wasm",
     "https://github.com/rvcas/room/releases/download/v1.2.0/room.wasm",
-    # "https://github.com/fresh2dev/zellij-autolock/releases/download/0.1.0/zellij-autolock.wasm",
+    # "https://github.com/fresh2dev/zellij-automode/releases/download/0.1.0/zellij-automode.wasm",
 ):
     files.download(url, str(dest_dir / Path(url).name), force=False)
