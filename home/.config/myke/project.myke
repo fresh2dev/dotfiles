@@ -1,0 +1,269 @@
+import os
+from collections.abc import Generator, Sequence
+from contextlib import contextmanager
+from pathlib import Path
+from subprocess import PIPE, CalledProcessError, run
+from typing import Annotated, Callable, Literal, Optional
+
+import myke
+
+COPIER_TEMPLATE_URI = (
+    "ssh://git@git.local.hostbutter.net/fresh2dev/copier-python-project.git"
+)
+
+COPIER_APPLY_DEFAULT: dict[str, Callable[[], bool]] = {
+    "common": lambda: True,
+    "mkdocs": lambda: Path("mkdocs.yml").exists(),
+    "hugo": lambda: Path("hugo.yaml").exists(),
+    "zola": lambda: Path("config.toml").exists(),
+    "marp": lambda: Path(".marprc.yml").exists(),
+    "python": lambda: Path("pyproject.toml").exists(),
+}
+COPIER_TEMPLATE_NAMES: tuple[str, ...] = tuple(COPIER_APPLY_DEFAULT)
+COPIER_COMMON_ANSWERS_PATH: Path = Path(".copier-answers.common.yml")
+
+
+def continue_prompt(msg: str, default: bool = False) -> bool:
+    """
+    Present a simple 'y/n' confirmation prompt to the user.
+
+    Args:
+        msg: The message to display to the user.
+        default: When True, "yes" is selected when the user presses "enter".
+                 When False, "no" is selected when the user presses "enter".
+
+    Returns:
+        bool: True if the user confirmed, False otherwise.
+    """
+    default_text = "[Y/n]" if default else "[y/N]"
+    prompt = f"{msg} {default_text}: "
+
+    while True:
+        response = input(prompt).strip().lower()
+
+        if not response:  # User pressed enter, use default
+            return default
+
+        if response in ["y", "yes"]:
+            return True
+
+        if response in ["n", "no"]:
+            return False
+
+        print("Please respond with 'y' or 'n'.")
+
+
+@contextmanager
+def set_cwd(path: Optional[Path]) -> Generator[None, None, None]:
+    og_cwd = Path.cwd()
+
+    if path:
+        path.mkdir(parents=True, exist_ok=True)
+        os.chdir(path)
+
+    yield
+
+    os.chdir(og_cwd)
+
+
+def find_git_root() -> Optional[Path]:
+    try:
+        stdout = run(
+            ["git", "rev-parse", "--show-toplevel"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+    except CalledProcessError:
+        return
+    else:
+        if not stdout:
+            return
+
+    return Path(str(stdout).removesuffix("\n"))
+
+
+class UnstagedChangesError(Exception):
+    """Exception raised when a Git repository has unstaged changes."""
+
+
+def assert_no_unstaged_changes() -> None:
+    try:
+        stdout = run(
+            ["git", "status", "--porcelain"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+    except CalledProcessError as e:
+        if e.returncode == 128:
+            # "not a git repository"
+            return
+        print(e.stderr)
+        raise e
+    else:
+        if not stdout or not (stdout := str(stdout).rstrip()):
+            return
+
+    # `x[0]` is staged status, `x[1]` is unstaged status.
+    if any((x[0].isspace() or not x[1].isspace()) for x in stdout.splitlines()):
+        raise UnstagedChangesError("Current Git repository has unstaged modifications.")
+
+
+def _copier(
+    cmd: str,
+    args: Sequence[str],
+    /,
+    *,
+    vcs_ref: str,
+    template: Optional[str] = None,
+    skip_answered: bool = False,
+    allow_unstaged: bool = False,
+    force: bool = False,
+    **kwargs,
+) -> None:
+    if not template:
+        for i, x in enumerate(COPIER_APPLY_DEFAULT):
+            loop_args: list[str] = list(args)
+            if i > 0:
+                apply_default: bool = COPIER_APPLY_DEFAULT[x]()
+                if (force and not apply_default) or (
+                    not force
+                    and not continue_prompt(
+                        f'\nApply "{x}" template?',
+                        default=apply_default,
+                    )
+                ):
+                    continue
+
+                allow_unstaged = True
+                skip_answered = True
+                loop_args = [
+                    "--data-file",
+                    str(COPIER_COMMON_ANSWERS_PATH),
+                    "--skip-tasks",
+                    *loop_args,
+                ]
+
+            _copier(
+                cmd,
+                loop_args,
+                vcs_ref=vcs_ref,
+                skip_answered=skip_answered,
+                template=x,
+                allow_unstaged=allow_unstaged,
+                force=force,
+                **kwargs,
+            )
+
+            print(f'Successfully applied "{x}" template.')
+
+        return
+
+    if not allow_unstaged:
+        assert_no_unstaged_changes()
+
+    extra_args = [
+        "--vcs-ref",
+        vcs_ref,
+        "--data",
+        f"template={template}",
+    ]
+
+    if force:
+        extra_args.append("-f")
+        skip_answered = True
+
+    if cmd != "update":
+        extra_args.append("--overwrite")
+
+        if cmd == "copy":
+            skip_answered = False
+
+    if skip_answered and COPIER_COMMON_ANSWERS_PATH.exists():
+        extra_args.extend(["--data-file", str(COPIER_COMMON_ANSWERS_PATH)])
+
+    if (x := Path(f".copier-answers.{template}.yml")).exists():
+        extra_args.extend(["--answers-file", str(x)])
+
+    args = ["copier", cmd, "--trust", *extra_args, *args]
+    print(args)
+    run(
+        args,
+        check=True,
+        **kwargs,
+    )
+
+
+@myke.task(parents=("copier"), name="copy")
+def copier_copy(
+    *args: str,
+    to_dir: Annotated[Path, myke.arg("--to")],
+    template: Annotated[
+        Optional[Literal[COPIER_TEMPLATE_NAMES]],
+        myke.arg("--template"),
+    ] = None,
+    vcs_ref: Annotated[str, myke.arg("-r", "--vcs-ref")] = "dev",
+    skip_answered: Annotated[bool, myke.arg("-A", "--skip-answered")] = False,
+    overwrite: Annotated[bool, myke.arg("-w", "--overwrite")] = False,
+    force: Annotated[bool, myke.arg("-f", "--force")] = False,
+    src: str = COPIER_TEMPLATE_URI,
+) -> None:
+    with set_cwd(to_dir):
+        _copier(
+            "copy",
+            [*args, src, str(to_dir)],
+            vcs_ref=vcs_ref,
+            template=template,
+            skip_answered=skip_answered,
+            allow_unstaged=overwrite,
+            force=force,
+        )
+
+
+@myke.task(parents=("copier"), name="recopy")
+def copier_recopy(
+    *args: str,
+    template: Annotated[
+        Optional[Literal[COPIER_TEMPLATE_NAMES]],
+        myke.arg("--template"),
+    ] = None,
+    vcs_ref: Annotated[str, myke.arg("-r", "--vcs-ref")] = "dev",
+    skip_answered: Annotated[bool, myke.arg("-A", "--skip-answered")] = False,
+    overwrite: Annotated[bool, myke.arg("-w", "--overwrite")] = False,
+    force: Annotated[bool, myke.arg("-f", "--force")] = False,
+) -> None:
+    with set_cwd(find_git_root()):
+        _copier(
+            "recopy",
+            args,
+            vcs_ref=vcs_ref,
+            template=template,
+            skip_answered=skip_answered,
+            allow_unstaged=overwrite,
+            force=force,
+        )
+
+
+@myke.task(parents=("copier"), name="update")
+def copier_update(
+    *args: str,
+    template: Annotated[
+        Optional[Literal[COPIER_TEMPLATE_NAMES]],
+        myke.arg("--template"),
+    ] = None,
+    vcs_ref: Annotated[str, myke.arg("-r", "--vcs-ref")] = "dev",
+    skip_answered: Annotated[bool, myke.arg("-A", "--skip-answered")] = False,
+    overwrite: Annotated[bool, myke.arg("-w", "--overwrite")] = False,
+    force: Annotated[bool, myke.arg("-f", "--force")] = False,
+) -> None:
+    with set_cwd(find_git_root()):
+        _copier(
+            "update",
+            args,
+            vcs_ref=vcs_ref,
+            template=template,
+            skip_answered=skip_answered,
+            allow_unstaged=overwrite,
+            force=force,
+        )

@@ -1,0 +1,15 @@
+allow_duplicate_keys = true
+comments_min_spaces_from_content = 2
+comments_require_starting_space = true
+explicit_start = false
+indent_mapping = 2
+indent_offset = 2
+indent_sequence = 4
+none_representation = "~"
+quote_basic_values = true
+quote_representation = "'"
+whitelines = 1
+section_whitelines = 1
+comments_whitelines = 1
+sequence_style = "flow_style"
+line_length = 120
