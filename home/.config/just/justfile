@@ -1,0 +1,14 @@
+set no-cd
+
+mod? apps "apps.just"
+mod? common "common.just"
+mod? docs "docs.just"
+mod? py "py.just"
+
+editor := quote(env('EDITOR', 'nvim'))
+
+default:
+    @ just -f "{{ source_file() }}" --choose
+
+edit:
+    {{ editor }} {{ source_file() }}

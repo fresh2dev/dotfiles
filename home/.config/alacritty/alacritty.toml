@@ -1,0 +1,36 @@
+[general]
+import = ["~/.config/alacritty/themes/carbonfox.toml"]
+# import = ["~/.config/alacritty/themes/catppuccin_macchiato.toml"]
+
+[env]
+TERM = "alacritty"
+
+[font]
+size = 14
+
+[font.normal]
+family = "MesloLGL Nerd Font"
+# family = "iMWritingMono Nerd Font"
+# family = "SauceCodePro Nerd Font"
+# style = "Regular"
+
+[window]
+# decorations = "None"
+decorations_theme_variant = "None"
+title = "Terminal"
+dynamic_title = true
+# dynamic_padding = true
+# padding = { x = 0, y = 0 }
+# startup_mode = "Fullscreen"
+option_as_alt = "both"
+
+# [[keyboard.bindings]]
+# action = "SpawnNewInstance"
+# key = "a"
+# mods = "Alt"
+
+# Added so Claude Code will enter a newline with `shift+enter`.
+[[keyboard.bindings]]
+key = "Enter"
+mods = "Shift"
+chars = "\n"

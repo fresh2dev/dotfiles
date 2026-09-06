@@ -1,0 +1,253 @@
+// This configuration is merged with the default vicinae configuration file, which you can obtain by running the `vicinae config default` command.
+// Every item defined in this file takes precedence over the values defined in the default config or any other imported file.
+//
+// You can make manual edits to this file, however you should keep in mind that this file may be written to by vicinae when a configuration change is made through the GUI.
+// When that happens, any custom comments or formatting will be lost.
+//
+// If you want to maintain a configuration file with your own comments and formatting, you should create a separate file and add it to the 'imports' array.
+//
+// Learn more about configuration at https://docs.vicinae.com/config
+
+{
+   "$schema": "https://vicinae.com/schemas/config.json",
+   "close_on_focus_loss": false,
+   "pop_to_root_on_close": true,
+   "activate_on_single_click": true,
+   "keybinding": "vim",
+   "global_shortcuts": {
+      "toggle": "control+SPACE"
+   },
+   "font": {
+      "normal": {
+         "family": "MesloLGM Nerd Font",
+         "size": 12
+      }
+   },
+   "theme": {
+      "dark": {
+         "name": "catppuccin-macchiato"
+      }
+   },
+   "telemetry": {
+      "system_info": false
+   },
+   "launcher_window": {
+      "rounding": 5,
+      "opacity": 1,
+      "compact_mode": {
+         "enabled": true
+      },
+      "material": "blur"
+   },
+   "providers": {
+      "@leonkohli/store.vicinae.process-manager": {
+         "enabled": false
+      },
+      "@pavle99/store.vicinae.zed-recents": {
+         "preferences": {
+            "windowPreference": "NewWindow"
+         },
+         "entrypoints": {
+            "open-recents": {
+               "shortcut": "super+control+alt+shift+Z"
+            }
+         }
+      },
+      "applications": {
+         "entrypoints": {
+            "app.loshadki.OpenIn.Helper": {
+               "enabled": false
+            },
+            "com.BZG.KagiAssistant": {
+               "alias": "Assistant",
+               "shortcut": "super+control+alt+4"
+            },
+            "com.TickTick.task.mac": {
+               "alias": "ToDo"
+            },
+            "com.anthropic.claudefordesktop": {
+               "enabled": true
+            },
+            "com.apple.DVDPlayer": {
+               "enabled": false
+            },
+            "com.apple.DirectoryUtility": {
+               "enabled": false
+            },
+            "com.apple.Safari": {
+               "alias": "Browser",
+               "shortcut": "super+control+alt+3"
+            },
+            "com.apple.Terminal": {
+               "enabled": false
+            },
+            "com.apple.Ticket-Viewer": {
+               "enabled": true
+            },
+            "com.apple.finder.Open-AllMyFiles": {
+               "enabled": false
+            },
+            "com.apple.finder.Open-Recents": {
+               "enabled": false
+            },
+            "dev.zed.Zed": {
+               "alias": "IDE",
+               "shortcut": "super+control+alt+2"
+            },
+            "org.alacritty": {
+               "alias": "Terminal",
+               "shortcut": "super+control+alt+1"
+            }
+         }
+      },
+      "browser-extension": {
+         "entrypoints": {
+            "browse-tabs": {
+               "enabled": false
+            },
+            "shortcut-active-tab": {
+               "enabled": false
+            }
+         }
+      },
+      "calculator": {
+         "preferences": {
+            "backend": "soulver-core",
+            "refreshRatesOnStartup": false
+         },
+         "entrypoints": {
+            "history": {
+               "enabled": false
+            },
+            "refresh-rates": {
+               "enabled": false
+            }
+         }
+      },
+      "clipboard": {
+         "preferences": {
+            "eraseOnStartup": false,
+            "monitoring": false
+         },
+         "entrypoints": {
+            "clear": {
+               "enabled": true
+            },
+            "clear-history": {
+               "enabled": false
+            },
+            "history": {
+               "enabled": false
+            }
+         }
+      },
+      "core": {
+         "entrypoints": {
+            "sponsor": {
+               "enabled": false
+            },
+            "store": {
+               "enabled": false
+            }
+         }
+      },
+      "developer": {
+         "entrypoints": {
+            "create": {
+               "enabled": false
+            }
+         }
+      },
+      "files": {
+         "entrypoints": {
+            "search": {
+               "enabled": false
+            }
+         }
+      },
+      "font": {
+         "entrypoints": {
+            "browse": {
+               "enabled": false
+            }
+         }
+      },
+      "macos-settings": {
+         "enabled": false
+      },
+      "manage-shortcuts": {
+         "entrypoints": {
+            "create": {
+               "enabled": false
+            },
+            "manage": {
+               "enabled": false
+            }
+         }
+      },
+      "power": {
+         "entrypoints": {
+            "sleep": {
+               "preferences": {
+                  "confirm": false
+               }
+            }
+         }
+      },
+      "raycast-compat": {
+         "entrypoints": {
+            "store": {
+               "enabled": false
+            }
+         }
+      },
+      "shortcuts": {
+         "enabled": false
+      },
+      "system": {
+         "entrypoints": {
+            "run": {
+               "enabled": false
+            },
+            "toggle-mute": {
+               "enabled": false
+            },
+            "volume-0": {
+               "enabled": false
+            },
+            "volume-100": {
+               "enabled": false
+            },
+            "volume-25": {
+               "enabled": false
+            },
+            "volume-50": {
+               "enabled": false
+            },
+            "volume-75": {
+               "enabled": false
+            },
+            "volume-down": {
+               "enabled": false
+            },
+            "volume-up": {
+               "enabled": false
+            }
+         }
+      },
+      "theme": {
+         "entrypoints": {
+            "set": {
+               "enabled": false
+            }
+         }
+      },
+      "wm": {
+         "entrypoints": {
+            "switch-windows": {
+               "enabled": false
+            }
+         }
+      }
+   }
+}

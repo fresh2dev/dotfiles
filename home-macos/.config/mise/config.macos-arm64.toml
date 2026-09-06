@@ -1,0 +1,15 @@
+[bootstrap.macos.dock]
+autohide = true
+orientation = "left"
+tilesize = 48
+show_recents = false
+
+[bootstrap.macos.finder]
+show_all_files = true
+show_pathbar = true
+preferred_view_style = "list"
+
+# Make GUI apps respect `XDG_CONFIG_HOME`
+[bootstrap.macos.launchd.agents.my-sync]      # macOS user LaunchAgents
+program = "launchctl setenv XDG_CONFIG_HOME \"$HOME/.config\""
+run_at_load = true

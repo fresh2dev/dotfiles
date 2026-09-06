@@ -1,0 +1,6 @@
+[tools]
+fzf = "0.74.3"
+just = "1.58.0"
+pipx = "latest"
+"pipx:stow-python" = "2.4.1"
+ripgrep = "15.2.0"

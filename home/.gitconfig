@@ -1,0 +1,128 @@
+[user]
+  email = hello@Fresh2.dev
+  name = Donald Mellenbruch
+[init]
+  defaultBranch = main
+[core]
+    autocrlf = false
+    fileMode = false
+    editor = nvim
+    pager = delta
+    sshCommand = ssh -i $DOTFILES_TARGET/.ssh/id_ed25519
+[interactive]
+    diffFilter = delta
+[delta]
+    features = decorations
+    light = false
+    dark = true
+    navigate = true
+    line-numbers = true
+    side-by-side = false
+    color-only = true
+    syntax-theme = DarkNeon
+[absorb]
+    oneFixupPerCommit = true
+[color]
+    ui = true
+    pager = true
+    ; diff = always
+    ; status = always
+    ; branch = always
+    ; interactive = always
+[fetch]
+    prune = true
+[pull]
+    rebase = true
+[rebase]
+    autoStash = true
+    updateRefs = true
+[push]
+    autoSetupRemote = true
+[merge]
+    tool = diffview
+    conflictStyle = zdiff3
+    autoStash = true
+[mergetool]
+    prompt = false
+    keepBackup = false
+[mergetool "diffview"]
+  cmd = nvim -c "DiffviewOpen" "$MERGE"
+[diff]
+    tool = nvimdiff
+[difftool]
+    prompt = false
+[difftool "nvimdiff"]
+    ; TODO: Why do I have to explicitly call `diffthis`?
+    cmd = nvim -d "$LOCAL" "$REMOTE" -c 'windo diffthis'
+    colorMoved = default
+    algorithm = histogram
+[alias]
+    is-repo = !git status --porcelain >/dev/null 2>&1
+
+    is-clean = "!f() { \
+                git is-repo && test -z \"$(git status --porcelain)\"; \
+            }; f"
+
+    all = !drydock
+
+    top = !gittop
+
+    authors = shortlog --summary --numbered --email --all
+
+    ref = rev-parse --short=8 HEAD
+
+    ##################################################
+    # Revert/undo/nuke unstaged and untracked.
+    ##################################################
+    nuke = !git reset --hard && git restore .
+
+    ##################################################
+    # Branch ops
+    ##################################################
+    b = branch --show-current
+
+    co = checkout
+    cob = switch --create
+
+    ##################################################
+    # Commit ops
+    ##################################################
+    cc = commit
+    ca = commit --amend
+    ce = commit --amend --no-edit
+    cf = fixup
+    cs = squash
+    cr = revert
+    crc = revert --no-edit
+    crn = revert --no-commit
+
+    ##################################################
+    # Push ops
+    ##################################################
+    p = push
+    po = push origin -u
+
+    ##################################################
+    # Rebase ops
+    ##################################################
+    ri = rebase --interactive
+    rf = rebase --autosquash
+    rr = rebase --continue
+    rs = rebase --skip
+    ra = rebase --abort
+    re = rebase --edit-todo
+
+    ##################################################
+    # Fetch ops
+    ##################################################
+    f = fetch
+    fa = fetch --all --prune
+
+    ##################################################
+    # Log / Graph ops
+    ##################################################
+    g = log --graph --decorate --oneline
+    ga = log --graph --decorate --oneline --all
+    gav = log --graph --decorate --oneline --all --pretty=oneline --no-abbrev
+    l = log --graph --decorate --abbrev-commit --format=format:'%C(bold yellow)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    la = log --graph --decorate --abbrev-commit --format=format:'%C(bold yellow)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all

@@ -1,0 +1,369 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "ssh_connections": [
+    {
+      "host": "timpi",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/user"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "timxl",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/user"
+          ]
+        },
+        {
+          "paths": [
+            "/home/user/.donald"
+          ]
+        },
+        {
+          "paths": [
+            "/home/user/.donald/projects"
+          ]
+        },
+        {
+          "paths": [
+            "/home/user/.donald/projects/github.com/fresh2dev/nvim-config"
+          ]
+        }
+      ]
+    }
+  ],
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "restore_on_startup": "launchpad",
+  "session": {
+    "trust_all_worktrees": true,
+  },
+  "on_last_window_closed": "quit_app",
+  "cli_default_open_behavior": "existing_window",
+  "debugger": {
+    "dock": "left",
+  },
+  "git_panel": {
+    "dock": "left",
+  },
+  "auto_update": false, // Updated via Brew
+  "auto_install_extensions": {
+    // Themes
+    "nvim-nightfox": true,
+    "material-icon-theme": true,
+    // Misc.
+    "comment": true,
+    // Snippets
+    "python-snippets": true,
+    "rust-snippets": true,
+    "go-snippets": true,
+    "html-snippets": true,
+    // Grammars / LSPs
+    // (Python)
+    "pyrefly": true,
+    // "ty": true, // built-in
+    "zuban": true,
+    // (Others)
+    "docker-compose": true,
+    "basher": true, // bash-language-server
+    "dockerfile": true,
+    "git-firefly": true,
+    "graphql": true,
+    "r": true,
+    "just": true,
+    "make": true,
+    "xml": true,
+    "ini": true,
+    "html": true,
+    "lua": true,
+    "powershell": true,
+    "sql": true,
+    "toml": true,
+    "typos": true,
+  },
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Material Icon Theme",
+    "dark": "Material Icon Theme",
+  },
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Carbonfox - opaque",
+  },
+  "theme_overrides": {
+    "Carbonfox - opaque": {
+      "vim.yank.background": "#00FFFF",
+    },
+  },
+  "outline_panel": {
+    "dock": "left",
+  },
+  "sticky_scroll": {
+    "enabled": true,
+  },
+  "edit_predictions": {
+    "open_ai_compatible_api": {
+      "prompt_format": "infer",
+      "api_url": "https://openrouter.ai/api",
+      "model": "google/gemini-3.1-flash-lite-preview",
+    },
+    "provider": "zed",
+    "disabled_globs": [],
+  },
+  "which_key": { "enabled": true, "delay_ms": 500 },
+  "git": {
+    "inline_blame": {
+      "enabled": false,
+    },
+  },
+  "terminal": {
+    "dock": "bottom",
+    "copy_on_select": true,
+    "option_as_meta": true,
+  },
+  "agent": {
+    "terminal_init_command": "claude",
+    "dock": "right",
+    "sidebar_side": "right",
+    "tool_permissions": {
+      "default": "allow",
+    },
+    "inline_assistant_model": {
+      "provider": "lmstudio",
+      "model": "qwen2.5-coder-7b-instruct",
+    },
+    "default_profile": "write",
+    "default_model": {
+      "enable_thinking": false,
+      "provider": "openrouter",
+      "model": "anthropic/claude-sonnet-4.6",
+    },
+    "inline_alternatives": [
+      {
+        "provider": "openrouter",
+        "model": "gemini-2.5-flash",
+      },
+    ],
+  },
+  "project_panel": {
+    "dock": "left",
+    "sticky_scroll": true,
+    "hide_gitignore": false,
+    "auto_fold_dirs": false,
+    "git_status_indicator": true,
+    "auto_reveal_entries": false,
+  },
+  "context_servers": {},
+  "agent_servers": {
+
+  },
+  "seed_search_query_from_cursor": "selection",
+  "use_smartcase_search": true,
+  "diagnostics": {
+    "inline": {
+      "enabled": false,
+    },
+  },
+  "inlay_hints": {
+    "enabled": false,
+  },
+  "show_whitespaces": "selection",
+  "base_keymap": "VSCode",
+  "vim_mode": true,
+  "vim": {
+    "use_smartcase_find": true,
+    "use_system_clipboard": "always",
+    // "highlight_on_yank_duration": 666
+  },
+  "cursor_blink": false,
+  "multi_cursor_modifier": "alt",
+  "ui_font_family": ".ZedSans",
+  "ui_font_size": 16,
+  "buffer_font_family": "MesloLGM Nerd Font Mono",
+  "buffer_font_size": 13,
+  "when_closing_with_no_tabs": "keep_window_open",
+  "show_wrap_guides": true,
+  "wrap_guides": [88],
+  "auto_indent": "syntax_aware",
+  "auto_indent_on_paste": false,
+  "format_on_save": "off",
+  "ensure_final_newline_on_save": true,
+  "remove_trailing_whitespace_on_save": true,
+  "autosave": "on_focus_change",
+  // "autosave": {
+  //   "after_delay": {
+  //     "milliseconds": 2000
+  //   }
+  // },
+  "languages": {
+    "Python": {
+      "language_servers": [
+        "ruff",
+        "zuban",
+        "!pyright",
+        "!basedpyright",
+        "!pylsp",
+        "!ty",
+        "!pyrefly",
+      ],
+      "formatter": [
+        {
+          "language_server": {
+            "name": "ruff",
+          },
+        },
+        { "code_action": "source.organizeImports.ruff" },
+      ],
+      // "code_actions_on_format": {
+      //   // Organize imports
+      //   "source.organizeImports.ruff": true,
+      //   // Fix all auto-fixable lint violations
+      //   "source.fixAll.ruff": false,
+      // },
+    },
+    "Lua": {
+      "format_on_save": "on",
+      "formatter": {
+        "external": {
+          "command": "stylua",
+          "arguments": [
+            "--respect-ignores",
+            "--stdin-filepath",
+            "{buffer_path}",
+            "-",
+          ],
+        },
+      },
+    },
+  },
+  "lsp": {
+    "ruff": {
+      "initialization_options": {
+        "settings": {
+          "lint": {
+            "enable": true,
+          },
+        },
+      },
+    },
+    "basedpyright": {
+      "settings": {
+        "python.analysis": {
+          "diagnosticMode": "workspace",
+        },
+        "python": {
+          "pythonPath": ".venv/bin/python",
+        },
+      },
+    },
+    "rust-analyzer": {
+      "initialization_options": {
+        "inlayHints": {
+          "maxLength": null,
+          "lifetimeElisionHints": {
+            "enable": "skip_trivial",
+            "useParameterNames": true,
+          },
+          "closureReturnTypeHints": {
+            "enable": "always",
+          },
+        },
+      },
+    },
+    "gopls": {
+      "initialization_options": {
+        "hints": {
+          "assignVariableTypes": true,
+          "compositeLiteralFields": true,
+          "compositeLiteralTypes": true,
+          "constantValues": true,
+          "functionTypeParameters": true,
+          "parameterNames": true,
+          "rangeVariableTypes": true,
+        },
+      },
+    },
+    "typos": {
+      // Optional. Omit the entire "binary" object to use Zed’s default typos-lsp discovery.
+      // See https://zed.dev/docs/configuring-languages
+      "binary": {
+        // Prefer your install instead of auto-downloaded version
+        "ignore_system_version": false,
+        "path": "~/.cargo/bin/typos-lsp",
+        "arguments": [],
+      },
+      // "initialization_options": {
+      //   // Diagnostic severity within Zed. "Information" by default, can be:
+      //   // "Error", "Hint", "Information", "Warning"
+      //   "diagnosticSeverity": "Information",
+      // },
+    },
+  },
+  "minimap": {
+    "show": "always",
+    "display_in": "all_editors",
+    "thumb": "always",
+    "max_width_columns": 88,
+  },
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware", // rainbow indentation
+  },
+  "colorize_brackets": true,
+  "scrollbar": {
+    "show": "never",
+  },
+  "tabs": {
+    "file_icons": true,
+    "git_status": true,
+  },
+  "preview_tabs": {
+    "enabled": false,
+  },
+  "command_aliases": {
+    "W": "w",
+    "Wq": "wq",
+    "Q": "q",
+    "enew": "tabnew",
+  },
+  "active_pane_modifiers": {
+    "border_size": 3,
+    "inactive_opacity": 0.8,
+  },
+  "file_scan_exclusions": [
+    // Default exclusions
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/.jj",
+    "**/.sl",
+    "**/.repo",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    // User-defined exclusions
+    "**/__pycache__",
+    "**/.venv",
+    "**/.pytest_cache",
+    "**/.ruff_cache",
+    "**/node_modules",
+  ],
+}

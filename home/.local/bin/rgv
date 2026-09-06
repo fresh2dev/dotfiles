@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+if [ "$1" = "--files" ]; then
+  RG_EXTRA_ARGS="--max-count=1" # Short-circuit at first match
+  INITIAL_QUERY="^"             # Every file will match this regex
+  FZF_DISPLAY_FORMAT="1"        # only show filename
+  shift
+else
+  if [[ " $* " == *" --files "* ]]; then
+    echo "Error: '--files' must be the first argument." >&2
+    exit 1
+  fi
+
+  if [ "${1:0:1}" != "-" ]; then
+    INITIAL_QUERY="${1:-}"
+    shift
+  fi
+
+  FZF_DISPLAY_FORMAT=".."
+fi
+
+RG_EXTRA_ARGS="$RG_EXTRA_ARGS $(python -c 'import sys; import shlex; print(shlex.join(sys.argv[1:]))' "$@")"
+# RG_PREFIX="rg --vimgrep --no-heading --color=always --smart-case --hidden $RG_EXTRA_ARGS"
+
+nvim -c ":lua require'fzf-lua'.grep({
+  debug=false,
+  search=[[$INITIAL_QUERY]],
+  no_esc=true,
+  rg_glob=true,
+  rg_opts=[[--vimgrep --column --line-number --no-heading --color=always $RG_EXTRA_ARGS -e]],
+  fzf_opts={['--delimiter']=':', ['--with-nth']='$FZF_DISPLAY_FORMAT'},
+})"

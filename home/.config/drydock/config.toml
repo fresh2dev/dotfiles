@@ -1,0 +1,42 @@
+roots = ["$GHQ_ROOT/github.com"]  # each immediate subdirectory becomes a "group"
+max_depth = 2
+follow_nested_repos = false  # keeps submodules and vendored checkouts out
+# (bare repos always descend — see "Worktrees")
+follow_symlinks = false  # so a symlinked tree can't be counted twice
+# exclude = ["fixtures/**"]  # globs, relative to a root
+# prune = []  # extra directory names to skip
+
+[refresh]
+interval = "5m"  # backstop sweep; the watcher handles the rest
+watch = true
+debounce = "1s"
+
+[status]
+untracked = "normal"  # normal | all | no
+concurrency = 12  # omit to size from your core count
+max_files = 200
+
+[release]
+# Requires a digit, so marker tags like `latest` aren't mistaken for releases.
+tag_pattern = "*[0-9]*"
+read_changelog = true
+
+[remote]
+fetch = true  # see "Ahead, behind, and the network"
+interval = "1h"
+concurrency = 4  # how many fetches run at once
+timeout = "20s"  # per repo, then it's given up on
+
+[visibility]
+enabled = true  # see "Visibility"; requires `gh`
+interval = "24h"
+
+[ui]
+# columns = [...]            # unset = the defaults; the `C` key writes this
+default_filters = []  # e.g. ["dirty", "unpushed"]
+default_sort = "activity"
+default_since = ""  # e.g. "1w"
+editor_command = ["nvim", "{path}"]  # O
+file_manager_command = ["zed", "{path}"]  # o — `open -R` reveals instead
+git_client_command = ["lazygit", "--path", "{path}"]  # t
+terminal_command = ["open", "-a", "Terminal", "{path}"]  # T and ctrl-o

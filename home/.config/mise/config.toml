@@ -1,0 +1,230 @@
+[settings]
+# Pin versions in this file
+pin = true
+# Emit raw output from backend installers
+raw = true
+# Don't update tools released less than `minimum_release_age`
+minimum_release_age = "3h"
+# Default is `true`; disable to prevent shell expansion in env vars
+env_shell_expand = true
+# Install `pipx:` tools with `uv tool` (uv is pinned under [tools])
+pipx.uvx = true
+
+[bootstrap.mise_shell_activate]  # mise activation in shell startup files
+zprofile = "shims"
+zshrc = "activate"
+
+# [hooks]
+# cd = "echo 'I changed directories'"
+# enter = "echo 'I entered the project'"
+# leave = "echo 'I left the project'"
+
+[env]
+DOTFILES_TARGET = "${DOTFILES_TARGET:-$HOME}"
+
+XDG_CONFIG_HOME = "$DOTFILES_TARGET/.config"
+XDG_DATA_HOME = "$DOTFILES_TARGET/.local/share"
+XDG_CACHE_HOME = "$DOTFILES_TARGET/.cache"
+XDG_STATE_HOME = "$DOTFILES_TARGET/.local/state"
+
+GIT_CONFIG_GLOBAL = "$DOTFILES_TARGET/.gitconfig"
+RUSTUP_HOME = "$DOTFILES_TARGET/.rustup"
+CARGO_HOME = "$DOTFILES_TARGET/.cargo"
+BUN_INSTALL = "$DOTFILES_TARGET/.bun"
+GOPATH = "$DOTFILES_TARGET/go"
+GHQ_ROOT = "$DOTFILES_TARGET/projects"
+
+_.path = [
+  "$DOTFILES_TARGET/.local/bin",
+  "$CARGO_HOME/bin",
+]
+
+VISUAL = "nvim"
+EDITOR = "nvim"
+
+ZELLIJ_CONFIG_DIR = "$XDG_CONFIG_HOME/zellij"
+GH_CONFIG_DIR = "$XDG_CONFIG_HOME/gh"
+STARSHIP_CONFIG = "$XDG_CONFIG_HOME/starship.toml"
+RIPGREP_CONFIG_PATH = "$XDG_CONFIG_HOME/ripgreprc"
+GIT_CLIFF_CONFIG = "$XDG_CONFIG_HOME/git-cliff/cliff.toml"
+YAMLFIX_CONFIG_PATH = "$XDG_CONFIG_HOME/yamlfix"
+LG_CONFIG_FILE = "$XDG_CONFIG_HOME/lazygit/config.yml,$XDG_CONFIG_HOME/lazygit/theme.yml"
+HOMEBREW_BREWFILE = "$XDG_CONFIG_HOME/brewfile/Brewfile"
+TREEFMT_CONFIG = "$XDG_CONFIG_HOME/treefmt/treefmt.toml"
+
+FZF_DEFAULT_COMMAND = "rg --files"
+FZF_DEFAULT_OPTS = "--bind alt-a:select-all,alt-d:deselect-all,ctrl-n:down,ctrl-p:up,ctrl-y:toggle-down,ctrl-space:toggle-down --layout=reverse"
+_ZO_FZF_OPTS = "$FZF_DEFAULT_OPTS --border=none"
+_ZO_EXCLUDE_DIRS = "/tmp:/var/*:/mnt/*"
+_ZO_MAXAGE = 1000
+
+[shell_alias]
+ls = "lsd -a"
+ll = "ls -la"
+la = "ls -A"
+lt = "ls --tree"
+cat = "bat"
+q = "exit"
+g = "git"
+so = "source"
+v = "$VISUAL"
+vq = "$VISUAL -c 'cbuffer | copen | wincmd p | bdelete! | cc'"
+vg = "$EDITOR -c 'normal 1 go'"
+v0 = "$EDITOR -c 'normal 1 0'"
+fs = "$EDITOR -c 'normal 1 fs'"
+ff = "$EDITOR -c 'normal 1 ff'"
+fr = "$EDITOR -c 'normal 1 fr'"
+zj = "zellij"
+lg = "lazygit"
+kc = "kubectl"
+cdt = "cd $(mktemp -d)"
+currentmillis = "echo $(($(date +%s) * 1000))"
+watch = "viddy"
+less = "gum pager"
+pause = "gum confirm 'Continue?'"
+sshs = "purple"
+jg = "just -f $XDG_CONFIG_HOME/just/justfile"
+cld = "claude"
+clear-color = 'fzf --ansi --no-sort --filter "^"'
+scc = "tokei"  # "source code counter"
+
+# Single source of truth for CLI tools. `just apps update-mise` bumps the pins.
+# Only things mise cannot install live in ~/.config/just/apps.just (brew casks,
+# zsh plugin clones, zellij wasm plugins).
+#
+# Tools marked `lazy = true` (mise >= 2026.9.0) are skipped by a bare `mise install`
+# and installed on first invocation via a bootstrap shim. `mise install --include-lazy`
+# installs everything. Tools with no `bins` metadata in the mise registry, and every
+# explicit backend (cargo:/go:/pipx:/npm:), must list their commands in `lazy_bins`
+# or `mise reshim` fails. Run `mise reshim` after editing a lazy declaration by hand.
+[tools]
+# --- Languages / runtimes
+go = "1.27.1"
+node = "26.8.1"
+rust = "1.98.1"
+uv = "0.12.10"
+cargo-binstall = "1.23.0"
+bun = { version = "1.4.2", lazy = true }
+rust-analyzer = { version = "2026-09-07", lazy = true }
+"cargo:cargo-edit" = { version = "0.13.13", lazy = true, lazy_bins = ["cargo-add", "cargo-rm", "cargo-upgrade", "cargo-set-version"] }
+"npm:@github/copilot-language-server" = { version = "1.542.0", lazy = true, lazy_bins = ["copilot-language-server"] }
+"npm:happy" = { version = "latest", lazy = true, lazy_bins = ["happy"] }
+powershell = { version = "7.6.5", lazy = true, lazy_bins = ["pwsh"] }
+
+# --- Shell / terminal
+bat = "0.26.1"
+direnv = "2.37.1"
+fd = "10.5.0"
+fzf = "0.74.3"
+yq = "4.53.6"
+jq = "1.8.2"
+gum = "2.0.0"
+just = "1.58.0"
+lsd = "1.2.0"
+ripgrep = "15.2.0"
+starship = "1.26.0"
+zellij = "0.45.1"
+zoxide = "0.10.0"
+viddy = { version = "1.3.1", lazy = true }
+curlie = { version = "1.8.2", lazy = true }
+bottom = { version = "0.14.9", lazy = true, lazy_bins = ["btm"] }
+"cargo:purple-ssh" = { version = "3.27.0", lazy = true, lazy_bins = ["purple"] }
+"cargo:pastel" = { version = "0.12.0", lazy = true, lazy_bins = ["pastel"] }
+hyperfine = { version = "1.20.0", lazy = true }
+gping = { version = "1.21.0", lazy = true }
+dua = { version = "2.44.0", lazy = true }
+tokei = { version = "14.0.0", lazy = true, lazy_bins = ["tokei"] }
+"go:github.com/knqyf263/pet" = { version = "1.0.1", lazy = true, lazy_bins = ["pet"] }
+"go:github.com/maaslalani/sheets" = { version = "0.3.0", lazy = true, lazy_bins = ["sheets"] }
+
+# --- Git
+delta = "0.19.2"
+lazygit = "0.65.0"
+"cargo:git-graph" = "0.8.0"
+"cargo:git-absorb" = "0.9.0"
+github-cli = { version = "2.100.0", lazy = true, lazy_bins = ["gh"] }
+ghq = { version = "1.10.1", lazy = true, lazy_bins = ["ghq"] }
+"git-filter-repo" = { version = "2.47.0", lazy = true, lazy_bins = ["git-filter-repo"] }
+"git-cliff" = { version = "2.14.1", lazy = true, lazy_bins = ["git-cliff"] }
+# TODO: tuicr vs hunk?
+"github:agavra/tuicr" = { version = "0.25.0", lazy = true, lazy_bins = ["tuicr"] }
+"hunk" = { version = "0.21.1", lazy = true, lazy_bins = ["hunk"] }
+"cargo:gfold" = { version = "2026.3.0", lazy = true, lazy_bins = ["gfold"] }
+"cargo:deadbranch" = { version = "0.4.0", lazy = true, lazy_bins = ["deadbranch"] }
+"pipx:ghgrab" = { version = "2.0.2", lazy = true, lazy_bins = ["ghgrab"] }
+"go:github.com/hjr265/gittop" = { version = "0.4.0", lazy = true, lazy_bins = ["gittop"] }
+"cargo:drydock" = { version = "1.1.3", lazy = true, lazy_bins = ["drydock"] }
+
+# --- Editors / LSP / formatters / linters
+neovim = "0.12.5"
+"pipx:neovim-remote" = "2.5.1"
+# Force tree-sitter-cli to install without `cargo-binstall` so it compiles against the current glibc version.
+"cargo:tree-sitter-cli" = { version = "0.27.0", default-features = false }
+"cargo:stylua" = { version = "2.5.2", features = "luajit", lazy = true, lazy_bins = ["stylua"] }
+"aqua:numtide/treefmt" = "2.6.0"
+shfmt = { version = "3.14.1", lazy = true }
+tombi = { version = "1.5.2", lazy = true }
+lua-language-server = { version = "3.19.1", lazy = true }
+prek = { version = "0.5.2", lazy = true }
+copier = { version = "9.18.2", lazy = true }
+# TODO: markdown-oxide vs marksman?
+"cargo:https://github.com/feel-ix-343/markdown-oxide" = { version = "tag:v0.25.12", lazy = true, lazy_bins = ["markdown-oxide"] }
+typos = { version = "1.50.1", lazy = true, lazy_bins = ["typos"] }
+shellcheck = { version = "0.11.0", lazy = true, lazy_bins = ["shellcheck"] }
+"cargo:shellharden" = { version = "4.3.2", lazy = true, lazy_bins = ["shellharden"] }
+dotenv-linter = { version = "4.0.0", lazy = true, lazy_bins = ["dotenv-linter"] }
+"npm:bash-language-server" = { version = "5.6.0", lazy = true, lazy_bins = ["bash-language-server"] }
+"cargo:https://github.com/tekumara/typos-lsp" = { version = "tag:v0.1.56", lazy = true, lazy_bins = ["typos-lsp"] }
+yamllint = { version = "1.38.0", lazy = true }
+"pipx:yamlfix" = { version = "1.19.1", lazy = true, lazy_bins = ["yamlfix"] }
+"pipx:sqruff" = { version = "0.40.0", lazy = true, lazy_bins = ["sqruff"] }
+"pipx:git+https://github.com/lovesegfault/beautysh.git" = { version = "v6", lazy = true, lazy_bins = ["beautysh"] }
+"pipx:mdformat" = { version = "1.0.0", uvx_args = "--with mdformat-footnote --with mdformat-front-matters --with mdformat-ruff --with mdformat-gfm --with mdformat-lists --with mdformat-beautysh --with mdformat-simple-breaks --with mdformat-web --with mdformat-wikilink", lazy = true, lazy_bins = ["mdformat"] }
+
+# --- Python
+ruff = { version = "0.16.6", lazy = true }
+ty = { version = "0.0.78", lazy = true }
+"pipx:basedpyright" = { version = "1.40.0", lazy = true, lazy_bins = ["basedpyright", "basedpyright-langserver"] }
+"pipx:pyrefly" = { version = "1.2.0", lazy = true, lazy_bins = ["pyrefly"] }
+"pipx:zuban" = { version = "0.9.3", lazy = true, lazy_bins = ["zuban", "zmypy"] }
+"pipx:tox" = { version = "4.61.2", uvx_args = "--with tox-uv", lazy = true, lazy_bins = ["tox"] }
+
+# --- Go
+"go:golang.org/x/tools/gopls" = { version = "0.23.0", lazy = true, lazy_bins = ["gopls"] }
+"go:golang.org/x/tools/cmd/goimports" = { version = "0.49.0", lazy = true, lazy_bins = ["goimports"] }
+gofumpt = { version = "0.11.0", lazy = true }
+staticcheck = { version = "2026.2.1", lazy = true }
+
+# --- Kubernetes / containers
+kubectl = { version = "1.37.0", lazy = true }
+kubectx = { version = "0.11.0", lazy = true, lazy_bins = ["kubectx", "kubens"] }
+k9s = { version = "0.51.0", lazy = true }
+k3d = { version = "5.9.0", lazy = true }
+stern = { version = "1.34.0", lazy = true }
+helmwave = { version = "0.44.4", lazy = true }
+"npm:cdk8s-cli" = { version = "2.207.57", lazy = true, lazy_bins = ["cdk8s"] }
+docker-cli = { version = "29.8.0", lazy = true }
+docker-compose = { version = "5.5.1", lazy = true }
+
+# --- Docs / web / media
+# TODO: use `zensical` over mkdocs
+"pipx:mkdocs" = { version = "1.6.1", uvx_args = "--with mkdocs-material --with mkdocs-jupyter --with mkdocstrings[python] --with black --with mkdocs-include-dir-to-nav", lazy = true, lazy_bins = ["mkdocs"] }
+"pipx:markitdown" = { version = "0.1.7", extras = "pdf,audio-transcription,youtube-transcription", lazy = true, lazy_bins = ["markitdown"] }
+pandoc = { version = "3.11", lazy = true }
+zola = { version = "0.23.4", lazy = true }
+hugo = { version = "0.165.0", lazy = true }
+gomplate = { version = "5.2.0", lazy = true }
+ffmpeg = { version = "9.0.1", lazy = true }
+exiftool = { version = "13.59", lazy = true }
+yt-dlp = { version = "2026.08.19", rename_exe = "yt-dlp", lazy = true }
+"go:github.com/ramonvermeulen/whosthere" = { version = "0.8.3", lazy = true, lazy_bins = ["whosthere"] }
+
+# --- Claude
+claude = { version = "2.1.266", lazy = true }
+"cargo:cship" = { version = "1.8.3", lazy = true, lazy_bins = ["cship"] }
+
+# --- Misc
+bitwarden-secrets-manager = { version = "latest", lazy = true }
+mkcert = "1.4.4"
+"go:github.com/yutat23/lsoff" = "0.1.4"
+wrangler = { version = "4.130.0", allow_builds = ["esbuild", "sharp", "workerd"] }
