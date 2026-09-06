@@ -1,0 +1,2 @@
+[shell_alias]
+pbcopy = "xclip -selection clipboard"

@@ -1,0 +1,12 @@
+---
+# https://yamllint.readthedocs.io/en/stable/rules.html
+extends: default
+
+rules:
+document-start: disable
+document-end: disable
+line-length: disable
+comments-indentation: disable
+indentation:
+spaces: 2
+indent-sequences: true

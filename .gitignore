@@ -1,0 +1,6 @@
+home/.bash_history
+*.bak
+.DS_Store
+
+/.beads/
+/.ralph-tui/

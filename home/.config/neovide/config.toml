@@ -1,0 +1,8 @@
+fork = true
+# frame = "buttonless"
+no-multigrid = true
+tabs = false
+
+[font]
+normal = ["MesloLGL Nerd Font", "iMWritingMono Nerd Font"] # Will use the bundled Fira Code Nerd Font by default
+size = 16.0
