@@ -1,0 +1,28 @@
+[
+  {
+    "label": "Start LazyGit",
+    "shell": {
+      "program": "sh"
+    },
+    "command": "lazygit -p $ZED_WORKTREE_ROOT",
+    "hide": "on_success"
+  },
+  {
+    "label": "Start LazyGit file history",
+    "shell": {
+      "program": "sh"
+    },
+    "command": "lazygit",
+    "args": ["-f", "\"$ZED_RELATIVE_FILE\""],
+    "hide": "on_success"
+  },
+  {
+    "label": "just",
+    "shell": {
+      "program": "sh"
+    },
+    "command": "just",
+    "args": [],
+    "hide": "on_success"
+  }
+]

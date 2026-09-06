@@ -1,0 +1,7 @@
+[keys.normal]
+"C-c" = "quit"
+"a" = "nop"
+
+[keys.insert]
+
+[keys.select]

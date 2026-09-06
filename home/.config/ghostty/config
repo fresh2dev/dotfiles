@@ -1,0 +1,128 @@
+# off | check | download
+auto-update = off
+# stable | tip
+auto-update-channel = stable
+
+cursor-invert-fg-bg = true
+
+# Font
+font-size = 14
+font-family = MesloLGL Nerd Font
+font-thicken = true
+
+window-title-font-family = iMWritingQuat Nerd Font
+
+window-inherit-working-directory = false
+window-inherit-font-size = false
+
+cursor-style = bar
+cursor-style-blink = false
+cursor-click-to-move = false
+mouse-hide-while-typing = true
+
+# Theme
+# https://iterm2colorschemes.com
+theme = Carbonfox
+
+unfocused-split-opacity = 0.98
+
+clipboard-write = allow
+clipboard-read  = allow
+
+# Disable all built-in keybindings
+keybind = clear
+
+#keybind = alt+e=write_screen_file:paste
+#keybind = super+left_bracket=goto_split:previous
+keybind = super+n=new_window
+#keybind = super+right_bracket=goto_split:next
+keybind = super+comma=open_config
+keybind = super+up=jump_to_prompt:1
+# keybind = alt+e=write_screen_file:open
+# keybind = alt+grave_accent=new_split:down
+# keybind = alt+h=goto_split:left
+# keybind = alt+i=inspector:toggle
+# keybind = alt+j=goto_split:down
+# keybind = alt+k=goto_split:up
+# keybind = alt+l=goto_split:right
+keybind = super+h=esc:b
+# keybind = alt+left_bracket=previous_tab
+# keybind = alt+left_bracket=previous_tab
+# keybind = alt+m=toggle_split_zoom
+# keybind = alt+n=new_split:right
+keybind = super+physical:eight=goto_tab:8
+keybind = super+physical:five=goto_tab:5
+keybind = super+physical:four=goto_tab:4
+keybind = super+physical:one=goto_tab:1
+keybind = super+physical:seven=goto_tab:7
+keybind = super+physical:six=goto_tab:6
+keybind = super+physical:three=goto_tab:3
+keybind = super+physical:two=goto_tab:2
+keybind = super+w=close_surface
+keybind = super+q=quit
+# keybind = super+w=close_all_windows
+# keybind = super+w=close_tab
+# keybind = alt+shift+down=resize_split:down,100
+# keybind = alt+shift+left=resize_split:left,100
+# keybind = alt+shift+right=resize_split:right,100
+# keybind = alt+shift+up=resize_split:up,100
+keybind = super+l=esc:f
+# keybind = alt+right_bracket=next_tab
+keybind = super+period=reload_config
+keybind = ctrl+alt+super+m=toggle_fullscreen
+keybind = super+t=new_tab
+keybind = super+shift+right_bracket=next_tab
+keybind = super+u=scroll_page_up
+keybind = super+d=scroll_page_down
+keybind = super+up=jump_to_prompt:-1
+# keybind = alt+v=new_split:right
+# keybind = alt+w>equal=equalize_splits
+# keybind = alt+w>q=close_window
+keybind = shift+down=adjust_selection:down
+keybind = shift+end=adjust_selection:end
+keybind = shift+home=adjust_selection:home
+keybind = shift+left=adjust_selection:left
+keybind = shift+page_down=adjust_selection:page_down
+keybind = shift+page_up=adjust_selection:page_up
+keybind = shift+right=adjust_selection:right
+keybind = shift+up=adjust_selection:up
+keybind = super+a=select_all
+keybind = super+backspace=text:\x15
+keybind = super+c=copy_to_clipboard
+keybind = super+end=scroll_to_bottom
+keybind = super+equal=increase_font_size:1
+keybind = super+home=scroll_to_top
+keybind = super+k=clear_screen
+keybind = super+left=text:\x01
+keybind = super+minus=decrease_font_size:1
+keybind = super+page_down=scroll_page_down
+keybind = super+physical:nine=last_tab
+keybind = super+plus=increase_font_size:1
+keybind = super+right=text:\x05
+keybind = super+shift+down=jump_to_prompt:1
+keybind = super+shift+up=jump_to_prompt:-1
+keybind = super+shift+v=paste_from_selection
+keybind = super+v=paste_from_clipboard
+keybind = super+zero=reset_font_size
+
+# keybind = global:super+alt+space=toggle_quick_terminal
+
+# quick-terminal-position = top
+# quick-terminal-animation-duration = 0.1
+# quick-terminal-screen = mouse
+# quick-terminal-autohide = false
+# quick-terminal-size = 90%,90%
+# # "remain" or "move" quick-terminal when moving macos spaces
+# quick-terminal-space-behavior = remain
+# quick-terminal-keyboard-interactivity = exclusive
+
+# The style of the macOS titlebar. Available values are: "native",
+# "transparent", "tabs", and "hidden".
+macos-titlebar-style = tabs
+
+macos-option-as-alt = true
+macos-icon = retro
+
+confirm-close-surface = true
+quit-after-last-window-closed = true
+

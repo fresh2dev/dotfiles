@@ -1,0 +1,20 @@
+# Assume case-insensitive unless a search term contains a capital letter.
+--smart-case
+
+# Search hidden files and directories.
+--hidden
+
+# Follow symbolic links.
+--follow
+
+# Exclude directories.
+--glob=!.git
+--glob=!.venv
+--glob=!.cache
+--glob=!.local/share
+
+# Don't print lines longer than this limit.
+--max-columns=4096
+
+# Sort by file path.
+--sort=path

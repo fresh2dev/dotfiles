@@ -1,0 +1,16 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "cship"
+  },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "tui": "default",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "commitAttribution": "",
+  "prAttribution": ""
+}
