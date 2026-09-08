@@ -1,13 +1,4 @@
 keybinds clear-defaults=true {
-    normal {
-        bind "enter" {
-            WriteChars "\r"
-            MessagePlugin "autolock" {
-                name "autolock"
-                floating false
-            }
-        }
-    }
     locked {
         bind "Alt ." { SwitchToMode "normal"; }
         bind "Alt Shift ." {
@@ -37,8 +28,10 @@ keybinds clear-defaults=true {
         bind "l" { Resize "Increase right"; }
     }
     scroll {
+        bind "i" { SwitchToMode "normal"; }
         bind "c" { CopyLastCommandOutput; SwitchToMode "normal"; }
         bind "s" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
     }
     search {
         bind "c" { SearchToggleOption "CaseSensitivity"; }
@@ -52,9 +45,10 @@ keybinds clear-defaults=true {
         bind "Alt +" { Resize "Increase"; }
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt /" { SwitchToMode "entersearch"; SearchInput 0; }
-        bind "Alt Shift /" {
-            LaunchOrFocusPlugin "forgot-plugin" {
+        bind "Alt Shift p" {
+            LaunchOrFocusPlugin "command-plugin" {
                 floating true
+                move_to_focused_tab true
             }
         }
         bind "Alt 0" {
@@ -81,8 +75,6 @@ keybinds clear-defaults=true {
         bind "Alt Shift b" { BreakPaneLeft; }
         bind "Alt e" { EditScrollback; }
         bind "Alt f" { TogglePaneEmbedOrFloating; }
-        bind "Alt Shift f" { ToggleHostFullscreen; }
-
         bind "Alt r" {
             LaunchOrFocusPlugin "zextract" {
                 floating true
@@ -96,14 +88,8 @@ keybinds clear-defaults=true {
         bind "Alt Shift k" { MovePane "up"; }
         bind "Alt l" { MoveFocus "right"; }
         bind "Alt Shift l" { MovePane "right"; }
-        bind "Alt m" {
-            MessagePlugin "autolock" {
-                name "autolock"
-                payload "toggle"
-                floating false
-            }
-            ToggleFocusFullscreen
-        }
+        bind "Alt m" { ToggleFocusFullscreen; }
+        bind "Alt Shift m" { ToggleHostFullscreen; }
         bind "Alt n" { NewPane; }
         bind "Alt Shift n" { NewPane "stacked"; }
         bind "Alt o" { NextSwapLayout; }
@@ -118,7 +104,36 @@ keybinds clear-defaults=true {
             }
             SwitchToMode "normal"
         }
-
+        bind "Alt Shift s" {
+            LaunchOrFocusPlugin "session-favs" {
+                floating true
+                display_tab_panes true
+                // cache_dir "/path/to/cache/file"
+            }
+        }
+        bind "Alt z" { 
+            // Note: you must use the absolulte path to the plugin file
+            LaunchOrFocusPlugin "zsm" {
+                floating true
+                move_to_focused_tab true
+                
+                // Create sessions (default) or tabs in the current session
+                mode "session"
+                
+                // Default layout for Ctrl+Enter quick creation
+                default_layout "default"
+            
+                // // Session name separator (default: ".")
+                // session_separator "_"
+                
+                // Show sessions that can be resurrected
+                show_resurrectable_sessions true
+                
+                // Base paths to strip from directory names (pipe-separated)
+                // Example: "/home/user/projects/foo" becomes just "foo"
+                base_paths "/home/user/.donald/projects/github.com/fresh2dev|/Users/donald|/Users/donald/sync/projects"
+            }
+        }
         bind "Alt t" { NewTab; }
         bind "Alt v" { NewPane "right"; }
         bind "Alt w" { CloseFocus; }
@@ -147,7 +162,7 @@ keybinds clear-defaults=true {
     shared_except "normal" "locked" "entersearch" {
         bind "enter" { SwitchToMode "normal"; }
     }
-    shared_except "normal" "locked" "scroll" "search" "renametab" "renamepane" {
+    shared_except "normal" "locked" "scroll" "search" "renametab" "renamepane" "session" {
         bind "esc" { SwitchToMode "normal"; }
     }
     shared_among "scroll" "search" {
@@ -179,6 +194,9 @@ keybinds clear-defaults=true {
     renamepane {
         bind "esc" { UndoRenamePane; SwitchToMode "pane"; }
     }
+    session {
+        // ...
+    }
 }
 
 // Plugin aliases - can be used to change the implementation of Zellij
@@ -187,19 +205,19 @@ plugins {
     about location="zellij:about"
     autolock location="file:$ZELLIJ_CONFIG_DIR/plugins/zellij-autolock.wasm" {
         lock_regex ".*"
-        ignore_regex "^(zellij|sh|zsh|bash|fish|pwsh|ls|eza|starship|direnv|\\(atuin\\)|atuin history start.*)$"
+        ignore_regex "^(zellij|sh|zsh|bash|fish|pwsh|ls|lsd|eza|starship|direnv|\\(atuin\\)|atuin history start.*)$"
         is_enabled true
-        reaction_seconds "0.3"
-        print_to_log true
+        log_level "debug"
     }
     compact-bar location="zellij:compact-bar"
     configuration location="zellij:configuration"
     filepicker location="zellij:strider" {
         cwd "/"
     }
-    forgot-plugin location="file:$ZELLIJ_CONFIG_DIR/plugins/zellij_forgot.wasm"
+    command-plugin location="file:$ZELLIJ_CONFIG_DIR/plugins/zellij-commandpalette.wasm"
     plugin-manager location="zellij:plugin-manager"
     session-manager location="zellij:session-manager"
+    session-favs location="file:$ZELLIJ_CONFIG_DIR/plugins/zellij-favs.wasm"
     status-bar location="file:$ZELLIJ_CONFIG_DIR/plugins/zjstatus.wasm"
     strider location="zellij:strider"
     tab-bar location="zellij:tab-bar"
@@ -209,6 +227,7 @@ plugins {
     }
     tabula location="file:$ZELLIJ_CONFIG_DIR/plugins/zellij-tabula.wasm"
     zextract location="file:$ZELLIJ_CONFIG_DIR/plugins/zextract.wasm"
+    zsm location="file:$ZELLIJ_CONFIG_DIR/plugins/zsm.wasm"
 }
 
 // Plugins to load in the background when a new session starts
@@ -279,7 +298,7 @@ web_client {
 // The name of the default layout to load on startup
 // Default: "default"
 // 
-// default_layout "compact"
+default_layout "default"
  
 // The folder in which Zellij will look for layouts
 // (Requires restart)
@@ -359,12 +378,12 @@ web_client {
 //   - system (default)
 //   - primary
 // 
-// copy_clipboard "primary"
+copy_clipboard "system"
  
 // Enable automatic copying (and clearing) of selection when releasing mouse
 // Default: true
 // 
-// copy_on_select true
+copy_on_select true
  
 // Path to the default editor to use to edit pane scrollbuffer
 // Default: $EDITOR or $VISUAL
@@ -395,14 +414,14 @@ web_client {
 //   - true (default)
 //   - false
 // 
-// session_serialization false
+session_serialization true
  
 // Whether pane viewports are serialized along with the session, default is false
 // Options:
 //   - true
 //   - false (default)
 // 
-// serialize_pane_viewport false
+// serialize_pane_viewport true
  
 // Scrollback lines to serialize along with the pane viewport when serializing sessions, 0
 // defaults to the scrollback size. If this number is higher than the scrollback size, it will
@@ -577,7 +596,7 @@ show_startup_tips false
 // in any pane - including one running on a remote machine over SSH - can
 // read the clipboard without the user being asked.
 // Default: false
-// dangerously_enable_paste_buffer_read false
+dangerously_enable_paste_buffer_read true
  
 // How to handle a nested Zellij session detected inside a pane.
 // Options:
@@ -586,7 +605,7 @@ show_startup_tips false
 //   - "descend" (always control the nested session on focus)
 //   - "never" (never prompt or descend; do it manually)
 // 
-// nested_session_handling "ask"
+nested_session_handling "fullscreen"
  
 // Which escape sequence desktop notifications coming from panes are
 // forwarded to the host terminal with.
