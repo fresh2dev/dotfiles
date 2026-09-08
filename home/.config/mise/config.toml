@@ -39,8 +39,6 @@ _.path = ["{{ env.HOME }}/.local/bin", "/opt/homebrew/bin", "$GOPATH/bin"]
 VISUAL = "nvim"
 EDITOR = "nvim"
 
-ZELLIJ_CONFIG_DIR = "$XDG_CONFIG_HOME/zellij"
-ZELLIJ_SOCKET_DIR = "/tmp/zellij-{{ exec(command='id -u') }}"
 GH_CONFIG_DIR = "$XDG_CONFIG_HOME/gh"
 STARSHIP_CONFIG = "$XDG_CONFIG_HOME/starship.toml"
 RIPGREP_CONFIG_PATH = "$XDG_CONFIG_HOME/ripgreprc"
@@ -52,7 +50,6 @@ FZF_DEFAULT_COMMAND = "rg --files"
 _ZO_FZF_OPTS = "--border=none --no-sort"
 _ZO_EXCLUDE_DIRS = "/tmp/*:/private/tmp/*:/var/*:/mnt/*"
 _ZO_MAXAGE = 1000
-FZJ_DEFAULT_OPTS = "--yes --every 5 -- --exact"
 
 [shell_alias]
 ls = "lsd -a"
@@ -68,7 +65,6 @@ vq = "$VISUAL -c 'cbuffer | copen | wincmd p | bdelete! | cc'"
 fg = "$EDITOR -c 'normal 1 fg'"
 ff = "$EDITOR -c 'normal 1 ff'"
 zz = "ghq list --full-path | fzf --multi | sort -r | xargs -n1 zed --existing"
-zj = "zellij"
 j = "just"
 gg = "lazygit"
 kc = "kubectl"
@@ -93,7 +89,6 @@ recipes = [
 run = [
   'mkdir -p "$HOME/.local/bin"',
   'mkdir -p "${XDG_CONFIG_HOME}"',
-  'mkdir -p "${ZELLIJ_CONFIG_DIR}/plugins"',
 ]
 
 [bootstrap.hooks.post-tools]
@@ -129,7 +124,6 @@ just = "1.59.0"
 lsd = "1.2.0"
 ripgrep = "15.2.0"
 starship = "1.27.0"
-zellij = "0.45.1"
 zoxide = "0.10.0"
 viddy = { version = "1.3.1", lazy = true }
 bottom = { version = "0.14.9", lazy = true, lazy_bins = ["btm"] }
@@ -234,25 +228,6 @@ mkcert = { version = "1.4.4", lazy = true }
 "go:github.com/ramonvermeulen/whosthere" = { version = "0.9.0", lazy = true, lazy_bins = ["whosthere"] }
 bitwarden-secrets-manager = { version = "latest", lazy = true }
 
-# --- Zellij plugins
-# Each release ships a `.wasm` asset, not a binary, so `asset_pattern` picks it and
-# `postinstall` symlinks it into $ZELLIJ_CONFIG_DIR/plugins, where config.kdl loads it.
-# Upgrades re-run `postinstall`, so the link follows the installed version.
-[tools."github:dj95/zjstatus"]
-version = "0.25.0"
-asset_pattern = "zjstatus.wasm"
-postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"'
-
-[tools."github:codingfragments/zellij-zextract"]
-version = "0.4.0"
-asset_pattern = "zextract.wasm"
-postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"'
-
-[tools."github:rashidalnaemi/zellij-commandpalette"]
-version = "0.1.1"
-asset_pattern = "zellij-commandpalette.wasm"
-postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"'
-
 [dotfiles]
 "~/.ansible.cfg" = {}
 "~/.cargo/binstall.toml" = {}
@@ -295,9 +270,6 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.config/zed/keymap.json" = {}
 "~/.config/zed/settings.json" = {}
 "~/.config/zed/tasks.json" = {}
-"~/.config/zellij/config.kdl" = {}
-"~/.config/zellij/justfile" = {}
-"~/.config/zellij/layouts/default.kdl" = {}
 "~/.editorconfig" = {}
 "~/.gitconfig" = {}
 "~/.hushlogin" = { mode = "symlink", variants = [{ os = "macos" }] }

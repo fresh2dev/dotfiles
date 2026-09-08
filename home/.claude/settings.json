@@ -21,7 +21,6 @@
   "enabledPlugins": {
     "ponytail@ponytail": true,
     "i-have-adhd@i-have-adhd": true,
-    "fzj@fzj": true,
     "claude-hud@claude-hud": true,
     "worktrunk@worktrunk": true
   },
@@ -36,24 +35,6 @@
       "source": {
         "source": "github",
         "repo": "ayghri/i-have-adhd"
-      }
-    },
-    "zellij-attention": {
-      "source": {
-        "source": "directory",
-        "path": "/Users/donald/sync/projects/github.com/fresh2dev/zellij-attention"
-      }
-    },
-    "zj-radar": {
-      "source": {
-        "source": "github",
-        "repo": "marktoda/zj-radar"
-      }
-    },
-    "fzj": {
-      "source": {
-        "source": "directory",
-        "path": "/Users/donald/sync/projects/github.com/fresh2dev/fzj"
       }
     },
     "claude-hud": {
