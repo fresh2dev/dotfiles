@@ -1,0 +1,25 @@
+# The bootstrap recipes (`bs`). `import` can't expand env vars, so this is
+# $MISE_CONFIG_DIR/justfile at its default location.
+import '~/.config/mise/justfile'
+
+# Pick or create a zellij session
+[positional-arguments]
+fzj *args:
+    fzj "$@"
+
+# Open lazygit
+[positional-arguments]
+lazygit *args:
+    lazygit "$@"
+
+# List uncommitted, unpushed, and unreleased work across repos
+[positional-arguments]
+drydock *args:
+    drydock "$@"
+
+# Triage beads issues
+[positional-arguments]
+beads *args:
+    bv "$@"
+
+alias bv := beads
