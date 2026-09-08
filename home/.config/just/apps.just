@@ -87,11 +87,12 @@ zellij_plugins_dir := '"${ZELLIJ_CONFIG_DIR:?}/plugins"'
 
 # GitHub repos whose latest release ships a single `.wasm` asset
 zellij_plugins := '''
-    karimould/zellij-forgot
     rvcas/room
     codingfragments/zellij-zextract
     bezbac/zellij-tabula
     JoseMM2002/zellij-favs
+    rashidalnaemi/zellij-commandpalette
+    liam-mackie/zsm
 '''
 
 install-zellij-plugins: && update-zellij-plugins
