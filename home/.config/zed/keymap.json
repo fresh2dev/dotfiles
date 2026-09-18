@@ -5,6 +5,21 @@
 //
 // To see the default key bindings run `zed: open default keymap`
 // from the command palette.
+//
+// Known gaps versus the Neovim config that a keymap cannot close
+// (Neovim is the source of truth; see the comments next to each binding):
+//
+// - `space p {motion}` (replace with register) leaves the cursor at the end of
+//   the replaced text, not at its start as mini.operators does in Neovim.
+//   Needs a change in Zed (see the binding).
+// - `#` and `g #` search forward so `n`/`N` keep their direction, but a `?`
+//   search still reverses `n`/`N`.
+// - `[e`/`]e` (move line up/down) ignore a count; `3]e` moves one line.
+// - No Zed equivalent for: `ga` (character info), `<leader>ta`, `U` /
+//   `<leader>fu` (undo tree), `<leader>fh` / `<leader>fj` / `<leader>fq` /
+//   `<leader>fS`, `[x` / `]x`, `zK`, and true edgemotion `gj` / `gk`.
+// - `.` after `]p` / `[p` / `>p` / `<p` / `=p` repeats only the last step of
+//   the SendKeystrokes sequence (the paste or the indent), not the whole thing.
 [
   {
     // "context": "EmptyPane || SharedScreen || Dock || Pane || Editor",
@@ -21,6 +36,9 @@
       "alt-}": "vim::GoToTab",
       "alt-shift-k": "multi_workspace::PreviousThread",
       "alt-shift-j": "multi_workspace::NextThread",
+      "ctrl-alt-shift-k": "multi_workspace::MoveProjectUp",
+      "ctrl-alt-shift-j": "multi_workspace::MoveProjectDown",
+      "alt-m": "workspace::ToggleZoom",
     },
   },
   {
@@ -58,7 +76,6 @@
       "alt-n": "pane::SplitRight",
       "alt-v": "pane::SplitRight",
       "alt-t": "workspace::NewTerminal",
-      "alt-m": "workspace::ToggleZoom",
       "alt-w": [
         "pane::CloseActiveItem",
         {
@@ -72,10 +89,22 @@
   {
     "context": "Dock && !Terminal",
     "bindings": {
-      "ctrl-w q": "workspace::CloseActiveDock",
-      "ctrl-w c": "workspace::CloseActiveDock",
-      "ctrl-w ctrl-q": "workspace::CloseActiveDock",
-      "ctrl-w ctrl-c": "workspace::CloseActiveDock",
+      "ctrl-w q": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
+      "ctrl-w c": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
+      "ctrl-w ctrl-q": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
+      "ctrl-w ctrl-c": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
     },
   },
   {
@@ -88,22 +117,20 @@
     },
   },
   {
-    // "context": "ThreadsSidebar || Editor || EmptyPane",
-    "bindings": {
-      "alt-shift-[": "multi_workspace::PreviousThread",
-      "alt-shift-]": "multi_workspace::NextThread",
-      // "alt-tab": "agents_sidebar::ToggleThreadSwitcher",
-      // "alt-shift-up": "multi_workspace::MoveProjectUp",
-      // "alt-shift-down": "multi_workspace::MoveProjectDown",
-      // "alt-shift-enter": "multi_workspace::MoveProjectToNewWindow",
-    },
-  },
-  {
     "context": "Dock && !Terminal && !Editor",
     "bindings": {
-      "\\": "workspace::CloseActiveDock",
-      "|": "workspace::CloseActiveDock",
-      "q": "workspace::CloseActiveDock",
+      "\\": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
+      "|": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
+      "q": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
     },
   },
   {
@@ -156,25 +183,59 @@
       "ctrl-y": "editor::ConfirmCodeAction",
     },
   },
-  // Empty pane, set of keybindings that are available when there is no active editor
   {
-    "context": "EmptyPane || SharedScreen",
+    // This context is active when the editor is not expecting text input (e.g., empty panes, vim's normal mode, etc.).
+    "context": "!CommandPalette && !Terminal && !editing && !searching && (VimControl || !Editor)",
     "bindings": {
       // File finder
       "space f f": "file_finder::Toggle",
+      // Find recent files (the file finder lists recent files first)
+      "space f r": "file_finder::Toggle",
       // File search grep
       "space f s": "pane::DeploySearch",
       // Open recent project
-      "space f o": "projects::OpenRecent",
+      "space f p": "projects::OpenRecent",
+      // Find buffers
+      "space f b": "tab_switcher::ToggleAll",
+      "g b": "tab_switcher::ToggleAll",
+      // Git panel
       "space g g": "git_panel::ToggleFocus",
+      // File history (matches Neovim); the destructive restore lives under the hunk group
+      "space g r": "git::FileHistory",
+      // Focus terminal
+      "space `": "workspace::ToggleBottomDock",
+      // LazyGit
+      "space l g": [
+        "task::Spawn",
+        {
+          "task_name": "lazygit",
+          "reveal_target": "center",
+        },
+      ],
+      "space g shift-r": [
+        "task::Spawn",
+        {
+          "task_name": "lazygit (file revisions)",
+          "reveal_target": "center",
+        },
+      ],
+      "space shift-j": [
+        "task::Spawn",
+        {
+          "task_name": "just",
+        },
+      ],
+      "space g h d": [
+        "task::Spawn",
+        {
+          "task_name": "hunk diff",
+        },
+      ],
     },
   },
   {
     "context": "VimControl",
     "bindings": {
-      // Workaround for files not reflecting changes made outside of Zed
-      // ref: https://github.com/zed-industries/zed/issues/38109
-      "space 5": "editor::ReloadFile",
       // These bindings are are applicable to the context menu.
       "g d": "editor::GoToDefinition",
       "g shift-d": "editor::GoToDeclaration",
@@ -197,31 +258,6 @@
       // "down": "vim::Down",
       // "ctrl-j": "vim::Down",
       // "j": "vim::Down",
-      // Override these so that `j/k` moves within soft wraps.
-      "j": [
-        "vim::Down",
-        {
-          "display_lines": true,
-        },
-      ],
-      "down": [
-        "vim::Down",
-        {
-          "display_lines": true,
-        },
-      ],
-      "k": [
-        "vim::Up",
-        {
-          "display_lines": true,
-        },
-      ],
-      "up": [
-        "vim::Up",
-        {
-          "display_lines": true,
-        },
-      ],
       // "ctrl-m": "vim::NextLineStart",
       // "+": "vim::NextLineStart",
       // "enter": "vim::NextLineStart",
@@ -278,8 +314,12 @@
       // "g /": "pane::DeploySearch",
       // "*": "vim::MoveToNext",
       // "#": "vim::MoveToPrevious",
-      "*": "vim::SearchUnderCursor", // Start search without moving cursor
-      "#": "vim::SearchUnderCursorPrevious", // Start search without moving cursor
+      // Neovim's `*`/`#` start a search without moving the cursor. Both map to
+      // `SearchUnderCursor` (forward), so `n`/`N` keep their forward/backward
+      // sense after `#` instead of being reversed by `SearchUnderCursorPrevious`.
+      // Remaining gap: a `?` search still reverses `n`/`N`.
+      "*": "vim::SearchUnderCursor",
+      "#": "vim::SearchUnderCursor",
       // "n": "vim::MoveToNextMatch",
       // "shift-n": "vim::MoveToPreviousMatch",
       // "%": "vim::Matching",
@@ -312,6 +352,12 @@
       //     "multiline": false
       //   }
       // ],
+      // `f`/`t`/`F`/`T` search across lines, as in Neovim with a multiline
+      // find plugin.
+      "f": ["vim::PushFindForward", { "before": false, "multiline": true }],
+      "t": ["vim::PushFindForward", { "before": true, "multiline": true }],
+      "shift-f": ["vim::PushFindBackward", { "after": false, "multiline": true }],
+      "shift-t": ["vim::PushFindBackward", { "after": true, "multiline": true }],
       // "m": "vim::PushMark",
       // "'": [
       //   "vim::PushJump",
@@ -357,6 +403,7 @@
       // "g" commands
       // "g shift-r": "vim::PushReplaceWithRegister",
       // `space p` to replace with register (akin to `vim-subversive`)
+      "g shift-r": null, // DISABLED
       "space p": "vim::PushReplaceWithRegister",
       // `space P` to replace with register to end of line.
       "space shift-p": ["workspace::SendKeystrokes", "space p $"],
@@ -364,9 +411,9 @@
       // "g h": "editor::Hover",
       "g h": null, // DISABLED
       "g l": null, // DISABLED
-      "g L": null, // DISABLED
+      "g shift-l": null, // DISABLED
       // "g B": "editor::BlameHover",
-      "g B": null, // DISABLED
+      "g shift-b": null, // DISABLED
       // "g t": "vim::GoToTab",
       // "g shift-t": "vim::GoToPreviousTab",
       // "g x": "editor::OpenUrl",
@@ -387,9 +434,11 @@
       //     "replace_newest": true
       //   }
       // ],
-      "g >": "vim::NextGreaterIndent",
+      // Scope borders: jump to the next / previous line with a lesser indent.
+      "g >": "vim::NextLesserIndent",
       "g <": "vim::PreviousLesserIndent",
       "g a": "editor::SelectAllMatches",
+      "g r t": "editor::GoToTypeDefinition",
       "g s": "outline::Toggle",
       // "g shift-o": "outline::Toggle",
       "g shift-o": "outline_panel::ToggleFocus",
@@ -399,9 +448,9 @@
       // "g .": "editor::ToggleCodeActions", // zed specific
       // "g shift-a": "editor::FindAllReferences", // zed specific
       // "g space": "editor::OpenExcerpts", // zed specific
-      "g .": "editor::DuplicateLineDown",
+      "g .": null, // DISABLED
       "g shift-a": null, // DISABLED
-      "g space": "task::Spawn",
+      "g space": null, // DISABLED
       // "g *": [
       //   "vim::MoveToNext",
       //   {
@@ -420,8 +469,9 @@
           "partial_word": true,
         },
       ],
+      // Forward search, like `#` above.
       "g #": [
-        "vim::SearchUnderCursorPrevious",
+        "vim::SearchUnderCursor",
         {
           "partial_word": true,
         },
@@ -624,10 +674,13 @@
       // "] -": "vim::NextLesserIndent",
       // "] +": "vim::NextGreaterIndent",
       // "] =": "vim::NextSameIndent",
-      // `]p` to paste linewise below
-      "] p": ["workspace::SendKeystrokes", "o escape g shift-r shift-r"],
-      // `]p` to paste linewise above
-      "[ p": ["workspace::SendKeystrokes", "shift-o escape g shift-r shift-r"],
+      // `]p` to paste linewise below. A visual-line paste of charwise text
+      // replaces the empty line, so the result is linewise either way, and
+      // it sets the `[`/`]` marks that `gp` needs.
+      // Known gap: `.` after `]p`/`[p`/`>p` repeats only the last paste or indent.
+      "] p": ["workspace::SendKeystrokes", "o escape shift-v shift-p"],
+      // `[p` to paste linewise above
+      "[ p": ["workspace::SendKeystrokes", "shift-o escape shift-v shift-p"],
       // `[P` equivalent to `[p`
       "[ shift-p": ["workspace::SendKeystrokes", "[ p"],
       // `]P` equivalent to `]p`
@@ -682,10 +735,7 @@
       "g z": "workspace::ToggleZoom",
       // "go file"
       "g f": "editor::OpenExcerpts",
-      "g F": "editor::OpenExcerptsSplit",
       "g d": "editor::OpenExcerpts",
-      "g D": "editor::OpenExcerptsSplit",
-      // TODO: `g p` for visual select last pasted content
       // TOGGLES
       // inlay hints
       "space t h": "editor::ToggleInlayHints",
@@ -702,9 +752,15 @@
       "space t a i": "workspace::ToggleEditPrediction",
       // pin
       "space t p": "pane::TogglePinTab",
-      // Code debugging
+      // indent guides
+      "space t i": "editor::ToggleIndentGuides",
+      // zoom
+      "space t z": "workspace::ToggleZoom",
+      // Code actions
+      "space c a": "editor::ToggleCodeActions",
+      // Code debugging (`space c c` / `space c r` stay on the debugger on purpose)
       "space c b": "editor::ToggleBreakpoint",
-      "space c D": "debugger::ClearAllBreakpoints",
+      "space c shift-d": "debugger::ClearAllBreakpoints",
       "space c c": "debugger::Continue",
       "space c r": "debugger::Start",
       // TODO: toggle inline suggestions
@@ -715,53 +771,24 @@
       // ],
       // // pin (zed specific)
       // "space t p": "pane::TogglePinTab",
-      // GIT
-      // TODO: note about requiring lazygit in tasks.json
-      // TODO: add more (gd, gD, lg, ga, gs, gx)
+      // Hunk group
       // "space g h d": "editor::ToggleSelectedDiffHunks",
-      "space l g": [
-        "task::Spawn",
-        {
-          "task_name": "Start LazyGit",
-          "reveal_target": "center",
-        },
-      ],
-      "space g h": [
-        "task::Spawn",
-        {
-          "task_name": "Start LazyGit file history",
-          "reveal_target": "center",
-        },
-      ],
-      "space g g": "git_panel::ToggleFocus",
       "space g a": "git::ToggleStaged",
-      "space g r": "git::Restore",
-      "space g b": "editor::ToggleGitBlameInline",
-      "space g shift-b": "git::Blame",
+      "space g h s": "git::ToggleStaged",
+      "space g h r": "git::Restore",
+      "space g h p": "editor::ToggleSelectedDiffHunks",
+      "space g b": "git::Blame",
+      "space g shift-b": "editor::ToggleGitBlameInline",
+      "space g w": "git::StageFile",
       "space g p": "git::Push",
-      "space g P": "git::ForcePush",
-      "space g d": "git::Diff",
-      "space g D": "git::DiffBranch",
-      "space g c": "git::ExpandCommitEditor",
-      // File finder
-      "space f f": "file_finder::Toggle",
-      // File search grep
-      "space f s": "pane::DeploySearch",
-      // Open recent project
-      "space f o": "projects::OpenRecent",
+      "space g shift-p": "git::ForcePush",
+      "space g d": "git::OpenFileDiff",
       // Find diagnostics
       "space f d": "diagnostics::Deploy",
       // Find marks
       "space f m": "vim::ToggleMarksView",
       // Find registers
-      "space f r": "vim::ToggleRegistersView",
-      // Find buffers
-      "space f b": "tab_switcher::ToggleAll",
-      "g b": "tab_switcher::ToggleAll",
-      // Open new file / tab
-      "space N": "workspace::NewFile",
-      // Focus terminal
-      "space `": "terminal_panel::ToggleFocus",
+      "space f \"": "vim::ToggleRegistersView",
       // Show project panel with current file
       // "\\": "vim::ToggleProjectPanelFocus",
       "\\": "vim::ToggleProjectPanelFocus",
@@ -799,6 +826,7 @@
           "save_intent": "close",
         },
       ],
+      "space q shift-o": "workspace::CloseInactiveTabsAndPanes",
       "space shift-q": [
         "pane::CloseActiveItem",
         {
@@ -815,6 +843,38 @@
         "pane::CloseOtherItems",
         {
           "save_intent": "save_all",
+        },
+      ],
+    },
+  },
+  {
+    // `j`/`k` move by screen line (within soft wraps) only when typed bare in
+    // normal or visual mode. With a count (`5j`) or an operator pending (`dj`)
+    // the default `vim::Down`/`vim::Up` (commented above) acts on real lines.
+    "context": "VimControl && !menu && !VimCount && (vim_mode == normal || vim_mode == visual)",
+    "bindings": {
+      "j": [
+        "vim::Down",
+        {
+          "display_lines": true,
+        },
+      ],
+      "down": [
+        "vim::Down",
+        {
+          "display_lines": true,
+        },
+      ],
+      "k": [
+        "vim::Up",
+        {
+          "display_lines": true,
+        },
+      ],
+      "up": [
+        "vim::Up",
+        {
+          "display_lines": true,
         },
       ],
     },
@@ -887,19 +947,12 @@
       "shift-a": "vim::InsertEndOfLine",
       "o": "vim::InsertLineBelow",
       "shift-o": "vim::InsertLineAbove",
-      "p": [
-        "vim::Paste",
-        {
-          "preserve_clipboard": true,
-        },
-      ],
-      "shift-p": [
-        "vim::Paste",
-        {
-          "before": true,
-          "preserve_clipboard": true,
-        },
-      ],
+      // "p": "vim::Paste",
+      // "shift-p": ["vim::Paste", { "before": true }],
+      // `gp` visually selects the last pasted text
+      "g p": ["workspace::SendKeystrokes", "` [ v ` ]"],
+      // `gmm` multiplies (duplicates) the current line, as mini.operators does.
+      "g m m": "editor::DuplicateLineDown",
       // "u": "vim::Undo",
       // "shift-u": "vim::UndoLastLine",
       // "r": "vim::PushReplace",
@@ -911,14 +964,32 @@
       // "\"": "vim::PushRegister",
       // "ctrl-pagedown": "pane::ActivateNextItem",
       // "ctrl-pageup": "pane::ActivatePreviousItem"
-      // Copy to blackhole register to avoid overwriting clipboard
-      "c": ["workspace::SendKeystrokes", "\" _ c"],
-      "shift-c": ["workspace::SendKeystrokes", "\" _ shift-c"],
-      // "d": ["workspace::SendKeystrokes", "\" _ d"],
-      // "shift-d": ["workspace::SendKeystrokes", "\" _ shift-d"],
-      "x": ["workspace::SendKeystrokes", "\" _ x"],
-      "shift-x": ["workspace::SendKeystrokes", "\" _ shift-x"],
+      // Cutlass-style registers: deletes go to `"d`, changes go to `"c`.
+      // A named register writes the internal `"` register and the named one,
+      // but never the system clipboard. With `use_system_clipboard: always`,
+      // a plain `p` reads the clipboard, so it still pastes the last yank;
+      // `"dp` / `"cp` paste the deleted / changed text instead.
+      "c": ["workspace::SendKeystrokes", "\" c c"],
+      "shift-c": ["workspace::SendKeystrokes", "\" c shift-c"],
+      // "d": ["workspace::SendKeystrokes", "\" d d"],
+      // "shift-d": ["workspace::SendKeystrokes", "\" d shift-d"],
+      "x": ["workspace::SendKeystrokes", "\" d x"],
+      "shift-x": ["workspace::SendKeystrokes", "\" d shift-x"],
       // Cut key for supporting "mm"
+    },
+  },
+  {
+    "context": "vim_mode == normal && !VimCount && !menu",
+    "bindings": {
+      // `.` keeps the cursor where it was, as in Neovim. With a count (`3.`)
+      // the default `vim::Repeat` applies, because `m` would swallow the count.
+      // Mark `~` is used here and in visual `y`; if Zed rejects `~` as a mark
+      // name, switch both to one spare lowercase letter.
+      // Caveats: `.` replays through `window.defer`, but SendKeystrokes
+      // flushes effects between keystrokes, so the jump back lands after the
+      // replay; `` ` `` jumps add `ctrl-o` history entries; `~` appears in
+      // `space f m` (marks view); `m ~` drops a pending `"x` register.
+      ".": ["workspace::SendKeystrokes", "m ~ . ` ~"],
     },
   },
   // {
@@ -948,19 +1019,20 @@
       // "y": "vim::VisualYank",
       // "shift-y": "vim::VisualYankLine",
       // "p": "vim::Paste",
+      // `p` keeps the register (like Zed's default visual `P`), so pasting
+      // over a selection does not replace the last yank.
       "p": [
         "vim::Paste",
         {
           "preserve_clipboard": true,
         },
       ],
-      "shift-p": [
-        "vim::Paste",
-        {
-          "preserve_clipboard": true,
-        },
-      ],
+      // "shift-p": ["vim::Paste", { "preserve_clipboard": true }],
       // "c": "vim::Substitute",
+      // Cutlass-style registers, as in normal mode: `x` deletes into `"d` and
+      // `c` changes into `"c`, so a plain `p` still pastes the last yank.
+      "c": ["workspace::SendKeystrokes", "\" c c"],
+      "x": ["workspace::SendKeystrokes", "\" d x"],
       // "s": "vim::Substitute",
       // "shift-r": "vim::SubstituteLine",
       // "shift-s": "vim::SubstituteLine",
@@ -969,6 +1041,10 @@
       "shift-s": "vim::PushAddSurrounds",
       // Use `X` to exchange visual selection.
       "shift-x": "vim::Exchange",
+      // Search within the visual selection, as in Neovim.
+      "g /": ["buffer_search::Deploy", { "selection_search_enabled": true }],
+      // `gm` multiplies (duplicates) the selection, as mini.operators does.
+      "g m": "editor::DuplicateSelection",
       // "~": "vim::ChangeCase",
       // "*": [
       //   "vim::MoveToNext",
@@ -1040,12 +1116,13 @@
           "preserve_clipboard": true,
         },
       ],
-      "space P": [
+      "space shift-p": [
         "vim::Paste",
         {
           "preserve_clipboard": true,
         },
       ],
+      "space a a": "agent::AddSelectionToThread"
     },
   },
   {
@@ -1179,8 +1256,9 @@
       // "'": "vim::Quotes",
       // "`": "vim::BackQuotes",
       // "\"": "vim::DoubleQuotes",
+      // "q": "vim::AnyQuotes",
+      // mini.ai-style `q`: nearest of `'`, `"`, `` ` `` (cover-or-next, like nvim mini.ai)
       "q": "vim::AnyQuotes",
-      // "q": "vim::MiniQuotes",
       // "|": "vim::VerticalBars",
       // "(": [
       //   "vim::Parentheses",
@@ -1190,7 +1268,8 @@
       // ],
       // ")": "vim::Parentheses",
       // "b": "vim::Parentheses",
-      // "b": "vim::MiniBrackets",
+      // "b": "vim::AnyBrackets",
+      // mini.ai-style `b`: nearest of `()`, `[]`, `{}` (cover-or-next, like nvim mini.ai)
       "b": "vim::AnyBrackets",
       // "[": [
       //   "vim::SquareBrackets",
@@ -1208,7 +1287,8 @@
       // ],
       // "}": "vim::CurlyBrackets",
       // "shift-b": "vim::CurlyBrackets",
-      "shift-b": "vim::MiniBrackets",
+      // `shift-b` left at the default `CurlyBrackets` (was `MiniBrackets`; `b` covers that now)
+      // "shift-b": "vim::MiniBrackets",
       // "<": [
       //   "vim::AngleBrackets",
       //   {
@@ -1225,6 +1305,8 @@
       //   }
       // ],
       // "f": "vim::Method",
+      // mini.ai `F` = function definition; Zed has no function-*call* object like mini.ai's `f`
+      "shift-f": "vim::Method",
       // "c": "vim::Class",
       // "e": "vim::EntireFile"
       // Subword allows for `civ` / `cav`, akin to `Julian/vim-textobj-variable-segment`
@@ -1341,11 +1423,11 @@
     "bindings": {
       // ">": "vim::CurrentLine"
       // `>p` to paste linewise below and indent
-      "p": ["workspace::SendKeystrokes", "o escape g shift-r shift-r > >"],
+      "p": ["workspace::SendKeystrokes", "o escape shift-v shift-p g p >"],
       // `>P` to paste linewise above and indent
       "shift-p": [
         "workspace::SendKeystrokes",
-        "shift-o escape g shift-r shift-r > >",
+        "shift-o escape shift-v shift-p g p >",
         // "[ space k p = = > >"
       ],
     },
@@ -1355,11 +1437,11 @@
     "bindings": {
       // "<": "vim::CurrentLine"
       // `<p` to paste linewise below and dedent
-      "p": ["workspace::SendKeystrokes", "o escape g shift-r shift-r < <"],
+      "p": ["workspace::SendKeystrokes", "o escape shift-v shift-p g p <"],
       // `<P` to paste linewise above and dedent
       "shift-p": [
         "workspace::SendKeystrokes",
-        "shift-o escape g shift-r shift-r < <",
+        "shift-o escape shift-v shift-p g p <",
         // "[ space k p = = < <"
       ],
     },
@@ -1369,11 +1451,11 @@
     "bindings": {
       // "=": "vim::CurrentLine",
       // `=p` to paste linewise below and auto-indent
-      "p": ["workspace::SendKeystrokes", "o escape g shift-r shift-r = ="],
+      "p": ["workspace::SendKeystrokes", "o escape shift-v shift-p g p ="],
       // `=P` to paste linewise above and auto-indent
       "shift-p": [
         "workspace::SendKeystrokes",
-        "shift-o escape g shift-r shift-r = =",
+        "shift-o escape shift-v shift-p g p =",
       ],
     },
   },
@@ -1394,12 +1476,11 @@
     },
   },
   {
-    // NOTE: this context activates using `gR` or `space p`
+    // NOTE: this context activates using `space p`
     "context": "vim_operator == gR",
     "bindings": {
-      // `gRR` to replace line (`space p R` also works)
       // "shift-r": "vim::CurrentLine",
-      // `space p p` to replace line (`gRp` also works)
+      "shift-r": null,  // DISABLED
       "p": "vim::CurrentLine",
     },
   },
@@ -1766,12 +1847,6 @@
       "space w k": null,  // DISABLED
       "space w l": null,  // DISABLED
       "space w q": null,  // DISABLED
-      // File finder
-      "space f f": "file_finder::Toggle",
-      // File search grep
-      "space f s": "pane::DeploySearch",
-      // Open recent project
-      "space f o": "projects::OpenRecent",
     },
   },
   {
@@ -1784,11 +1859,11 @@
       // "d": "project_panel::NewDirectory",
       "d": null, // DISABLED
       "d d": "project_panel::Trash",
-      "d D": "project_panel::Delete",
+      "d shift-d": "project_panel::Delete",
       // "enter": "project_panel::OpenPermanent",
       // "escape": "vim::ToggleProjectPanelFocus",
       "escape": null, // DISABLED
-      "H": "project_panel::CollapseAllEntries",
+      "shift-h": "project_panel::CollapseAllEntries",
       // "h": "project_panel::CollapseSelectedEntry",
       // "j": "vim::MenuSelectNext",
       // "k": "vim::MenuSelectPrevious",
@@ -1813,7 +1888,7 @@
       "g f": "project_panel::RevealInFileManager",
       // "s": "workspace::OpenWithSystem",
       "s": null, // DISABLED
-      "g F": "workspace::OpenWithSystem",
+      "g shift-f": "workspace::OpenWithSystem",
       // CUSTOM
       "o": "project_panel::NewFile",
       "shift-o": "project_panel::NewFile",
@@ -1823,11 +1898,20 @@
       "g r n": "project_panel::Rename",
       "y y": "project_panel::Copy",
       "y p": "workspace::CopyRelativePath",
-      "y P": "workspace::CopyPath",
+      "y shift-p": "workspace::CopyPath",
       "g .": "project_panel::Duplicate",
-      "\\": "workspace::CloseActiveDock",
-      "|": "workspace::CloseActiveDock",
-      "q": "workspace::CloseActiveDock",
+      "\\": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
+      "|": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
+      "q": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
       // "cmd-shift-.": "project_panel::ToggleHideGitIgnore",
       "cmd->": "project_panel::ToggleHideGitIgnore",
       // "z d": "project_panel::CompareMarkedFiles",
@@ -2007,7 +2091,10 @@
     "bindings": {
       "enter": "agent::Chat",
       "cmd-enter": "agent::Chat",
-      "q": "workspace::CloseActiveDock",
+      "q": ["action::Sequence", [
+        "workspace::CloseActiveDock",
+        "editor::ToggleFocus",
+      ]],
     },
   },
   // {
