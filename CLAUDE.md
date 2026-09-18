@@ -114,8 +114,6 @@ that mise's registry has no `bins` metadata for, and every explicit-backend tool
 - `.treefmt.toml` at the repo root is the global treefmt config. It is not inside a stow
   package, so nothing links it to the `~/.config/treefmt/treefmt.toml` path that mise's
   `TREEFMT_CONFIG` points at.
-- `PLAN.md` is a dated (2026-09-06) list of inconsistencies and bugs found in a full read of
-  the repo, with an ordered cleanup plan. Check it before fixing something it may already cover.
 - Neovim config is **not** in this repo despite `rgv` and `update-neovim-plugins`
   depending on it (it lives in the separate `nvim-config` repo).
 - `home/.local/bin/` holds one hand-written script: `rgv` (ripgrep → fzf-lua in neovim).
