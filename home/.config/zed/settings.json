@@ -7,6 +7,29 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "ssh_connections": [
+    {
+      "host": "timpi",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/user/.donald/sync/projects/github.com"
+          ]
+        },
+        {
+          "paths": [
+            "/home/user/.donald/sync/projects/github.com/fresh2dev"
+          ]
+        },
+        {
+          "paths": [
+            "/home/user/.donald/sync/projects/github.com/fresh2dev/clyde"
+          ]
+        }
+      ]
+    }
+  ],
   "collaboration_panel": {
     "dock": "left"
   },
@@ -249,12 +272,10 @@
       },
     },
     "typos": {
-      // Optional. Omit the entire "binary" object to use Zed’s default typos-lsp discovery.
-      // See https://zed.dev/docs/configuring-languages
       "binary": {
         // Prefer your install instead of auto-downloaded version
         "ignore_system_version": false,
-        "path": "~/.cargo/bin/typos-lsp",
+        "path": "typos-lsp",
         "arguments": [],
       },
       // "initialization_options": {
