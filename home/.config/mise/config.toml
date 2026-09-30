@@ -245,6 +245,7 @@ ghq = "1.11.2"
 "~/.config/colima/default/colima.yaml" = { mode = "symlink", variants = [{ os = "macos" }] }
 "~/.config/cship.toml" = {}
 "~/.config/direnv/direnv.toml" = {}
+"~/.config/direnv/direnvrc" = {}
 "~/.config/drydock/config.toml" = {}
 "~/.config/fd/ignore" = {}
 "~/.config/gh/config.yml" = {}
