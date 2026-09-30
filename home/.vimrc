@@ -37,7 +37,7 @@ endif
 " Always show current position
 set ruler
 
-" When "on" the commands listed below move the cursor to the first non-blank of the line.  
+" When "on" the commands listed below move the cursor to the first non-blank of the line.
 " This applies to the commands:
 " - CTRL-D, CTRL-U, CTRL-B, CTRL-F, "G", "H", "M", "L", "gg"
 " - "d", "<<" and ">>" with a linewise operator

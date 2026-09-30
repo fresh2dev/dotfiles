@@ -6,4 +6,3 @@ done
 
 # # Bump the zoxide score of all project directories
 # [ -z "${GHQ_ROOT}" ] || find "${GHQ_ROOT}/github.com" -mindepth 2 -maxdepth 2 -type d -not -name ".*" -exec zoxide add {} \;
-
