@@ -9,6 +9,9 @@ raw = true
 minimum_release_age = "0h"
 # Default is `true`; disable to prevent shell expansion in env vars
 env_shell_expand = true
+# Dotfiles config
+dotfiles.root = "~/.dotfiles"
+dotfiles.default_mode = "symlink"
 
 [settings.npm]
 package_manager = "bun"
@@ -214,6 +217,7 @@ claude = { version = "2.1.285", lazy = true }
 "github:Dicklesworthstone/beads_rust" = { version = "0.7.3", lazy = true, lazy_bins = ["br"] }
 "github:Dicklesworthstone/beads_viewer" = { version = "0.25.1", lazy = true, lazy_bins = ["bv"] }
 "npm:ralph-tui" = { version = "0.12.0", lazy = true, lazy_bins = ["ralph-tui"] }
+"npm:skills" = { version = "1.7.0", lazy = true, lazy_bins = ["skills"] }
 hunk = { version = "0.22.0", lazy = true, lazy_bins = ["hunk"] }
 
 # --- Network / Security
@@ -223,3 +227,62 @@ mkcert = { version = "1.4.4", lazy = true }
 bitwarden-secrets-manager = { version = "latest", lazy = true }
 ghq = "1.11.2"
 "npm:@ticktick/ticktick-cli" = "0.1.14"
+
+[dotfiles]
+"~/.config/nvim" = {}
+"~/.agents/skills" = {}
+"~/.agents/.skill-lock.json" = {}
+"~/.claude/skills" = { source = "~/.dotfiles/.agents/skills" }
+
+"~/.ansible.cfg" = {}
+"~/.cargo/binstall.toml" = {}
+"~/.claude/commands/hunk-review.md" = {}
+"~/.claude/settings.json" = {}
+"~/.config/alacritty/alacritty.toml" = {}
+"~/.config/atuin/config.toml" = {}
+"~/.config/bat/config" = {}
+"~/.config/brewfile/Brewfile" = { mode = "symlink", variants = [{ os = "macos" }] }
+"~/.config/colima/default/colima.yaml" = { mode = "symlink", variants = [{ os = "macos" }] }
+"~/.config/cship.toml" = {}
+"~/.config/direnv/direnv.toml" = {}
+"~/.config/drydock/config.toml" = {}
+"~/.config/fd/ignore" = {}
+"~/.config/gh/config.yml" = {}
+"~/.config/ghostty/config" = {}
+"~/.config/git/ignore" = {}
+"~/.config/just/justfile" = {}
+"~/.config/k9s/aliases.yaml" = {}
+"~/.config/k9s/config.yaml" = {}
+"~/.config/k9s/plugins.yaml" = {}
+"~/.config/k9s/skins/transparent.yaml" = {}
+"~/.config/lazygit/config.yml" = {}
+"~/.config/lazygit/theme.yml" = {}
+"~/.config/mise/config.macos-arm64.toml" = { mode = "symlink", variants = [{ os = "macos" }] }
+"~/.config/mise/config.toml" = {}
+"~/.config/moxide/settings.toml" = {}
+"~/.config/myke/project.myke" = {}
+"~/.config/neovide/config.toml" = {}
+"~/.config/ripgreprc" = {}
+"~/.config/sheets/config.toml" = {}
+"~/.config/starship.toml" = {}
+"~/.config/vicinae/settings.json" = {}
+"~/.config/whosthere/config.yaml" = {}
+"~/.config/yamlfix/yamlfix.toml" = {}
+"~/.config/yamllint/config" = {}
+"~/.config/zed/keymap.json" = {}
+"~/.config/zed/settings.json" = {}
+"~/.config/zed/tasks.json" = {}
+"~/.config/zellij/config.kdl" = {}
+"~/.config/zellij/layouts/default.kdl" = {}
+"~/.editorconfig" = {}
+"~/.gitconfig" = {}
+"~/.hushlogin" = { mode = "symlink", variants = [{ os = "macos" }] }
+"~/.local/bin/rgv" = {}
+"~/.mdformat.toml" = {}
+"~/.streamlit/config.toml" = {}
+"~/.vimrc" = {}
+"~/.zlogin" = {}
+"~/.zprofile" = {}
+"~/.zshenv" = {}
+"~/.zshrc" = {}
+"~/Library/LaunchAgents/mise-env.plist" = { mode = "symlink", variants = [{ os = "macos" }] }

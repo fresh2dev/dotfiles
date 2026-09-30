@@ -109,6 +109,44 @@ update-neovim-plugins:
 install-neovim-plugins: update-neovim-plugins
 
 ##################################################
+# agent skills (pulled from upstream into ~/.agents/skills by the `skills` CLI)
+##################################################
+
+# Install one skill from an upstream repo, skipped if it is already in the skills lock file
+_install-skill repo skill:
+    jq -e --arg skill '{{ skill }}' '.skills | has($skill)' ~/.agents/.skill-lock.json >/dev/null 2>&1 || skills add '{{ repo }}' -g -a claude-code -a zed -y --skill '{{ skill }}'
+
+# Install each skill listed below
+install-skills: \
+    (_install-skill "Dicklesworthstone/beads_rust" "br") \
+    (_install-skill "vercel-labs/skills" "find-skills") \
+    (_install-skill "ayghri/i-have-adhd" "i-have-adhd") \
+    (_install-skill "github/awesome-copilot" "github-issues") \
+    (_install-skill "mattpocock/skills" "codebase-design") \
+    (_install-skill "mattpocock/skills" "domain-modeling") \
+    (_install-skill "mattpocock/skills" "grill-me") \
+    (_install-skill "mattpocock/skills" "grilling") \
+    (_install-skill "mattpocock/skills" "improve-codebase-architecture") \
+    (_install-skill "subsy/ralph-tui" "ralph-tui-prd") \
+    (_install-skill "subsy/ralph-tui" "ralph-tui-create-json") \
+    (_install-skill "subsy/ralph-tui" "ralph-tui-create-beads-rust") \
+    (_install-skill "softaworks/agent-toolkit" "agent-md-refactor") \
+    (_install-skill "softaworks/agent-toolkit" "commit-work") \
+    (_install-skill "softaworks/agent-toolkit" "crafting-effective-readmes") \
+    (_install-skill "softaworks/agent-toolkit" "dependency-updater") \
+    (_install-skill "softaworks/agent-toolkit" "excalidraw") \
+    (_install-skill "softaworks/agent-toolkit" "game-changing-features") \
+    (_install-skill "softaworks/agent-toolkit" "lesson-learned") \
+    (_install-skill "softaworks/agent-toolkit" "reducing-entropy") \
+    (_install-skill "softaworks/agent-toolkit" "session-handoff") \
+    (_install-skill "softaworks/agent-toolkit" "writing-clearly-and-concisely")
+
+# Update the named skills from upstream, or every installed skill if none given
+[positional-arguments]
+update-skills *skills:
+    skills update -g -y "$@"
+
+##################################################
 # Cache cleanup
 ##################################################
 
