@@ -1,6 +1,12 @@
+[settings]
+dotfiles.root = "."
+
+[dotfiles]
+"~/.dotfiles" = { source = "home/", mode = "symlink" }
+"~/.config/mise" = { source = "home/.config/mise", mode = "symlink-each" }
+# DO NOT ADD DOTFILE ENTRIES HERE
+# Leave this repo and run `mise dot add` or edit ~/.config/mise/config.toml directly.
+
 [tools]
-fzf = "0.74.4"
-just = "1.58.0"
-pipx = "latest"
-"pipx:stow-python" = "2.4.1"
-ripgrep = "15.2.0"
+just = "1"
+"aqua:numtide/treefmt" = "2"
