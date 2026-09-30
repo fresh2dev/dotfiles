@@ -1,115 +1,177 @@
 # dotfiles
 
 Personal dotfiles, symlinked into `$HOME` by mise's built-in dotfiles manager
-([`mise dot`](https://mise.jdx.dev/dotfiles.html)) and driven by
-[`just`](https://github.com/casey/just). CLI tools are installed by
+([`mise dot`](https://mise.jdx.dev/dotfiles.html)). CLI tools are installed by
 [`mise`](https://mise.jdx.dev) from `home/.config/mise/config.toml`.
 
 ## Setup
 
-Prerequisites: `git` and `mise` (a version with `mise dot` variants, e.g. 2026.9.17), plus
-Homebrew on macOS for GUI apps. The root `mise.toml` pins `just` for the recipes below.
+Prerequisites: `git` and a `mise` recent enough to support `mise dot` variants (2026.9.17
+works), plus Homebrew on macOS, which `mise bootstrap` drives to install formulae and casks.
+mise installs everything else.
 
 ```sh
 git clone https://github.com/fresh2dev/dotfiles ~/projects/github.com/fresh2dev/dotfiles
 cd ~/projects/github.com/fresh2dev/dotfiles
-mise install      # just, for the recipes below
-just link         # symlink every [dotfiles] entry into ~
-mise install      # again, now reading the linked ~/.config/mise/config.toml
+MISE_CONFIG_DIR="$PWD" mise install   # the repo's own tools, from mise.toml
+MISE_CONFIG_DIR="$PWD" mise en        # a subshell with them on PATH
+just install                          # link both layers and set up the machine (see below)
 ```
 
-This repo used to be linked with stow, and those existing relative symlinks count as
-`applied` when they already point at the right source, so migrating a live machine is just
-`just link`. No `--force` or unlink step is needed.
+`MISE_CONFIG_DIR="$PWD"` makes mise read only this repo's `mise.toml`.
+`just install` applies the bootstrap layer, then runs `mise bootstrap` from `~`, which
+links the file layer and applies the rest of the global config: Homebrew taps, formulae and
+casks, user services, macOS settings, tools, and hooks. Last, it clones zsh plugins and
+installs agent skills. Its arguments reach only `mise bootstrap`, so
+`just install --dry-run` previews that step but still applies the bootstrap layer and
+installs plugins and skills.
+
+Then open a new shell. The linked shell config activates mise, and the bootstrap layer has
+linked this repo's `justfile` to `~/.config/mise/justfile`, so `bs <recipe>` (short for
+`bootstrap`, an alias for `just -f $MISE_CONFIG_DIR/justfile`) runs its recipes from any
+directory.
+
+Links that already resolve to the right file count as `applied`, so re-running
+`just install` on a machine that is already set up is safe.
+
+### Dotfiles only
+
+To link the dotfiles without installing packages or tools, changing macOS settings, or
+starting services, apply the two layers with `mise dot` directly. This needs only `git`
+and `mise`:
+
+```sh
+git clone https://github.com/fresh2dev/dotfiles ~/projects/github.com/fresh2dev/dotfiles
+cd ~/projects/github.com/fresh2dev/dotfiles
+MISE_CONFIG_DIR="$PWD" mise dot apply   # bootstrap layer
+cd ~ && mise dot apply                  # file layer
+```
+
+Add `--dry-run` to either `mise dot apply` to preview it. The linked mise config is now
+your global config, so a new shell activates mise and lazy tools install on first use;
+`mise install` installs the eager ones. Run `just install` later to set up the rest.
 
 ## Layout
 
 | Path | Purpose |
 |---|---|
-| `home/` | Files linked on every platform, each at its `$HOME`-relative path |
-| `home-macos/` | macOS-only files (Brewfile, colima, mise's `config.macos-arm64.toml`, `.hushlogin`, a LaunchAgent) |
-| `mise.toml` | pins `just`; its `[dotfiles]` table lists every linked file |
-| `justfile` | `link`, `unlink`, `status`, `diff` and `adopt`; a bare `just` opens a chooser |
+| `mise.toml` | Bootstrap layer, plus the few tools the `justfile` needs before anything is linked |
+| `home/` | Every dotfile, each at its `$HOME`-relative path |
+| `home/.config/mise/config.toml` | File layer. mise's global config, which also pins every other tool |
+| `home/.config/mise/config.macos.toml` | macOS-only bootstrap config: Homebrew packages, services, LaunchAgents, Dock and Finder settings |
+| `justfile` | Recipes for installing, upgrading, and formatting, linked to `~/.config/mise/justfile` and run with `bs`. `bs --list` shows them, a bare `bs` opens a chooser |
+| `.treefmt.toml` | treefmt config for this repo |
+| `.pre-commit-config.yaml` | [prek](https://prek.j178.dev) hooks: whitespace fixers and syntax, symlink, and safety checks. `prek install` enables them as a git hook |
 
-## The `[dotfiles]` table
+Linking happens in two layers, each with its own `[dotfiles]` table.
 
-The root `mise.toml` ends with a `[dotfiles]` table that has **one entry per file**. The key
-is the target (`~/…`) and `source` is the repo-relative path. Every entry uses
-`mode = "symlink"`, so mise creates an absolute symlink into this checkout:
-
-```toml
-[dotfiles]
-"~/.zshrc" = { source = "home/.zshrc", mode = "symlink" }
-"~/.config/zellij/config.kdl" = { source = "home/.config/zellij/config.kdl", mode = "symlink" }
+```mermaid
+flowchart TB
+    bootstrap["just install"] --> dot["mise dot apply<br/>(MISE_CONFIG_DIR = repo root)"]
+    bootstrap --> apply["mise bootstrap (from ~)"]
+    dot -->|reads| layer1["mise.toml<br/>bootstrap layer"]
+    apply -->|reads| layer2["~/.config/mise/config.toml<br/>file layer"]
+    layer1 -->|links| links1["~/.dotfiles → home/<br/>~/.config/mise/* → home/.config/mise/*<br/>~/.config/mise/justfile → justfile"]
+    links1 -.->|makes reachable| layer2
+    layer2 -->|links| links2["~/path → ~/.dotfiles/path"]
 ```
 
-Only files are linked, never whole directories, so a real directory in `$HOME` is never
-replaced by a link into the repo. `README.md` files inside `home/` have no entry and are
-not linked.
+### The bootstrap layer: `mise.toml`
 
-Entries for `home-macos/` files add an `os = "macos"` variant. mise applies them on macOS
-and skips them on every other OS, so the same `mise.toml` is safe to apply anywhere:
+This layer only makes the file layer reachable. It links `~/.dotfiles` to `home/` in this
+checkout, links each file in `home/.config/mise` into a real `~/.config/mise` directory
+(`symlink-each`), and links the repo's `justfile` to `~/.config/mise/justfile`. Once
+applied, mise's global config holds the file layer. Don't add other dotfile entries here.
+
+Its `[tools]` table pins only what the repo's `justfile` needs, by major version, so those
+tools install before the global config exists.
+
+### The file layer: `home/.config/mise/config.toml`
+
+The `[dotfiles]` table in the global config has one entry per linked path, keyed by its
+`~/…` target. The same file sets mise's dotfiles root to `~/.dotfiles` and the default mode
+to `symlink`, so an empty entry links `~/<path>` to `home/<path>`:
 
 ```toml
-"~/.hushlogin" = { source = "home-macos/.hushlogin", mode = "symlink", variants = [{ os = "macos" }] }
+"~/.zshrc" = {}
 ```
 
-`[dotfiles]` stays the **last** table in `mise.toml`, because `just adopt` appends new
-entries to the end of the file.
+An entry can name a single file or a whole directory, and can set `source` to link a target
+to a different path under `home/`.
 
-## Recipes
+macOS-only entries add an `os = "macos"` variant, which mise applies on macOS and skips
+everywhere else. An entry with a variant needs an explicit `mode`; with only `variants`,
+mise warns "no recognized operation" and ignores it:
 
-Every recipe exports `MISE_CONFIG_DIR` as the repo root and runs `mise dot`, which reads
-the repo's `mise.toml`.
+```toml
+"~/.hushlogin" = { mode = "symlink", variants = [{ os = "macos" }] }
+```
+
+## Which layer `mise dot` sees
+
+Where you run `mise dot` decides which layer it reads:
+
+- **Outside this repo**, your shell's `MISE_CONFIG_DIR` (`~/.config/mise`) applies, so
+  `mise dot` reads the global config: the file layer.
+- **With `MISE_CONFIG_DIR="$PWD"` at the repo root**, `mise dot` reads only `mise.toml`:
+  the bootstrap layer.
+
+A bare `mise dot` inside the repo reads both layers and fails with "conflicting dotfile
+declarations". Set `MISE_CONFIG_DIR="$PWD"` there, or `cd ~` first for the file layer.
 
 | Command | Effect |
 |---|---|
-| `just link [targets…]` | `mise dot apply`: link every entry, or only the named targets (e.g. `~/.zshrc`) |
-| `just unlink [targets…]` | `mise dot unapply`: remove the links for every entry, or only the named targets |
-| `just status` | `mise dot status`: show the state of every entry |
-| `just diff [targets…]` | `mise dot diff`: show what `link` would change |
-| `just adopt <paths…>` | move regular files from `$HOME` into `home/`, add their entries, and link them |
+| `bs install [args…]` | Apply both layers and the rest of `mise bootstrap` |
+| `MISE_CONFIG_DIR="$PWD" mise dot <subcommand>` | `mise dot <subcommand>` for the bootstrap layer, from the repo root, e.g. `status`, `apply`, `diff` |
+| `cd ~ && mise dot <subcommand>` | The same for the file layer |
+| `bs upgrade [args…]` | Prune, then upgrade mise, tools (bumping their pins), Homebrew packages, zsh plugins, and agent skills |
+| `bs prune [args…]` | Remove unused tool versions, undeclared Homebrew formulae, and undeclared casks that mise installed |
+| `bs dir` | Print the path of this checkout, e.g. `cd "$(bs dir)"` |
+| `bs format` | `treefmt` on the repo, using `.treefmt.toml`, then prek's whitespace fixers |
+
+## Homebrew packages
+
+`mise bootstrap` manages Homebrew on macOS; there is no Brewfile. Taps, formulae, and casks
+are declared in `home/.config/mise/config.macos.toml`:
+
+```toml
+[bootstrap.brew.taps]
+"rcmdnk/file" = "https://github.com/rcmdnk/homebrew-file.git"
+
+[bootstrap.packages]
+"brew:syncthing" = "latest"
+"brew-cask:ghostty" = "latest"
+```
+
+Add an entry and run `bs install` to install it. To uninstall one, remove its entry and run
+`bs prune`, which removes undeclared formulae and any undeclared cask that mise installed
+(casks installed before mise managed them are left alone).
 
 ## Adding a file
 
-### By hand
+> [!IMPORTANT]
+> Run `mise dot add` **outside** this repo. Inside it, a bare `mise dot` fails (see above),
+> and `MISE_CONFIG_DIR="$PWD" mise dot add` targets the bootstrap layer, not the file layer.
 
-Put the file under `home/` at its `$HOME`-relative path, then add one entry to the end of
-`mise.toml` and link just that target:
-
-```toml
-"~/.config/foo/config.toml" = { source = "home/.config/foo/config.toml", mode = "symlink" }
-```
-
-```sh
-just link ~/.config/foo/config.toml
-```
-
-For a macOS-only file, put it under `home-macos/` and add `variants = [{ os = "macos" }]`
-to the entry.
-
-### `just adopt`
-
-`adopt` brings real files that already exist in `$HOME` under version control:
+From `$HOME` (or anywhere outside the repo), `mise dot add` moves the file into `home/`,
+adds a `"~/<path>" = {}` entry to the global config (writing through the symlink into this
+repo), and links it:
 
 ```sh
-just adopt ~/.config/foo/config.toml
-just adopt ./config.toml ~/.config/bar/bar.yaml   # relative paths work; the recipe is [no-cd]
+cd ~
+mise dot add ~/.config/foo/config.toml
 ```
 
-It validates **every** path before anything moves. A single bad path aborts the whole run
-and names that path. A path is rejected if any of these hold:
+Given a directory, `mise dot add` links the whole directory. For a macOS-only file, add the
+`mode` and `variants` shown above to its entry by hand.
 
-- it is not a regular file (a directory, a symlink, or missing);
-- it is outside `$HOME` or inside this repo;
-- `home/<path>` already exists in the repo;
-- `"~/<path>"` is already a key in `mise.toml`.
+To add a file by hand instead, put it under `home/` at its `$HOME`-relative path, add
+`"~/<path>" = {}` to the global config's `[dotfiles]` table, then run
+`cd ~ && mise dot apply ~/<path>`.
 
-For each file, `adopt` moves it to `home/<path>` and appends
-`"~/<path>" = { source = "home/<path>", mode = "symlink" }` to `mise.toml`. It then runs
-`mise dot apply` for only the adopted targets. It always adopts into `home/`. Add
-macOS-only files by hand.
+## Neovim
 
-`adopt` does not use `mise dot add`. That command writes absolute, machine-specific target
-keys, and for a relative `--source` it writes a broken relative symlink. The entries in this
-repo must stay portable, with `~/…` keys and repo-relative sources.
+The Neovim config in `home/.config/nvim/` is extensive enough to have its own
+documentation: [`home/.config/nvim/README.md`](home/.config/nvim/README.md) covers its
+requirements, layout, keymaps and plugins, and how to extend it. It is linked as a whole
+directory, so it follows the same two-layer setup as everything else here.
