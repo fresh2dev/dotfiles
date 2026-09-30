@@ -19,22 +19,20 @@ package_manager = "bun"
 # leave = "echo 'I left the project'"
 
 [env]
-DOTFILES_TARGET = "${DOTFILES_TARGET:-$HOME}"
+XDG_CONFIG_HOME = "{{ env.HOME }}/.config"
+# XDG_DATA_HOME = "{{ env.HOME }}/.local/share"
+# XDG_CACHE_HOME = "{{ env.HOME }}/.cache"
+# XDG_STATE_HOME = "{{ env.HOME }}/.local/state"
 
-XDG_CONFIG_HOME = "$DOTFILES_TARGET/.config"
-# XDG_DATA_HOME = "$DOTFILES_TARGET/.local/share"
-# XDG_CACHE_HOME = "$DOTFILES_TARGET/.cache"
-# XDG_STATE_HOME = "$DOTFILES_TARGET/.local/state"
-
-GIT_CONFIG_GLOBAL = "$DOTFILES_TARGET/.gitconfig"
-RUSTUP_HOME = "$DOTFILES_TARGET/.rustup"
-CARGO_HOME = "$DOTFILES_TARGET/.cargo"
-BUN_INSTALL = "$DOTFILES_TARGET/.bun"
-GOPATH = "$DOTFILES_TARGET/go"
-GHQ_ROOT = "$DOTFILES_TARGET/sync/projects"
+GIT_CONFIG_GLOBAL = "{{ env.HOME }}/.gitconfig"
+RUSTUP_HOME = "{{ env.HOME }}/.rustup"
+CARGO_HOME = "{{ env.HOME }}/.cargo"
+BUN_INSTALL = "{{ env.HOME }}/.bun"
+GOPATH = "{{ env.HOME }}/go"
+GHQ_ROOT = "{{ env.HOME }}/sync/projects"
 
 _.path = [
-  "$DOTFILES_TARGET/.local/bin",
+  "{{ env.HOME }}/.local/bin",
   "$CARGO_HOME/bin",
 ]
 
