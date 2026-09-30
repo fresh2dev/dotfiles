@@ -1,5 +1,5 @@
 # Leave blank to try to import from Obsidian Daily Notes
-dailynote = "%Y-%m-%d" # this is akin to YYYY-MM-DD from Obsidian
+dailynote = "%Y-%m-%d"  # this is akin to YYYY-MM-DD from Obsidian
 
 # Fuzzy match file headings in completions
 heading_completions = true
@@ -11,7 +11,7 @@ heading_completions = true
 # If false, [](file) -> [](file) (for example)
 title_headings = true
 
-# Show diagnostics for unresolved links; note that even if this is turned off, 
+# Show diagnostics for unresolved links; note that even if this is turned off,
 # special semantic tokens will be sent for the unresolved links, allowing you
 # to visually identify unresolved links
 unresolved_diagnostics = true
@@ -25,16 +25,14 @@ references_in_codeblocks = true
 
 # # The folder for new files to be created in; this is relevant for the code action that creates
 # # from an unresolved link. If not specified, it will import from your obsidian config option titled
-# # "Default Location for new notes" -- which is "" by default too. 
+# # "Default Location for new notes" -- which is "" by default too.
 # new_file_folder_path = ""
-
 
 # The folder for new daily notes: this is applied for the create file for unresolved link code action
 # as well as the Today, Tomorrow, Yesterday, and Daily... lsp commands
 #
 # This is also imported from obsidian if not specified: specifically the option titled "New file location"
 daily_notes_folder = "daily"
-
 
 # Whether markdown links should include an extension or not
 # for example [File](file.md) or [File](file)
