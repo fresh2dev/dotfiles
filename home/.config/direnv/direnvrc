@@ -1,0 +1,32 @@
+# shellcheck shell=bash
+#
+# Global direnv config, sourced before every project's .envrc/.env.
+#
+# layout_uv syncs and activates a uv venv when $PWD is inside a git repo whose
+# top level has a pyproject.toml. When the venv or uv.lock is missing,
+# `uv sync --all-extras --all-groups` creates and syncs them. The venv is
+# $UV_PROJECT_ENVIRONMENT (relative to the repo root) if set, otherwise
+# <root>/.venv. Errors are logged and never stop direnv from loading.
+
+layout_uv() {
+  local root venv
+  root=$(git rev-parse --show-toplevel 2>/dev/null) || return 0
+  [[ -f "$root/pyproject.toml" ]] || return 0
+  if ! has uv; then
+    log_error "uv: not found on PATH, skipping venv"
+    return 0
+  fi
+
+  venv=${UV_PROJECT_ENVIRONMENT:-.venv}
+  [[ "$venv" == /* ]] || venv="$root/$venv"
+
+  if [[ ! -f "$venv/pyvenv.cfg" || ! -f "$root/uv.lock" ]]; then
+    uv --directory "$root" sync --all-extras --all-groups </dev/null ||
+      log_error "uv: sync failed in $root"
+  fi
+
+  export VIRTUAL_ENV="$venv"
+  PATH_add "$VIRTUAL_ENV/bin"
+}
+
+layout_uv
