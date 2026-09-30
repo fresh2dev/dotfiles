@@ -112,34 +112,40 @@ install-neovim-plugins: update-neovim-plugins
 # agent skills (pulled from upstream into ~/.agents/skills by the `skills` CLI)
 ##################################################
 
-# Install one skill from an upstream repo, skipped if it is already in the skills lock file
-_install-skill repo skill:
-    jq -e --arg skill '{{ skill }}' '.skills | has($skill)' ~/.agents/.skill-lock.json >/dev/null 2>&1 || skills add '{{ repo }}' -g -a claude-code -a zed -y --skill '{{ skill }}'
+# Skills to install, as <upstream GitHub repo>:<skill name>
+agent_skills := '''
+    Dicklesworthstone/beads_rust:br
+    vercel-labs/skills:find-skills
+    ayghri/i-have-adhd:i-have-adhd
+    github/awesome-copilot:github-issues
+    mattpocock/skills:codebase-design
+    mattpocock/skills:domain-modeling
+    mattpocock/skills:grill-me
+    mattpocock/skills:grilling
+    mattpocock/skills:improve-codebase-architecture
+    subsy/ralph-tui:ralph-tui-prd
+    subsy/ralph-tui:ralph-tui-create-json
+    subsy/ralph-tui:ralph-tui-create-beads-rust
+    softaworks/agent-toolkit:agent-md-refactor
+    softaworks/agent-toolkit:commit-work
+    softaworks/agent-toolkit:crafting-effective-readmes
+    softaworks/agent-toolkit:dependency-updater
+    softaworks/agent-toolkit:excalidraw
+    softaworks/agent-toolkit:game-changing-features
+    softaworks/agent-toolkit:lesson-learned
+    softaworks/agent-toolkit:reducing-entropy
+    softaworks/agent-toolkit:session-handoff
+    softaworks/agent-toolkit:writing-clearly-and-concisely
+'''
 
-# Install each skill listed below
-install-skills: \
-    (_install-skill "Dicklesworthstone/beads_rust" "br") \
-    (_install-skill "vercel-labs/skills" "find-skills") \
-    (_install-skill "ayghri/i-have-adhd" "i-have-adhd") \
-    (_install-skill "github/awesome-copilot" "github-issues") \
-    (_install-skill "mattpocock/skills" "codebase-design") \
-    (_install-skill "mattpocock/skills" "domain-modeling") \
-    (_install-skill "mattpocock/skills" "grill-me") \
-    (_install-skill "mattpocock/skills" "grilling") \
-    (_install-skill "mattpocock/skills" "improve-codebase-architecture") \
-    (_install-skill "subsy/ralph-tui" "ralph-tui-prd") \
-    (_install-skill "subsy/ralph-tui" "ralph-tui-create-json") \
-    (_install-skill "subsy/ralph-tui" "ralph-tui-create-beads-rust") \
-    (_install-skill "softaworks/agent-toolkit" "agent-md-refactor") \
-    (_install-skill "softaworks/agent-toolkit" "commit-work") \
-    (_install-skill "softaworks/agent-toolkit" "crafting-effective-readmes") \
-    (_install-skill "softaworks/agent-toolkit" "dependency-updater") \
-    (_install-skill "softaworks/agent-toolkit" "excalidraw") \
-    (_install-skill "softaworks/agent-toolkit" "game-changing-features") \
-    (_install-skill "softaworks/agent-toolkit" "lesson-learned") \
-    (_install-skill "softaworks/agent-toolkit" "reducing-entropy") \
-    (_install-skill "softaworks/agent-toolkit" "session-handoff") \
-    (_install-skill "softaworks/agent-toolkit" "writing-clearly-and-concisely")
+# Skills already in the skills lock file are skipped
+install-skills:
+    for entry in {{ replace(agent_skills, "\n", " ") }}; do \
+        repo="${entry%%:*}" skill="${entry#*:}"; \
+        jq -e --arg skill "$skill" '.skills | has($skill)' ~/.agents/.skill-lock.json >/dev/null 2>&1 \
+            || skills add "$repo" -g -a claude-code -a zed -y --skill "$skill" \
+            || exit; \
+    done
 
 # Update the named skills from upstream, or every installed skill if none given
 [positional-arguments]
