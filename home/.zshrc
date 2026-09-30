@@ -2,9 +2,7 @@
 # enable comments in interactive shells
 set -k
 
-export DOTFILES_TARGET="${DOTFILES_TARGET:-${HOME:?}}"
-
-export ZDOTDIR=${ZDOTDIR:-$DOTFILES_TARGET}
+export ZDOTDIR=${ZDOTDIR:-$HOME}
 source ${ZDOTDIR}/.zprofile
 
 setopt INTERACTIVE_COMMENTS
@@ -19,9 +17,9 @@ export MISE_SKILLS_AUTO_SYNC=true
 
 # if ! command -v mise &>/dev/null; then
 #   echo "Installing mise..."
-#   curl -fsSL https://mise.run | MISE_INSTALL_PATH="$DOTFILES_TARGET/.local/bin/mise" sh
+#   curl -fsSL https://mise.run | MISE_INSTALL_PATH="$HOME/.local/bin/mise" sh
 # fi
-eval "$($DOTFILES_TARGET/.local/bin/mise activate zsh)"
+eval "$($HOME/.local/bin/mise activate zsh)"
 
 ################################################################################
 ################################################################################
@@ -37,7 +35,7 @@ if command -v atuin &>/dev/null; then
   eval "$(atuin init zsh --disable-up-arrow)"
   fc -R =(atuin search --cmd-only --limit 100)
 else
-  export HISTFILE="$DOTFILES_TARGET/.zsh_history"
+  export HISTFILE="$HOME/.zsh_history"
   export SAVEHIST=1000
   export HISTSIZE=1000
   setopt INC_APPEND_HISTORY
@@ -73,7 +71,7 @@ install_yapx_zsh_completion() {
   $1 --print-shell-completion zsh | grep -v '\--print-shell-completion' | sudo tee /usr/local/share/zsh/site-functions/_$1
 }
 
-if [ -d "$DOTFILES_TARGET/.zsh/fzf-tab" ]; then
+if [ -d "$HOME/.zsh/fzf-tab" ]; then
   # disable sort when completing `git checkout`
   zstyle ':completion:*:git-checkout:*' sort false
   # set descriptions format to enable group support
@@ -95,7 +93,7 @@ if [ -d "$DOTFILES_TARGET/.zsh/fzf-tab" ]; then
   zstyle ':fzf-tab:*' switch-group '<' '>'
   zstyle ':fzf-tab:*' fzf-pad 4
   zstyle ':fzf-tab:*' fzf-min-height 4
-  source "$DOTFILES_TARGET/.zsh/fzf-tab/fzf-tab.plugin.zsh"
+  source "$HOME/.zsh/fzf-tab/fzf-tab.plugin.zsh"
 fi
 
 if command -v fzf &>/dev/null; then
@@ -107,12 +105,12 @@ if [ -d "$DOTFILES_TARGET/.zsh/zsh-autosuggestions" ]; then
   # export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
   export ZSH_AUTOSUGGEST_HISTORY_IGNORE=" *"
   export ZSH_AUTOSUGGEST_COMPLETION_IGNORE="$ZSH_AUTOSUGGEST_HISTORY_IGNORE"
-  source "$DOTFILES_TARGET/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
   # unset ZSH_AUTOSUGGEST_USE_ASYNC
 fi
 
-if [ -d "$DOTFILES_TARGET/.zsh/zsh-syntax-highlighting" ]; then
-  source "$DOTFILES_TARGET/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+if [ -d "$HOME/.zsh/zsh-syntax-highlighting" ]; then
+  source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
 if ! command -v ghostty &>/dev/null && [ -e "/Applications/Ghostty.app" ]; then
