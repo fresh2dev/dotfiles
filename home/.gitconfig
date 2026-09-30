@@ -8,7 +8,7 @@
     fileMode = false
     editor = nvim
     pager = delta
-    sshCommand = ssh -i $DOTFILES_TARGET/.ssh/id_ed25519
+    sshCommand = ssh -i ~/.ssh/id_ed25519
 [interactive]
     diffFilter = delta
 [delta]
