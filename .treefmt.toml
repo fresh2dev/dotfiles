@@ -39,6 +39,8 @@ excludes = [
   "**/target/*",
   "**/.venv/*",
   "**/__pycache__/*",
+  # Agent skills are vendored from upstream by the `skills` CLI.
+  "**/.agents/skills/*",
 ]
 
 # ---------------------------------------------------------------- lua
@@ -140,9 +142,11 @@ includes = ["*.sh", "*.bash", "*.envrc", "*.envrc.*"]
 excludes = []
 priority = 0
 
+# `just -f` takes a single justfile, but treefmt passes every match in one call,
+# so loop over them in sh (the trailing "--" fills $0; the files become "$@").
 [formatter.just]
-command = "just"
-options = ["--fmt", "--unstable", "-f"]
+command = "sh"
+options = ["-c", 'for f; do just --fmt --unstable -f "$f" || exit; done', "--"]
 includes = ["*justfile", "*.just"]
 excludes = []
 priority = 0

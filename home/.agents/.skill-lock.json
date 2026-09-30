@@ -1,0 +1,226 @@
+{
+  "version": 3,
+  "skills": {
+    "br": {
+      "source": "Dicklesworthstone/beads_rust",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/Dicklesworthstone/beads_rust.git",
+      "skillPath": ".claude/skills/br/SKILL.md",
+      "skillFolderHash": "c296368a74fa908fed07268fe76aa7285abc6de4",
+      "installedAt": "2026-09-30T03:27:04.282Z",
+      "updatedAt": "2026-09-30T04:18:04.706Z"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/skills.git",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
+      "installedAt": "2026-09-30T03:27:13.651Z",
+      "updatedAt": "2026-09-30T04:24:33.877Z"
+    },
+    "i-have-adhd": {
+      "source": "ayghri/i-have-adhd",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/ayghri/i-have-adhd.git",
+      "skillPath": "skills/i-have-adhd/SKILL.md",
+      "skillFolderHash": "72dc6e3e9d0f8d906579a235edb7b2a402d7b8e1",
+      "installedAt": "2026-09-30T04:07:04.082Z",
+      "updatedAt": "2026-09-30T04:18:10.159Z"
+    },
+    "github-issues": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/github/awesome-copilot.git",
+      "skillPath": "skills/github-issues/SKILL.md",
+      "skillFolderHash": "ff3489a4f04f2a7cb9a00609c5e1e50966e54c74",
+      "installedAt": "2026-09-30T04:07:18.327Z",
+      "updatedAt": "2026-09-30T04:18:25.920Z"
+    },
+    "improve-codebase-architecture": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
+      "skillFolderHash": "39bd9cc130f7dfcc4e3ea0b3613f6ebed0d0ad2b",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-09-30T04:07:22.165Z",
+      "updatedAt": "2026-09-30T04:18:29.570Z"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "skillFolderHash": "3df14e2d3a89459bf300614be9247e3ce74798f8",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-09-30T04:07:22.166Z",
+      "updatedAt": "2026-09-30T04:18:29.573Z"
+    },
+    "ralph-tui-create-beads-rust": {
+      "source": "subsy/ralph-tui",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/subsy/ralph-tui.git",
+      "skillPath": "skills/ralph-tui-create-beads-rust/SKILL.md",
+      "skillFolderHash": "779eaa0fb04f828b38d97938257ae70f70b74a0f",
+      "installedAt": "2026-09-30T04:07:26.746Z",
+      "updatedAt": "2026-09-30T04:18:34.400Z"
+    },
+    "ralph-tui-create-json": {
+      "source": "subsy/ralph-tui",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/subsy/ralph-tui.git",
+      "skillPath": "skills/ralph-tui-create-json/SKILL.md",
+      "skillFolderHash": "8773e8874e3eaa4d59e2cd871999d7d426fc2ec3",
+      "installedAt": "2026-09-30T04:07:26.748Z",
+      "updatedAt": "2026-09-30T04:18:34.403Z"
+    },
+    "ralph-tui-prd": {
+      "source": "subsy/ralph-tui",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/subsy/ralph-tui.git",
+      "skillPath": "skills/ralph-tui-prd/SKILL.md",
+      "skillFolderHash": "9443135cc27e2f1fb55cf1f6f4607180d1db5bd9",
+      "installedAt": "2026-09-30T04:07:26.749Z",
+      "updatedAt": "2026-09-30T04:18:34.404Z"
+    },
+    "agent-md-refactor": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/agent-md-refactor/SKILL.md",
+      "skillFolderHash": "89a8fede359cb48c66f1af44c5aa8fc07b82cded",
+      "installedAt": "2026-09-30T04:07:30.991Z",
+      "updatedAt": "2026-09-30T04:18:38.723Z"
+    },
+    "commit-work": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/commit-work/SKILL.md",
+      "skillFolderHash": "ac7c2ea0f24eb668f5b80e4f237efa4a90f12312",
+      "installedAt": "2026-09-30T04:07:30.994Z",
+      "updatedAt": "2026-09-30T04:18:38.725Z"
+    },
+    "crafting-effective-readmes": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/crafting-effective-readmes/SKILL.md",
+      "skillFolderHash": "72e2a4d89c5a14b762cfc58e3bbd7fd63e9642b0",
+      "installedAt": "2026-09-30T04:07:30.994Z",
+      "updatedAt": "2026-09-30T04:18:38.726Z"
+    },
+    "dependency-updater": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/dependency-updater/SKILL.md",
+      "skillFolderHash": "65459aa3b16657ab04a2e4ea07f4e07e85c5285c",
+      "installedAt": "2026-09-30T04:07:30.995Z",
+      "updatedAt": "2026-09-30T04:18:38.726Z"
+    },
+    "excalidraw": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/excalidraw/SKILL.md",
+      "skillFolderHash": "535a7f7b3194cfe0bf308ad8f4558d066a7b95af",
+      "installedAt": "2026-09-30T04:07:30.995Z",
+      "updatedAt": "2026-09-30T04:18:38.727Z"
+    },
+    "game-changing-features": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/game-changing-features/SKILL.md",
+      "skillFolderHash": "3538ed17db233eedc52b8039d43172313c88d842",
+      "installedAt": "2026-09-30T04:07:30.996Z",
+      "updatedAt": "2026-09-30T04:18:38.727Z"
+    },
+    "lesson-learned": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/lesson-learned/SKILL.md",
+      "skillFolderHash": "6ab6847ffef7f50b70aa1d637c75a167387b6c7f",
+      "installedAt": "2026-09-30T04:07:30.996Z",
+      "updatedAt": "2026-09-30T04:18:38.727Z"
+    },
+    "reducing-entropy": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/reducing-entropy/SKILL.md",
+      "skillFolderHash": "31380d65f4abe7cae6ca2cc1332bafd14d0d8793",
+      "installedAt": "2026-09-30T04:07:30.997Z",
+      "updatedAt": "2026-09-30T04:18:38.728Z"
+    },
+    "session-handoff": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/session-handoff/SKILL.md",
+      "skillFolderHash": "9038976da9e22fa34168feb813ef18082fe005b1",
+      "installedAt": "2026-09-30T04:07:30.997Z",
+      "updatedAt": "2026-09-30T04:18:38.728Z"
+    },
+    "writing-clearly-and-concisely": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/writing-clearly-and-concisely/SKILL.md",
+      "skillFolderHash": "4bb2d919b567277219f7a18358bd05e0a1679a77",
+      "installedAt": "2026-09-30T04:07:30.997Z",
+      "updatedAt": "2026-09-30T04:18:38.728Z"
+    },
+    "codebase-design": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/codebase-design/SKILL.md",
+      "skillFolderHash": "07ba1cd60efc12d0d3a083005c1d9651cf15e39a",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-09-30T04:54:02.483Z",
+      "updatedAt": "2026-09-30T04:54:02.483Z"
+    },
+    "domain-modeling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/domain-modeling/SKILL.md",
+      "skillFolderHash": "ea30ee454ba264543dbe40737973b1a5afb9f0e6",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-09-30T04:54:02.485Z",
+      "updatedAt": "2026-09-30T04:54:02.485Z"
+    },
+    "grilling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grilling/SKILL.md",
+      "skillFolderHash": "f0732035b8b1b60ae39454e4191caef32fa91903",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-09-30T04:54:02.485Z",
+      "updatedAt": "2026-09-30T04:54:02.485Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "cline",
+    "codex",
+    "cursor",
+    "droid",
+    "gemini-cli",
+    "github-copilot",
+    "kilo",
+    "kimi-code-cli",
+    "opencode",
+    "warp",
+    "zed",
+    "claude-code"
+  ]
+}
