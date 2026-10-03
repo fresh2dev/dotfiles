@@ -4,9 +4,11 @@ dotfiles.root = "."
 [dotfiles]
 "~/.dotfiles" = { source = "home/", mode = "symlink" }
 "~/.config/mise" = { source = "home/.config/mise", mode = "symlink-each" }
+"~/.config/just/justfile" = { source = "justfile", mode = "symlink" }
 # DO NOT ADD DOTFILE ENTRIES HERE
 # Leave this repo and run `mise dot add` or edit ~/.config/mise/config.toml directly.
 
 [tools]
 just = "1"
 "aqua:numtide/treefmt" = "2"
+ruby = "4"

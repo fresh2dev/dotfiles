@@ -1,0 +1,127 @@
+[bootstrap.brew]
+adopt = true
+
+[bootstrap.brew.taps]
+"buo/cask-upgrade" = "https://github.com/buo/homebrew-cask-upgrade.git"
+"ganeshmshetty/tap" = "https://github.com/ganeshmshetty/homebrew-tap.git"
+"julyx10/lap" = "https://github.com/julyx10/homebrew-lap.git"
+"jundot/omlx" = "https://github.com/jundot/omlx.git"
+"mattrobenolt/stuff" = "https://github.com/mattrobenolt/homebrew-stuff.git"
+"rcmdnk/file" = "https://github.com/rcmdnk/homebrew-file.git"
+
+[bootstrap.packages]
+# formulae
+"brew:colima" = "latest"
+"brew:git" = "latest"
+"brew:git-crypt" = "latest"
+"brew:mole" = "latest"
+"brew:openssl@4" = "latest"
+"brew:sponge" = "latest"
+"brew:sshpass" = "latest"
+"brew:syncthing" = "latest"
+"brew:universal-ctags" = "latest"
+"brew:zsh" = "latest"
+# apps
+"brew-cask:app-tamer" = "latest"
+"brew-cask:betterdisplay" = "latest"
+"brew-cask:bitwarden" = "latest"
+"brew-cask:bloom" = "latest"
+"brew-cask:claude" = "latest"
+"brew-cask:daisydisk" = "latest"
+"brew-cask:downie" = "latest"
+"brew-cask:dropshare" = "latest"
+"brew-cask:ghostty" = "latest"
+"brew-cask:iina" = "latest"
+"brew-cask:keycastr" = "latest"
+"brew-cask:leader-key" = "latest"
+"brew-cask:losslesscut" = "latest"
+"brew-cask:macusb" = "latest"
+"brew-cask:macwhisper" = "latest"
+"brew-cask:mullvad-browser" = "latest"
+"brew-cask:mullvad-vpn" = "latest"
+"brew-cask:netspot" = "latest"
+"brew-cask:onyx" = "latest"
+"brew-cask:openclip" = "latest"
+"brew-cask:pdf-expert" = "latest"
+"brew-cask:pearcleaner" = "latest"
+"brew-cask:rectangle-pro" = "latest"
+"brew-cask:recut" = "latest"
+"brew-cask:revpdf-editor" = "latest"
+"brew-cask:rewritebar" = "latest"
+"brew-cask:space-rabbit" = "latest"
+"brew-cask:superkey" = "latest"
+"brew-cask:tailscale-app" = "latest"
+"brew-cask:ticktick" = "latest"
+"brew-cask:transmission" = "latest"
+"brew-cask:typora" = "latest"
+"brew-cask:vorssaint" = "latest"
+"brew-cask:whichspace" = "latest"
+"brew-cask:zed" = "latest"
+# apps from third-party taps
+"brew-cask:julyx10/lap/lap" = "latest"
+# "brew-cask:mattrobenolt/stuff/appify" = "latest"
+# fonts
+"brew-cask:font-fira-code-nerd-font" = "latest"
+"brew-cask:font-fira-mono-nerd-font" = "latest"
+"brew-cask:font-go-mono-nerd-font" = "latest"
+"brew-cask:font-hack-nerd-font" = "latest"
+"brew-cask:font-im-writing-nerd-font" = "latest"
+"brew-cask:font-jetbrains-mono-nerd-font" = "latest"
+"brew-cask:font-meslo-lg-nerd-font" = "latest"
+"brew-cask:font-roboto-mono-nerd-font" = "latest"
+"brew-cask:font-sauce-code-pro-nerd-font" = "latest"
+"brew-cask:font-ubuntu-mono-nerd-font" = "latest"
+"brew-cask:font-ubuntu-nerd-font" = "latest"
+"brew-cask:font-ubuntu-sans-nerd-font" = "latest"
+
+# Run Syncthing (`brew:syncthing` above) at login, replacing `brew services start syncthing`.
+[bootstrap.services.syncthing]
+scope = "user"
+description = "Syncthing"
+command = "/opt/homebrew/opt/syncthing/bin/syncthing --no-browser --no-restart"
+
+# Set PATH, XDG_CONFIG_HOME and XDG_DATA_DIRS for GUI apps not started from a terminal
+# (Finder, Dock, Spotlight), for the current user only, so they find tools such as
+# mise-managed `ffmpeg`, read their config from ~/.config, and find Homebrew's share dir
+# like a shell does. PATH uses mise shims, not install dirs, so it survives version bumps.
+# Only apps launched after the agent runs see the values; relaunch open apps.
+[bootstrap.macos.launchd.agents.mise-env]
+program = "/bin/launchctl"
+args = [
+  "setenv",
+  "PATH",
+  "{{ env.HOME }}/.local/share/mise/shims:{{ env.HOME }}/.local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+  "XDG_CONFIG_HOME",
+  "{{ env.HOME }}/.config",
+  "XDG_DATA_DIRS",
+  "/opt/homebrew/share:/usr/local/share:/usr/share",
+]
+run_at_load = true
+
+[bootstrap.macos.dock]
+autohide = true
+orientation = "left"
+tilesize = 36
+show_recents = false
+
+[bootstrap.macos.finder]
+show_all_files = true
+show_pathbar = true
+preferred_view_style = "list"
+
+# valid phases are: pre-packages, post-packages, pre-repos, post-repos, pre-dotfiles, post-dotfiles, pre-defaults, post-defaults, pre-user, post-user, pre-tools, post-tools, final
+[bootstrap.hooks.post-packages]
+run = [
+  'ln -sfn "/Applications/Dropshare 6.app/Contents/Resources/ds.sh" "$HOME/.local/bin/dropshare"',
+]
+
+# Restart the Dock and Finder so the Dock and Finder defaults above take effect. Both are
+# launchd agents in the GUI domain, so let launchd restart them (`kickstart -k` stops the
+# running instance and starts a new one) instead of `killall`. `|| true` because there
+# is no GUI domain outside a desktop session (e.g. over SSH), and a failed restart
+# shouldn't stop bootstrap.
+[bootstrap.hooks.post-defaults]
+run = [
+  'launchctl kickstart -k "gui/$(id -u)/com.apple.Dock.agent" || true',
+  'launchctl kickstart -k "gui/$(id -u)/com.apple.Finder" || true',
+]

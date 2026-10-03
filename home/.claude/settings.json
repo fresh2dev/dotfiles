@@ -1,0 +1,65 @@
+{
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "model": "opus",
+  "statusLine": {
+    "type": "command",
+    "command": "cship"
+  },
+  "enabledPlugins": {
+    "ponytail@ponytail": true,
+    "i-have-adhd@i-have-adhd": true,
+    "zellij-attention@zellij-attention": true,
+    "zj-radar-claude@zj-radar": true,
+    "fzj@fzj": true
+  },
+  "extraKnownMarketplaces": {
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    },
+    "i-have-adhd": {
+      "source": {
+        "source": "github",
+        "repo": "ayghri/i-have-adhd"
+      }
+    },
+    "zellij-attention": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/donald/sync/projects/github.com/fresh2dev/zellij-attention"
+      }
+    },
+    "zj-radar": {
+      "source": {
+        "source": "github",
+        "repo": "marktoda/zj-radar"
+      }
+    },
+    "fzj": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/donald/sync/projects/github.com/fresh2dev/fzj"
+      }
+    }
+  },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "high"
+    },
+    "claude-haiku-4-5": {
+      "effortLevel": "high"
+    }
+  },
+  "tui": "default",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark"
+}
