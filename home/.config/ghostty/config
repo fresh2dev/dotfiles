@@ -116,10 +116,6 @@ keybind = super+zero=reset_font_size
 # quick-terminal-space-behavior = remain
 # quick-terminal-keyboard-interactivity = exclusive
 
-# The style of the macOS titlebar. Available values are: "native",
-# "transparent", "tabs", and "hidden".
-macos-titlebar-style = tabs
-
 macos-option-as-alt = true
 macos-icon = retro
 

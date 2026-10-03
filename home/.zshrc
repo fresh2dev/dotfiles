@@ -2,24 +2,7 @@
 # enable comments in interactive shells
 set -k
 
-export ZDOTDIR=${ZDOTDIR:-$HOME}
-source ${ZDOTDIR}/.zprofile
-
 setopt INTERACTIVE_COMMENTS
-
-################################################################################
-################################################################################
-################################################################################
-
-# Enables auto-loading of `config.<os>-<arch>.toml`
-export MISE_AUTO_ENV=true
-export MISE_SKILLS_AUTO_SYNC=true
-
-# if ! command -v mise &>/dev/null; then
-#   echo "Installing mise..."
-#   curl -fsSL https://mise.run | MISE_INSTALL_PATH="$HOME/.local/bin/mise" sh
-# fi
-eval "$($HOME/.local/bin/mise activate zsh)"
 
 ################################################################################
 ################################################################################
@@ -47,14 +30,6 @@ fi
 export COLORTERM="truecolor"
 export TERM_ORIGINAL="$TERM"
 export TERM="xterm-256color"
-
-export HOMEBREW_BREWFILE="$XDG_CONFIG_HOME/brewfile/Brewfile"
-if command -v brew &>/dev/null; then
-  brew_wrap_path="$(brew --prefix)/etc/brew-wrap"
-  if [ -f "$brew_wrap_path" ]; then
-    source "$brew_wrap_path"
-  fi
-fi
 
 if [ -n "$NVIM" ]; then
   alias nvim='nvr -cc split --remote-wait \+"set bufhidden=wipe"'
@@ -100,7 +75,7 @@ if command -v fzf &>/dev/null; then
   FZF_CTRL_T_COMMAND= FZF_ALT_C_COMMAND= eval "$(fzf --zsh)"
 fi
 
-if [ -d "$DOTFILES_TARGET/.zsh/zsh-autosuggestions" ]; then
+if [ -d "$HOME/.zsh/zsh-autosuggestions" ]; then
   # export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
   # export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
   export ZSH_AUTOSUGGEST_HISTORY_IGNORE=" *"
