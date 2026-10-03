@@ -49,6 +49,10 @@ upgrade *args: && _update-zsh-plugins _update-skills
     {{ mise_global }} upgrade --bump --interactive "$@"
     {{ mise_global }} bootstrap packages upgrade -y "$@"
 
+# Print the repo root (the justfile's resolved location)
+dir:
+    @echo {{ quote(repo_dir) }}
+
 # Remove unused tool versions and undeclared Homebrew packages
 [positional-arguments]
 prune *args:
@@ -58,11 +62,9 @@ prune *args:
 
 # Link the dotfiles and set up the machine; arguments go to `mise bootstrap`
 [positional-arguments]
-bootstrap *args: && _install-zsh-plugins _install-skills
+install *args: && _install-zsh-plugins _install-skills
     {{ mise_local }} dot apply
     {{ mise_global }} bootstrap "$@"
-
-alias install := bootstrap
 
 zsh_config_dir := quote(env('ZDOTDIR', env('HOME')) / '.zsh')
 
