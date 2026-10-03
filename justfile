@@ -33,10 +33,10 @@ edit-mise:
 edit-mise-macos:
     {{ editor }} {{ quote(mise_config_dir / "config.macos.toml") }}
 
-# Format the repo with treefmt
-[positional-arguments]
-format *args:
-    cd {{ quote(repo_dir) }} && treefmt "$@"
+# Format the repo with prek's whitespace fixers, then treefmt
+format:
+    {{ mise_exec }} treefmt -C {{ quote(repo_dir) }}
+    {{ mise_exec }} prek -C {{ quote(repo_dir) }} run -q --all-files trailing-whitespace end-of-file-fixer
 
 alias fmt := format
 
