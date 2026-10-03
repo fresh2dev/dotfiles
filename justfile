@@ -33,12 +33,10 @@ edit-mise:
 edit-mise-macos:
     {{ editor }} {{ quote(mise_config_dir / "config.macos.toml") }}
 
-# Format the repo with treefmt
-[positional-arguments]
-format *args:
-    cd {{ quote(repo_dir) }} && treefmt "$@"
-
-alias fmt := format
+# Format the repo with prek's whitespace fixers, then treefmt
+format-dotfiles:
+    {{ mise_exec }} treefmt -C {{ quote(repo_dir) }}
+    {{ mise_exec }} prek -C {{ quote(repo_dir) }} run -q --all-files trailing-whitespace end-of-file-fixer
 
 # Arguments reach every `mise` step except `self-update`, which has no `--dry-run`.
 # Upgrade mise, tools, packages, zsh plugins, and agent skills
@@ -59,6 +57,8 @@ prune *args:
     {{ mise_global }} prune "$@"
     {{ mise_global }} bootstrap packages prune -m brew "$@"
     {{ mise_global }} bootstrap packages prune -m brew-cask "$@"
+    {{ mise_global }} x -- uv cache clean
+    {{ mise_global }} x -- go clean -cache -testcache -modcache
 
 # Link the dotfiles and set up the machine; arguments go to `mise bootstrap`
 [positional-arguments]
