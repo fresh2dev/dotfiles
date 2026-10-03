@@ -1,19 +1,18 @@
-export PATH="$HOME/.local/bin:$PATH"
-
-if [ -e '/opt/homebrew/bin/brew' ]; then
-  eval $(/opt/homebrew/bin/brew shellenv)
-  export XDG_DATA_DIRS="${HOMEBREW_PREFIX}/share:${XDG_DATA_DIRS}"
-fi
+export DO_NOT_TRACK='1'
 
 export MISE_CONFIG_DIR="$HOME/.config/mise"
+# Enables auto-loading of `config.<os>-<arch>.toml`
+export MISE_AUTO_ENV=true
 
 # # Add `mise` shims dir to path (typically ~/.local/share/mise/shims)
 # eval "$("$HOME/.local/bin/mise" activate --shims)"
-# Export all env vars defined in mise/config.toml
-eval "$(mise env -s zsh)"
+# Export all env vars defined in mise/config.toml, with its tools and `_.path` ahead
+# of the inherited PATH. Login shells activate in .zprofile instead, after
+# /etc/zprofile's path_helper has reordered PATH.
+[[ -o login ]] || eval "$(~/.local/bin/mise activate zsh)"
 
 # Define all shell aliases defined in mise/config.toml
-mise shell-alias ls --no-header | while read -r name cmd; do
+~/.local/bin/mise shell-alias ls --no-header | while read -r name cmd; do
   alias -- "$name=$cmd"
 done
 

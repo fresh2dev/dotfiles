@@ -1,7 +1,6 @@
-# Create any defined XDG dirs
-for v in XDG_CONFIG_HOME XDG_DATA_HOME XDG_CACHE_HOME XDG_STATE_HOME; do
-  d=$(printenv "$v") || continue
-  [ -z "$d" ] || mkdir -p "$d"
+# Create any defined XDG dirs (unset ones expand to nothing; no forks unless one is missing)
+for d in $XDG_CONFIG_HOME $XDG_DATA_HOME $XDG_CACHE_HOME $XDG_STATE_HOME; do
+  [[ -d $d ]] || mkdir -p -- "$d"
 done
 
 # # Bump the zoxide score of all project directories
