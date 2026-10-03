@@ -47,8 +47,9 @@ YAMLFIX_CONFIG_PATH = "$XDG_CONFIG_HOME/yamlfix"
 LG_CONFIG_FILE = "$XDG_CONFIG_HOME/lazygit/config.yml,$XDG_CONFIG_HOME/lazygit/theme.yml"
 
 FZF_DEFAULT_COMMAND = "rg --files"
-FZF_DEFAULT_OPTS = "--bind alt-a:select-all,alt-d:deselect-all,ctrl-n:down,ctrl-p:up,ctrl-y:toggle-down,ctrl-space:toggle-down --layout=reverse"
-_ZO_FZF_OPTS = "$FZF_DEFAULT_OPTS --border=none"
+FZF_DEFAULT_OPTS_FILE = "$XDG_CONFIG_HOME/fzf/fzfrc"
+# Added to FZF_DEFAULT_OPTS_FILE.
+_ZO_FZF_OPTS = "--border=none"
 _ZO_EXCLUDE_DIRS = "/tmp:/var/*:/mnt/*"
 _ZO_MAXAGE = 1000
 
@@ -264,6 +265,7 @@ ghq = "1.11.2"
 "~/.config/direnv/direnvrc" = {}
 "~/.config/drydock/config.toml" = {}
 "~/.config/fd/ignore" = {}
+"~/.config/fzf/fzfrc" = {}
 "~/.config/gh/config.yml" = {}
 "~/.config/ghostty/config" = {}
 "~/.config/git/ignore" = {}
