@@ -1,9 +1,11 @@
-export PATH="$HOME/.local/bin:$PATH"
+# eval $(/opt/homebrew/bin/brew shellenv)
 
-if [ -e '/opt/homebrew/bin/brew' ]; then
-  eval $(/opt/homebrew/bin/brew shellenv)
-  export XDG_DATA_DIRS="${HOMEBREW_PREFIX}/share:${XDG_DATA_DIRS}"
+if [ -d '/opt/homebrew' ]; then
+  export PATH="/opt/homebrew/bin:$PATH"
+  export XDG_DATA_DIRS="/opt/homebrew/share:${XDG_DATA_DIRS}"
 fi
+
+export PATH="$HOME/.local/bin:$PATH"
 
 export MISE_CONFIG_DIR="$HOME/.config/mise"
 

@@ -1,0 +1,118 @@
+[bootstrap.brew]
+adopt = true
+
+[bootstrap.brew.taps]
+"buo/cask-upgrade" = "https://github.com/buo/homebrew-cask-upgrade.git"
+"ganeshmshetty/tap" = "https://github.com/ganeshmshetty/homebrew-tap.git"
+"julyx10/lap" = "https://github.com/julyx10/homebrew-lap.git"
+"jundot/omlx" = "https://github.com/jundot/omlx.git"
+"mattrobenolt/stuff" = "https://github.com/mattrobenolt/homebrew-stuff.git"
+"rcmdnk/file" = "https://github.com/rcmdnk/homebrew-file.git"
+
+[bootstrap.packages]
+# formulae
+"brew:colima" = "latest"
+"brew:git" = "latest"
+"brew:git-crypt" = "latest"
+"brew:mole" = "latest"
+"brew:openssl@4" = "latest"
+"brew:sponge" = "latest"
+"brew:sshpass" = "latest"
+"brew:syncthing" = "latest"
+"brew:universal-ctags" = "latest"
+"brew:zsh" = "latest"
+# apps
+"brew-cask:app-tamer" = "latest"
+"brew-cask:betterdisplay" = "latest"
+"brew-cask:bitwarden" = "latest"
+"brew-cask:bloom" = "latest"
+"brew-cask:claude" = "latest"
+"brew-cask:daisydisk" = "latest"
+"brew-cask:downie" = "latest"
+"brew-cask:dropshare" = "latest"
+"brew-cask:ghostty" = "latest"
+"brew-cask:iina" = "latest"
+"brew-cask:keycastr" = "latest"
+"brew-cask:leader-key" = "latest"
+"brew-cask:losslesscut" = "latest"
+"brew-cask:macusb" = "latest"
+"brew-cask:macwhisper" = "latest"
+"brew-cask:mullvad-browser" = "latest"
+"brew-cask:mullvad-vpn" = "latest"
+"brew-cask:netspot" = "latest"
+"brew-cask:onyx" = "latest"
+"brew-cask:openclip" = "latest"
+"brew-cask:pdf-expert" = "latest"
+"brew-cask:pearcleaner" = "latest"
+"brew-cask:rectangle-pro" = "latest"
+"brew-cask:recut" = "latest"
+"brew-cask:revpdf-editor" = "latest"
+"brew-cask:rewritebar" = "latest"
+"brew-cask:space-rabbit" = "latest"
+"brew-cask:superkey" = "latest"
+"brew-cask:tailscale-app" = "latest"
+"brew-cask:ticktick" = "latest"
+"brew-cask:transmission" = "latest"
+"brew-cask:typora" = "latest"
+"brew-cask:vorssaint" = "latest"
+"brew-cask:whichspace" = "latest"
+"brew-cask:zed" = "latest"
+# apps from third-party taps
+"brew-cask:julyx10/lap/lap" = "latest"
+# "brew-cask:mattrobenolt/stuff/appify" = "latest"
+# fonts
+"brew-cask:font-fira-code-nerd-font" = "latest"
+"brew-cask:font-fira-mono-nerd-font" = "latest"
+"brew-cask:font-go-mono-nerd-font" = "latest"
+"brew-cask:font-hack-nerd-font" = "latest"
+"brew-cask:font-im-writing-nerd-font" = "latest"
+"brew-cask:font-jetbrains-mono-nerd-font" = "latest"
+"brew-cask:font-meslo-lg-nerd-font" = "latest"
+"brew-cask:font-roboto-mono-nerd-font" = "latest"
+"brew-cask:font-sauce-code-pro-nerd-font" = "latest"
+"brew-cask:font-ubuntu-mono-nerd-font" = "latest"
+"brew-cask:font-ubuntu-nerd-font" = "latest"
+"brew-cask:font-ubuntu-sans-nerd-font" = "latest"
+
+# Run Syncthing (`brew:syncthing` above) at login, replacing `brew services start syncthing`.
+[bootstrap.services.syncthing]
+scope = "user"
+description = "Syncthing"
+command = "/opt/homebrew/opt/syncthing/bin/syncthing --no-browser --no-restart"
+
+# Publish the `[env]` table from ~/.config/mise/config.toml to launchd, so GUI apps not
+# started from a terminal see the same XDG_*, EDITOR, ... values as a shell. PATH is
+# skipped. Only processes launched afterwards see the values; relaunch open apps.
+# Written to ~/Library/LaunchAgents/dev.mise.mise-env.plist; re-run with
+# `launchctl kickstart -k gui/$(id -u)/dev.mise.mise-env`.
+[bootstrap.macos.launchd.agents.mise-env]
+program = "/bin/sh"
+args = [
+  "-c",
+  '''
+MISE_CONFIG_DIR="${HOME}/.config/mise" "${HOME}/.local/bin/mise" env ls --dotenv \
+  | while IFS='=' read -r name value; do
+      launchctl setenv "$name" "$value"
+    done
+''',
+]
+run_at_load = true
+stderr_path = "/tmp/mise-env.log"
+
+[bootstrap.macos.dock]
+autohide = true
+orientation = "left"
+tilesize = 36
+show_recents = false
+
+[bootstrap.macos.finder]
+show_all_files = true
+show_pathbar = true
+preferred_view_style = "list"
+
+# # valid phases are: pre-packages, post-packages, pre-repos, post-repos, pre-dotfiles, post-dotfiles, pre-defaults, post-defaults, pre-user, post-user, pre-tools, post-tools, final
+[bootstrap.hooks.post-defaults]
+run = [
+  "killall Dock || true",
+  "killall Finder || true",
+]

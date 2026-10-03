@@ -34,10 +34,7 @@ BUN_INSTALL = "{{ env.HOME }}/.bun"
 GOPATH = "{{ env.HOME }}/go"
 GHQ_ROOT = "{{ env.HOME }}/sync/projects"
 
-_.path = [
-  "{{ env.HOME }}/.local/bin",
-  "$CARGO_HOME/bin",
-]
+_.path = ["{{ env.HOME }}/.local/bin", "$CARGO_HOME/bin", "/opt/homebrew/bin"]
 
 VISUAL = "nvim"
 EDITOR = "nvim"
@@ -48,7 +45,6 @@ STARSHIP_CONFIG = "$XDG_CONFIG_HOME/starship.toml"
 RIPGREP_CONFIG_PATH = "$XDG_CONFIG_HOME/ripgreprc"
 YAMLFIX_CONFIG_PATH = "$XDG_CONFIG_HOME/yamlfix"
 LG_CONFIG_FILE = "$XDG_CONFIG_HOME/lazygit/config.yml,$XDG_CONFIG_HOME/lazygit/theme.yml"
-HOMEBREW_BREWFILE = "$XDG_CONFIG_HOME/brewfile/Brewfile"
 
 FZF_DEFAULT_COMMAND = "rg --files"
 FZF_DEFAULT_OPTS = "--bind alt-a:select-all,alt-d:deselect-all,ctrl-n:down,ctrl-p:up,ctrl-y:toggle-down,ctrl-space:toggle-down --layout=reverse"
@@ -72,8 +68,6 @@ v0 = "$EDITOR -c 'normal 1 0'"
 fs = "$EDITOR -c 'normal 1 fs'"
 ff = "$EDITOR -c 'normal 1 ff'"
 fr = "$EDITOR -c 'normal 1 fr'"
-mise-edit = "v ${MISE_CONFIG_DIR:-~/.config/mise}/config.toml"
-"v." = "mise-edit"
 zz = "ghq list --full-path | fzf --multi | sort -r | xargs -n1 zed --existing"
 zj = "zellij"
 lg = "lazygit"
@@ -90,24 +84,34 @@ agyy = "agy --dangerously-skip-permissions"
 scc = "tokei"  # "source code counter"
 clear-color = 'fzf --ansi --no-sort --filter "^"'
 
-# Single source of truth for CLI tools. `just apps update-mise` bumps the pins.
-# Only things mise cannot install live in ~/.config/just/apps.just (brew casks,
-# zsh plugin clones, zellij wasm plugins).
-#
-# Tools marked `lazy = true` (mise >= 2026.9.0) are skipped by a bare `mise install`
-# and installed on first invocation via a bootstrap shim. `mise install --include-lazy`
-# installs everything. Tools with no `bins` metadata in the mise registry, and every
-# explicit backend (cargo:/go:/pypi:/npm:), must list their commands in `lazy_bins`
-# or `mise reshim` fails. Run `mise reshim` after editing a lazy declaration by hand.
+# [tasks]
+# pre_bootstrap = [
+#   "mkdir -p ${XDG_CONFIG_HOME}",
+#   "mkdir -p ${ZELLIJ_CONFIG_DIR}/plugins",
+# ]
+
+# valid phases are: pre-packages, post-packages, pre-repos, post-repos, pre-dotfiles, post-dotfiles, pre-defaults, post-defaults, pre-user, post-user, pre-tools, post-tools, final
+[bootstrap.hooks.pre-tools]
+run = [
+  "mkdir -p ${XDG_CONFIG_HOME}",
+  "mkdir -p ${ZELLIJ_CONFIG_DIR}/plugins",
+]
+
+[bootstrap.hooks.post-tools]
+run = [
+  "nvim --headless -c 'lua vim.pack.update()' -c 'qa'",
+]
+
 [tools]
 # --- Languages / runtimes
-python = "3.14.7"
+python = "3.14.8"
 go = "1.27.1"
 node = "26.10.0"
-rust = "1.98.1"
-uv = "0.12.21"
-cargo-binstall = "1.24.0"
+rust = "1.99.0"
+uv = "0.12.22"
+cargo-binstall = "1.25.0"
 bun = "1.4.2"
+ruby = "4.0.7"
 rust-analyzer = { version = "2026-09-28", lazy = true }
 "cargo:cargo-edit" = { version = "0.13.13", lazy = true, lazy_bins = ["cargo-add", "cargo-rm", "cargo-upgrade", "cargo-set-version"] }
 "npm:happy" = { version = "latest", lazy = true, lazy_bins = ["happy"] }
@@ -133,7 +137,7 @@ bottom = { version = "0.14.9", lazy = true, lazy_bins = ["btm"] }
 "cargo:pastel" = { version = "0.12.0", lazy = true, lazy_bins = ["pastel"] }
 hyperfine = { version = "1.20.0", lazy = true }
 gping = { version = "1.21.0", lazy = true }
-dua = { version = "2.45.0", lazy = true }
+dua = { version = "2.45.1", lazy = true }
 tokei = { version = "15.0.0", lazy = true, lazy_bins = ["tokei"] }
 "go:github.com/knqyf263/pet" = { version = "1.0.1", lazy = true, lazy_bins = ["pet"] }
 "go:github.com/maaslalani/sheets" = { version = "0.3.0", lazy = true, lazy_bins = ["sheets"] }
@@ -160,7 +164,7 @@ luajit = "2.1.1744318430"
 "aqua:numtide/treefmt" = "2.6.0"
 rumdl = "0.2.78"
 shfmt = { version = "3.14.1", lazy = true }
-tombi = { version = "1.6.0", lazy = true }
+tombi = { version = "1.7.1", lazy = true }
 lua-language-server = { version = "3.19.1", lazy = true }
 "pypi:just-lsp" = "0.10.0"
 copier = { version = "9.18.2", lazy = true }
@@ -177,7 +181,7 @@ yamllint = { version = "1.38.0", lazy = true }
 "pypi:mdformat" = { version = "1.0.0", uvx_args = "--with mdformat-footnote --with mdformat-front-matters --with mdformat-ruff --with mdformat-gfm --with mdformat-lists --with mdformat-beautysh --with mdformat-simple-breaks --with mdformat-web --with mdformat-wikilink", lazy = true, lazy_bins = ["mdformat"] }
 
 # --- Python
-ruff = { version = "0.16.9", lazy = true }
+ruff = { version = "0.16.10", lazy = true }
 ty = { version = "0.0.84", lazy = true }
 "pypi:basedpyright" = { version = "1.40.1", lazy = true, lazy_bins = ["basedpyright", "basedpyright-langserver"] }
 "pypi:pyrefly" = { version = "1.3.2", lazy = true, lazy_bins = ["pyrefly"] }
@@ -198,7 +202,7 @@ stern = { version = "1.34.0", lazy = true }
 helm = { version = "4.3.0", lazy = true }
 helmwave = { version = "0.44.4", lazy = true }
 "npm:cdk8s-cli" = { version = "2.207.63", lazy = true, lazy_bins = ["cdk8s"] }
-docker-cli = { version = "29.8.1", lazy = true }
+docker-cli = { version = "29.8.2", lazy = true }
 docker-compose = { version = "5.5.1", lazy = true }
 
 "pypi:markitdown" = { version = "0.1.8", extras = "pdf,audio-transcription,youtube-transcription", lazy = true, lazy_bins = ["markitdown"] }
@@ -212,13 +216,13 @@ exiftool = { version = "13.59", lazy = true }
 yt-dlp = { version = "2026.08.19", rename_exe = "yt-dlp", lazy = true }
 
 # --- LLM
-claude = { version = "2.1.285", lazy = true }
+claude = { version = "2.1.288", lazy = true }
 "cargo:cship" = { version = "1.8.3", lazy = true, lazy_bins = ["cship"] }
-"github:Dicklesworthstone/beads_rust" = { version = "0.7.3", lazy = true, lazy_bins = ["br"] }
-"github:Dicklesworthstone/beads_viewer" = { version = "0.25.1", lazy = true, lazy_bins = ["bv"] }
+"github:Dicklesworthstone/beads_rust" = { version = "0.7.4", lazy = true, lazy_bins = ["br"] }
+"github:Dicklesworthstone/beads_viewer" = { version = "0.25.2", lazy = true, lazy_bins = ["bv"] }
 "npm:ralph-tui" = { version = "0.12.0", lazy = true, lazy_bins = ["ralph-tui"] }
 "npm:skills" = { version = "1.7.0", lazy = true, lazy_bins = ["skills"] }
-hunk = { version = "0.22.0", lazy = true, lazy_bins = ["hunk"] }
+hunk = { version = "0.23.0", lazy = true, lazy_bins = ["hunk"] }
 
 # --- Network / Security
 mkcert = { version = "1.4.4", lazy = true }
@@ -227,6 +231,18 @@ mkcert = { version = "1.4.4", lazy = true }
 bitwarden-secrets-manager = { version = "latest", lazy = true }
 ghq = "1.11.2"
 "npm:@ticktick/ticktick-cli" = "0.1.14"
+
+# --- Zellij plugins
+# Each release ships a `.wasm` asset, not a binary, so `asset_pattern` picks it and
+# `postinstall` symlinks it into $ZELLIJ_CONFIG_DIR/plugins, where config.kdl loads it.
+# Upgrades re-run `postinstall`, so the link follows the installed version.
+"github:dj95/zjstatus" = { version = "0.25.0", asset_pattern = "zjstatus.wasm", postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"' }
+"github:rvcas/room" = { version = "1.2.1", asset_pattern = "room.wasm", postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"' }
+"github:codingfragments/zellij-zextract" = { version = "0.4.0", asset_pattern = "zextract.wasm", postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"' }
+"github:bezbac/zellij-tabula" = { version = "0.6.0", asset_pattern = "zellij-tabula.wasm", postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"' }
+"github:JoseMM2002/zellij-favs" = { version = "1.0.5", asset_pattern = "zellij-favs.wasm", postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"' }
+"github:rashidalnaemi/zellij-commandpalette" = { version = "0.1.1", asset_pattern = "zellij-commandpalette.wasm", postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"' }
+"github:liam-mackie/zsm" = { version = "0.5.0", asset_pattern = "zsm.wasm", postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugins/"' }
 
 [dotfiles]
 "~/.config/nvim" = {}
@@ -241,7 +257,6 @@ ghq = "1.11.2"
 "~/.config/alacritty/alacritty.toml" = {}
 "~/.config/atuin/config.toml" = {}
 "~/.config/bat/config" = {}
-"~/.config/brewfile/Brewfile" = { mode = "symlink", variants = [{ os = "macos" }] }
 "~/.config/colima/default/colima.yaml" = { mode = "symlink", variants = [{ os = "macos" }] }
 "~/.config/cship.toml" = {}
 "~/.config/direnv/direnv.toml" = {}
@@ -251,15 +266,12 @@ ghq = "1.11.2"
 "~/.config/gh/config.yml" = {}
 "~/.config/ghostty/config" = {}
 "~/.config/git/ignore" = {}
-"~/.config/just/justfile" = {}
 "~/.config/k9s/aliases.yaml" = {}
 "~/.config/k9s/config.yaml" = {}
 "~/.config/k9s/plugins.yaml" = {}
 "~/.config/k9s/skins/transparent.yaml" = {}
 "~/.config/lazygit/config.yml" = {}
 "~/.config/lazygit/theme.yml" = {}
-"~/.config/mise/config.macos-arm64.toml" = { mode = "symlink", variants = [{ os = "macos" }] }
-"~/.config/mise/config.toml" = {}
 "~/.config/moxide/settings.toml" = {}
 "~/.config/myke/project.myke" = {}
 "~/.config/neovide/config.toml" = {}
@@ -286,4 +298,6 @@ ghq = "1.11.2"
 "~/.zprofile" = {}
 "~/.zshenv" = {}
 "~/.zshrc" = {}
-"~/Library/LaunchAgents/mise-env.plist" = { mode = "symlink", variants = [{ os = "macos" }] }
+# NOTE: leave these commented out; they are applied in the bootstrapping of the dotfiles repo.
+# "~/.config/mise/config.toml" = {}
+# "~/.config/mise/config.macos.toml" = { mode = "symlink", variants = [{ os = "macos" }] }
