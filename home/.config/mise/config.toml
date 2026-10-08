@@ -281,7 +281,7 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.ansible.cfg" = {}
 "~/.cargo/binstall.toml" = {}
 "~/.claude/CLAUDE.md" = {}
-"~/.claude/commands/hunk-review.md" = {}
+"~/.config/AGENTS.md" = { source = "~/.dotfiles/.claude/CLAUDE.md" }
 "~/.claude/keybindings.json" = {}
 "~/.claude/settings.json" = {}
 "~/.config/alacritty/alacritty.toml" = {}
