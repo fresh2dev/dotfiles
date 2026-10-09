@@ -41,7 +41,7 @@ format-dotfiles:
 # Arguments reach every `mise` step except `self-update`, which has no `--dry-run`.
 # Upgrade mise, tools, packages, zsh plugins, and agent skills
 [positional-arguments]
-upgrade *args: && _update-zsh-plugins _update-skills
+upgrade *args: && _update-zsh-plugins _update-skills _update-claude-plugins
     {{ just_executable() }} -f {{ quote(source_file()) }} prune "$@"
     {{ mise_global }} self-update
     {{ mise_global }} upgrade --bump --interactive "$@"
@@ -62,7 +62,7 @@ prune *args:
 
 # Link the dotfiles and set up the machine; arguments go to `mise bootstrap`
 [positional-arguments]
-install *args: && _install-zsh-plugins _install-skills
+install *args: && _install-zsh-plugins _install-skills _install-claude-plugins
     {{ mise_local }} dot apply
     {{ mise_global }} bootstrap "$@"
 
@@ -94,7 +94,6 @@ _update-zsh-plugins: _install-zsh-plugins
 agent_skills := '''
     Dicklesworthstone/beads_rust:br
     vercel-labs/skills:find-skills
-    ayghri/i-have-adhd:i-have-adhd
     github/awesome-copilot:github-issues
     mattpocock/skills:codebase-design
     mattpocock/skills:domain-modeling
@@ -128,3 +127,31 @@ _install-skills:
 [positional-arguments]
 _update-skills *skills:
     {{ mise_exec }} skills update -g "$@"
+
+##################################################
+# Claude Code plugins
+##################################################
+
+# One <GitHub repo>:<plugin>@<marketplace> per line
+claude_plugins := '''
+    ayghri/i-have-adhd:i-have-adhd@i-have-adhd
+    DietrichGebert/ponytail:ponytail@ponytail
+    fresh2dev/zellij-attention:zellij-attention@zellij-attention
+'''
+
+# Add marketplaces and install listed plugins that aren't installed yet
+_install-claude-plugins:
+    for entry in {{ replace(claude_plugins, "\n", " ") }}; do \
+        repo="${entry%%:*}" plugin="${entry#*:}"; \
+        {{ mise_exec }} claude plugin list --json | {{ mise_exec }} jq -e --arg id "$plugin" 'any(.[]; .id == $id)' >/dev/null \
+            || { {{ mise_exec }} claude plugin marketplace add "$repo" \
+                && {{ mise_exec }} claude plugin install "$plugin"; } \
+            || exit; \
+    done
+
+# Update every marketplace, then the listed plugins
+_update-claude-plugins: _install-claude-plugins
+    {{ mise_exec }} claude plugin marketplace update
+    for entry in {{ replace(claude_plugins, "\n", " ") }}; do \
+        {{ mise_exec }} claude plugin update "${entry#*:}" || exit; \
+    done
