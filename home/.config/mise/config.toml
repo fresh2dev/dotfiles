@@ -52,6 +52,7 @@ FZF_DEFAULT_COMMAND = "rg --files"
 _ZO_FZF_OPTS = "--border=none --no-sort"
 _ZO_EXCLUDE_DIRS = "/tmp/*:/private/tmp/*:/var/*:/mnt/*"
 _ZO_MAXAGE = 1000
+FZJ_DEFAULT_OPTS = "--yes --every 3 -- --exact"
 
 [shell_alias]
 ls = "lsd -a"
