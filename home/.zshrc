@@ -99,13 +99,10 @@ eval "$(direnv hook zsh)"
 eval "$(zoxide init zsh)"
 # source <(kubectl completion zsh)
 
-# if [ -z "$ZED_TERM" ] \
-#     && [ -z "$ZELLIJ_SESSION_NAME" ] \
-#     && [ -z "$NVIM" ]
-# then
-#   zellij -l welcome \
-#     --config-dir "${ZELLIJ_CONFIG_DIR:?}" \
-#     --data-dir "${ZELLIJ_CONFIG_DIR}/plugins" \
-#     --config "${ZELLIJ_CONFIG_DIR}/config.kdl"
-#   exit $?
-# fi
+if [ -z "$ZELLIJ_SESSION_NAME" ] \
+    && [ -z "$ZED_TERM" ] \
+    && [ -z "$NVIM" ] \
+    && [ -z "$CLAUDE_CODE_MESSAGING_SOCKET" ]
+then
+  fzj
+fi
