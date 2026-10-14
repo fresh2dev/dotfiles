@@ -56,7 +56,7 @@ adopt = true
 "brew-cask:typora" = "latest"
 "brew-cask:vorssaint" = "latest"
 "brew-cask:whichspace" = "latest"
-"brew-cask:zed" = "latest"
+# "brew-cask:zed" = "latest"
 # apps from third-party taps
 "brew-cask:julyx10/lap/lap" = "latest"
 # "brew-cask:mattrobenolt/stuff/appify" = "latest"
