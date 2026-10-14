@@ -48,6 +48,7 @@ adopt = true
 "brew-cask:recut" = "latest"
 "brew-cask:revpdf-editor" = "latest"
 "brew-cask:rewritebar" = "latest"
+"brew-cask:sidenotes" = "latest"
 "brew-cask:space-rabbit" = "latest"
 "brew-cask:superkey" = "latest"
 "brew-cask:tailscale-app" = "latest"
