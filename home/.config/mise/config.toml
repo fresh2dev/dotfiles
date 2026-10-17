@@ -282,6 +282,8 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.cargo/binstall.toml" = {}
 "~/.claude/CLAUDE.md" = {}
 "~/.claude/keybindings.json" = {}
+# `claude-hud` must link the directory (not the `config.json` file) because it evidently wants a real file, not a symlink.
+"~/.claude/plugins/claude-hud" = {}
 "~/.claude/settings.json" = {}
 "~/.config/AGENTS.md" = { source = "~/.dotfiles/.claude/CLAUDE.md" }
 "~/.config/alacritty/alacritty.toml" = {}
