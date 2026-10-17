@@ -97,12 +97,12 @@ fi
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)"
 eval "$(zoxide init zsh)"
-# source <(kubectl completion zsh)
+source <(kubectl completion zsh)
+eval "$(command wt config shell init zsh)"
 
-if [ -z "$ZELLIJ_SESSION_NAME" ] \
-    && [ -z "$ZED_TERM" ] \
-    && [ -z "$NVIM" ] \
-    && [ -z "$CLAUDE_CODE_MESSAGING_SOCKET" ]
-then
+if [ -z "$ZELLIJ_SESSION_NAME" ] &&
+  [ -z "$ZED_TERM" ] &&
+  [ -z "$NVIM" ] &&
+  [ -z "$CLAUDE_CODE_MESSAGING_SOCKET" ]; then
   fzj
 fi
