@@ -62,7 +62,7 @@ prune *args:
 
 # Link the dotfiles and set up the machine; arguments go to `mise bootstrap`
 [positional-arguments]
-install *args: && _install-zsh-plugins _install-skills _install-claude-plugins
+bootstrap *args: && _install-zsh-plugins _install-skills _install-claude-plugins
     {{ mise_local }} dot apply
     {{ mise_global }} bootstrap "$@"
 
