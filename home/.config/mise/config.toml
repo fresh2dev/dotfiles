@@ -81,18 +81,15 @@ watch = "viddy --shell $SHELL"
 less = "gum pager"
 pause = "gum confirm 'Continue?'"
 sshs = "purple"
-bootstrap = "just -f $MISE_CONFIG_DIR/justfile"
-bs = "bootstrap"
 cld = "claude --dangerously-skip-permissions"
 cldc = "cld --continue"
 scc = "tokei"  # "source code counter"
 clear-color = 'fzf --ansi --no-sort --filter "^"'
 
-# [tasks]
-# pre_bootstrap = [
-#   "mkdir -p ${XDG_CONFIG_HOME}",
-#   "mkdir -p ${ZELLIJ_CONFIG_DIR}/plugins",
-# ]
+[tasks]
+recipes = [
+  "just -f $MISE_CONFIG_DIR/justfile",
+]
 
 # valid phases are: pre-packages, post-packages, pre-repos, post-repos, pre-dotfiles, post-dotfiles, pre-defaults, post-defaults, pre-user, post-user, pre-tools, post-tools, final
 [bootstrap.hooks.pre-tools]
