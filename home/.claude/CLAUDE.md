@@ -7,6 +7,11 @@ Always follow the rules in the `i-have-adhd` skill: action-first, numbered steps
 - **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
 When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
 
+## Manage Worktrees using Worktrunk
+
+When I ask you to spawn parallel worktrees, use the agent handoff pattern
+from the worktrunk skill.
+
 ## Beads Workflow Integration
 
 This project uses a Beads tracker—either the Rust `br` CLI—for issue tracking, plus [beads_viewer](https://github.com/Dicklesworthstone/beads_viewer) (`bv`) for graph-aware triage. Issues are stored in `.beads/`. `bv` auto-discovers supported JSONL exports, including `.beads/issues.jsonl` and legacy `.beads/beads.jsonl`.

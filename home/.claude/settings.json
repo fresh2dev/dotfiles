@@ -54,6 +54,12 @@
         "source": "directory",
         "path": "/Users/donald/sync/projects/github.com/fresh2dev/fzj"
       }
+    },
+    "worktrunk": {
+      "source": {
+        "source": "github",
+        "repo": "max-sixty/worktrunk"
+      }
     }
   },
   "modelSettings": {

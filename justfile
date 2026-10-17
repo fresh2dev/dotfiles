@@ -137,6 +137,7 @@ claude_plugins := '''
     ayghri/i-have-adhd:i-have-adhd@i-have-adhd
     DietrichGebert/ponytail:ponytail@ponytail
     fresh2dev/zellij-attention:zellij-attention@zellij-attention
+    max-sixty/worktrunk:worktrunk@worktrunk
 '''
 
 # Add marketplaces and install listed plugins that aren't installed yet
