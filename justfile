@@ -136,7 +136,7 @@ _update-skills *skills:
 claude_plugins := '''
     ayghri/i-have-adhd:i-have-adhd@i-have-adhd
     DietrichGebert/ponytail:ponytail@ponytail
-    fresh2dev/zellij-attention:zellij-attention@zellij-attention
+    jarrodwatts/claude-hud:claude-hud@claude-hud
     max-sixty/worktrunk:worktrunk@worktrunk
 '''
 

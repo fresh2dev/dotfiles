@@ -7,14 +7,14 @@
   "model": "opus",
   "statusLine": {
     "type": "command",
-    "command": "cship"
+    "command": "'/opt/homebrew/lib/node_modules/bun/bin/bun.exe' --env-file /dev/null '/Users/donald/.claude/plugins/claude-hud/statusline.mjs'"
   },
   "enabledPlugins": {
     "ponytail@ponytail": true,
     "i-have-adhd@i-have-adhd": true,
-    "zellij-attention@zellij-attention": true,
-    "zj-radar-claude@zj-radar": true,
-    "fzj@fzj": true
+    "fzj@fzj": true,
+    "claude-hud@claude-hud": true,
+    "worktrunk@worktrunk": true
   },
   "extraKnownMarketplaces": {
     "ponytail": {
@@ -45,6 +45,12 @@
       "source": {
         "source": "directory",
         "path": "/Users/donald/sync/projects/github.com/fresh2dev/fzj"
+      }
+    },
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
       }
     },
     "worktrunk": {
