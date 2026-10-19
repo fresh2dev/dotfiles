@@ -72,6 +72,7 @@ ff = "$EDITOR -c 'normal 1 ff'"
 fr = "$EDITOR -c 'normal 1 fr'"
 zz = "ghq list --full-path | fzf --multi | sort -r | xargs -n1 zed --existing"
 zj = "zellij"
+ghostty-splits = 'env -u ZELLIJ -u ZELLIJ_PANE_ID -u ZELLIJ_SESSION_NAME open -na Ghostty.app --args --config-file="$HOME/.config/ghostty/splits"'
 j = "just"
 lg = "lazygit"
 kc = "kubectl"
@@ -278,6 +279,7 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.config/fzf/fzfrc" = {}
 "~/.config/gh/config.yml" = {}
 "~/.config/ghostty/config" = {}
+"~/.config/ghostty/splits" = {}
 "~/.config/git/ignore" = {}
 "~/.config/k9s/aliases.yaml" = {}
 "~/.config/k9s/config.yaml" = {}
