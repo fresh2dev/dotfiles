@@ -84,6 +84,9 @@
     co = checkout
     cob = switch --create
 
+    # Worktree recipes in ~/.git_wt.just, run in this repo: `git wt <recipe>`.
+    wt = !just -f ~/.git_wt.just -d .
+
     ##################################################
     # Commit ops
     ##################################################
