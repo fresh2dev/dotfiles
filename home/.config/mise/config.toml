@@ -154,8 +154,9 @@ github-cli = { version = "2.103.2", lazy = true, lazy_bins = ["gh"] }
 "cargo:deadbranch" = { version = "0.4.0", lazy = true, lazy_bins = ["deadbranch"] }
 "pypi:ghgrab" = { version = "2.2.0", lazy = true, lazy_bins = ["ghgrab"] }
 "go:github.com/hjr265/gittop" = { version = "0.6.0", lazy = true, lazy_bins = ["gittop"] }
-"cargo:drydock" = { version = "1.2.2", lazy = true, lazy_bins = ["drydock"] }
-worktrunk = { version = "0.80.0", lazy = true, lazy_bins = ["worktrunk"] }
+"cargo:drydock" = { version = "1.3.0", lazy = true, lazy_bins = ["drydock"] }
+# Must specify `bin = "wt"` to avoid installing `git-wt` and shadowing the `git wt` alias.
+"cargo:worktrunk" = { version = "0.81.0", bin = "wt", lazy = true, lazy_bins = ["wt"] }
 
 # --- Editors / LSP / formatters / linters
 neovim = "0.12.6"
@@ -303,6 +304,7 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.config/zellij/layouts/default.kdl" = {}
 "~/.config/zellij/layouts/default.swap.kdl" = {}
 "~/.editorconfig" = {}
+"~/.git_wt.just" = {}
 "~/.gitconfig" = {}
 "~/.hushlogin" = { mode = "symlink", variants = [{ os = "macos" }] }
 "~/.streamlit/config.toml" = {}
