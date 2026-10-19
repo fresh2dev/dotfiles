@@ -1,0 +1,45 @@
+# Splits mode: zellij's keybinds on Ghostty's native splits and tabs, with no zellij.
+# Opt-in, layered on top of `config`: `ghostty-splits` (mise shell_alias) launches a
+# separate instance with `--config-file` pointing here.
+
+# .zshrc skips its fzj auto-launch when this is set.
+env = FZJ_DISABLED=1
+
+split-divider-color = #00ff41
+
+keybind = alt+n=new_split:auto
+keybind = alt+v=new_split:right
+keybind = alt+t=new_tab
+keybind = alt+w=close_surface
+keybind = alt+shift+w=close_tab
+
+keybind = alt+h=goto_split:left
+keybind = alt+j=goto_split:down
+keybind = alt+k=goto_split:up
+keybind = alt+l=goto_split:right
+
+keybind = alt+m=toggle_split_zoom
+keybind = alt+shift+m=toggle_fullscreen
+
+keybind = alt+shift+left_bracket=previous_tab
+keybind = alt+shift+right_bracket=next_tab
+keybind = alt+left_bracket=move_tab:-1
+keybind = alt+right_bracket=move_tab:1
+
+keybind = alt+slash=start_search
+# Not $EDITOR like zellij's EditScrollback: opens in the macOS default app.
+keybind = alt+e=write_scrollback_file:open
+
+# zellij's resize mode.
+keybind = alt+shift+equal=activate_key_table:resize
+keybind = alt+shift+minus=activate_key_table:resize
+keybind = resize/h=resize_split:left,40
+keybind = resize/j=resize_split:down,40
+keybind = resize/k=resize_split:up,40
+keybind = resize/l=resize_split:right,40
+keybind = resize/left=resize_split:left,40
+keybind = resize/down=resize_split:down,40
+keybind = resize/up=resize_split:up,40
+keybind = resize/right=resize_split:right,40
+keybind = resize/escape=deactivate_key_table
+keybind = resize/enter=deactivate_key_table
