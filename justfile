@@ -112,6 +112,23 @@ agent_skills := '''
     softaworks/agent-toolkit:reducing-entropy
     softaworks/agent-toolkit:session-handoff
     softaworks/agent-toolkit:writing-clearly-and-concisely
+    delorenj/skills:zellij-plugin-dev
+    dashed/claude-marketplace:ai-friendly-cli
+    dashed/claude-marketplace:comment-slop
+    dashed/claude-marketplace:fd
+    dashed/claude-marketplace:fzf
+    dashed/claude-marketplace:git
+    dashed/claude-marketplace:git-absorb
+    dashed/claude-marketplace:jq
+    dashed/claude-marketplace:kubernetes
+    dashed/claude-marketplace:pytest
+    dashed/claude-marketplace:python-complexity
+    dashed/claude-marketplace:ripgrep
+    dashed/claude-marketplace:ruff
+    dashed/claude-marketplace:ty
+    dashed/claude-marketplace:uv
+    dashed/claude-marketplace:zellij
+    thesmart/repo-copier:repo-copier
 '''
 
 # Install listed skills that aren't in the skills lock file yet
