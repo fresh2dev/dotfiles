@@ -33,9 +33,10 @@ edit-mise:
 edit-mise-macos:
     {{ editor }} {{ quote(mise_config_dir / "config.macos.toml") }}
 
-# Format the repo with prek's whitespace fixers, then treefmt
+# Format the repo with dprint, using the repo's copy of the global dprint config, then
+# prek's whitespace fixers
 format-dotfiles:
-    {{ mise_exec }} treefmt -C {{ quote(repo_dir) }}
+    {{ mise_exec }} dprint fmt -c {{ quote(repo_dir / "home/.config/dprint/dprint.jsonc") }} {{ quote(repo_dir) }}
     {{ mise_exec }} prek -C {{ quote(repo_dir) }} run -q --all-files trailing-whitespace end-of-file-fixer
 
 # Arguments reach every `mise` step except `self-update`, which has no `--dry-run`.

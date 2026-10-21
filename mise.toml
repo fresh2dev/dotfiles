@@ -10,5 +10,5 @@ dotfiles.root = "."
 
 [tools]
 just = "1"
-"aqua:numtide/treefmt" = "2"
+dprint = "0"
 ruby = "4"

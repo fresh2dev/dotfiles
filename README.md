@@ -60,7 +60,7 @@ your global config, so a new shell activates mise and lazy tools install on firs
 | `home/.config/mise/config.toml` | File layer. mise's global config, which also pins every other tool |
 | `home/.config/mise/config.macos.toml` | macOS-only bootstrap config: Homebrew packages, services, LaunchAgents, `PATH`, `XDG_CONFIG_HOME` and `XDG_DATA_DIRS` for GUI apps, Dock and Finder settings |
 | `justfile` | Recipes for installing, upgrading, and formatting, linked to `~/.config/mise/justfile` and run with `mise run recipes`. `mise run recipes --list` shows them, a bare `mise run recipes` opens a chooser |
-| `.treefmt.toml` | treefmt config for this repo |
+| `home/.config/dprint/dprint.jsonc` | Global [dprint](https://dprint.dev) config, which also formats this repo |
 | `.pre-commit-config.yaml` | [prek](https://prek.j178.dev) hooks: whitespace fixers and syntax, symlink, and safety checks. `prek install` enables them as a git hook |
 
 Linking happens in two layers, each with its own `[dotfiles]` table.
@@ -127,7 +127,7 @@ declarations". Set `MISE_CONFIG_DIR="$PWD"` there, or `cd ~` first for the file 
 | `mise run recipes upgrade [args…]` | Prune, then upgrade mise, tools (bumping their pins), Homebrew packages, zsh plugins, and agent skills |
 | `mise run recipes prune [args…]` | Remove unused tool versions, undeclared Homebrew formulae, and undeclared casks that mise installed |
 | `mise run recipes dir` | Print the path of this checkout, e.g. `cd "$(mise run recipes dir)"` |
-| `mise run recipes format-dotfiles` | `treefmt` on the repo, using `.treefmt.toml`, then prek's whitespace fixers |
+| `mise run recipes format-dotfiles` | `dprint fmt` on the repo, using `home/.config/dprint/dprint.jsonc`, then prek's whitespace fixers |
 
 ## Homebrew packages
 

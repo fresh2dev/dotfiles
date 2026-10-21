@@ -48,7 +48,7 @@ root. `recipes` is a task in the global config's `[tasks]` that runs
 | `mise run recipes bootstrap [args…]` | Apply the bootstrap layer, then `mise bootstrap` (file layer, Homebrew packages, services, macOS settings, tools, hooks), then clone missing zsh plugins and install missing agent skills and Claude plugins. Args reach only `mise bootstrap`, so `--dry-run` still applies the bootstrap layer and installs plugins and skills |
 | `mise run recipes upgrade [args…]` | `prune`, then `mise self-update`, `mise upgrade --bump --interactive`, and `mise bootstrap packages upgrade`, then pull zsh plugins and update agent skills. Args reach every `mise` step except `self-update` (which has no `--dry-run`); plugins and skills update regardless |
 | `mise run recipes prune [args…]` | `mise prune`, then remove undeclared Homebrew formulae and undeclared casks that mise installed |
-| `mise run recipes format-dotfiles` | `treefmt -C <repo>`, which picks up `.treefmt.toml`, then prek's `trailing-whitespace` and `end-of-file-fixer` hooks on all files (`.pre-commit-config.yaml`) |
+| `mise run recipes format-dotfiles` | `dprint fmt -c <repo>/home/.config/dprint/dprint.jsonc <repo>`, then prek's `trailing-whitespace` and `end-of-file-fixer` hooks on all files (`.pre-commit-config.yaml`) |
 | `mise run recipes dir` | Print `repo_dir`, the repo checkout the justfile resolves to, e.g. `cd "$(mise run recipes dir)"` |
 | `mise run recipes edit`, `edit-mise`, `edit-mise-macos` | Open the justfile, `config.toml`, or `config.macos.toml` in `$EDITOR` |
 | `cd ~ && mise dot <subcommand>` | The file layer (`apply`, `status`, `diff`, `add`, …) |
@@ -160,9 +160,11 @@ wrappers around `mise` commands. Its conventions:
   file-layer entries are left commented out in `config.toml`; keep them that way, or both
   layers declare the same targets. In a throwaway `HOME`, `mise dot apply` warns that the
   linked global config is not trusted; linking still works.
-- `.treefmt.toml` at the repo root is this repo's treefmt config, found because
-  `format-dotfiles` runs treefmt with `-C <repo>`; it has no `[dotfiles]` entry. Its `just` formatter
-  loops over files in `sh` because `just --fmt -f` takes one justfile, and it excludes
+- `home/.config/dprint/dprint.jsonc` is the global dprint config (linked to
+  `~/.config/dprint/dprint.jsonc`) and also formats this repo: `format-dotfiles` passes it
+  with `-c`, so it works before anything is linked. Its exec plugin feeds each file to a CLI
+  formatter on stdin. The `just` command copies stdin to a temp file beside the original,
+  because `just -f /dev/stdin` can't resolve `import` or `mod` paths. It excludes
   `.agents/skills`. Keep both.
 - `.pre-commit-config.yaml` configures [prek](https://prek.j178.dev) with `repo: builtin`
   hooks only (prek-only; upstream pre-commit can't run it). It excludes `home/.agents/`
