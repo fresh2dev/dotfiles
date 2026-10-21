@@ -1,0 +1,79 @@
+// Global dprint config, used wherever no dprint.json(c) is found in the working
+// directory or its ancestors. dprint finds it at $XDG_CONFIG_HOME/dprint (mise's
+// [env] sets XDG_CONFIG_HOME).
+//
+// The exec plugin runs the CLI formatters that mise pins, feeding the file on
+// stdin. Project-local tool configs are still honoured: stylua reads .stylua.toml,
+// ruff reads pyproject.toml / ruff.toml, rustfmt reads rustfmt.toml. A formatter
+// that isn't installed fails the run instead of being skipped.
+{
+  "excludes": [
+    "**/*.lock",
+    "**/*-lock.json",
+    "**/*.min.*",
+    "**/node_modules",
+    "**/vendor",
+    "**/target",
+    "**/.venv",
+    "**/__pycache__",
+    // Agent skills are vendored from upstream by the `skills` CLI.
+    "**/.agents/skills",
+  ],
+  "exec": {
+    // Commands that set `associations` run in the order listed here, so a file
+    // can go through several of them. Such a command matches only by its one glob,
+    // never by `exts` or `fileNames`. Using any `associations` requires listing
+    // them on the plugin too.
+    "associations": [
+      "**/*.py",
+      "**/*.pyi",
+      "**/*.md",
+      "**/{*.sh,*.bash,*.zsh,.bashrc,.bash_profile,.profile,.zshrc,.zshenv,.zprofile,.zlogin,.zlogout,.envrc,.envrc.*}",
+    ],
+    "commands": [
+      {
+        "command": "stylua --stdin-filepath {{file_path}} -",
+        "exts": ["lua"],
+      },
+      // Python: lint-fix first, then format. `--exit-zero` keeps unfixable lint
+      // violations from failing the format run; reporting those is the LSP's job.
+      {
+        "command": "ruff check --exit-zero --fix-only --force-exclude --preview --unsafe-fixes --extend-select=E,W,I,F,COM --extend-fixable=E,W,I,F,COM --stdin-filename {{file_path}} -",
+        "associations": "**/*.{py,pyi}",
+      },
+      // Markdown: rumdl first, then ruff formats the Python code blocks.
+      {
+        "command": "rumdl fmt --stdin --silent --no-cache --stdin-filename {{file_path}}",
+        "associations": "**/*.md",
+      },
+      {
+        "command": "ruff format --quiet --preview --force-exclude --stdin-filename {{file_path}} -",
+        "associations": "**/*.{py,pyi,md}",
+      },
+      {
+        "command": "gofmt",
+        "exts": ["go"],
+      },
+      // Without `--edition` rustfmt assumes 2015 and fails on modern syntax. This
+      // overrides `edition` in a project's rustfmt.toml.
+      {
+        "command": "rustfmt --edition 2024",
+        "exts": ["rs"],
+      },
+      {
+        "command": "tombi format --quiet --stdin-filename {{file_path}} -",
+        "exts": ["toml"],
+      },
+      // shfmt (3.14) parses zsh too, picking the dialect from the extension, the
+      // shebang or a zsh startup-file name. It still rejects a few zsh-only forms,
+      // e.g. the short `for x (…) cmd` loop and `{ … } always { … }`.
+      {
+        "command": "shfmt -i 2 --filename {{file_path}}",
+        "associations": "**/{*.sh,*.bash,*.zsh,.bashrc,.bash_profile,.profile,.zshrc,.zshenv,.zprofile,.zlogin,.zlogout,.envrc,.envrc.*}",
+      },
+    ],
+  },
+  "plugins": [
+    "npm:@dprint/exec@0.8.0/plugin.json@9d6234ea05810c775f388c2a4cce82b9116b69294b65e0e1e9d64f1446283ef3",
+  ],
+}
