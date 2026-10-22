@@ -125,7 +125,6 @@ powershell = { version = "7.6.8", lazy = true, lazy_bins = ["pwsh"] }
 coreutils = { version = "0.12.0", postinstall = 'bin="$(find "$MISE_TOOL_INSTALL_PATH" -type f -name coreutils)" && "$bin" --list | xargs -I{} ln -sf "$bin" "$HOME/.local/bin/{}"' }
 bat = "0.26.1"
 direnv = "2.38.2"
-fd = "10.5.0"
 fzf = "0.74.5"
 yq = "4.54.1"
 jq = "1.8.2"
