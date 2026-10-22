@@ -308,7 +308,6 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.git_wt.just" = {}
 "~/.gitconfig" = {}
 "~/.hushlogin" = { mode = "symlink", variants = [{ os = "macos" }] }
-"~/.local/bin/rgv" = {}
 "~/.streamlit/config.toml" = {}
 "~/.vimrc" = {}
 "~/.zlogin" = {}
