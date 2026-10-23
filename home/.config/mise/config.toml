@@ -300,6 +300,7 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.config/zellij/config.kdl" = {}
 "~/.config/zellij/justfile" = {}
 "~/.config/zellij/layouts/default.kdl" = {}
+"~/.config/zellij/layouts/default.swap.kdl" = {}
 "~/.editorconfig" = {}
 "~/.gitconfig" = {}
 "~/.hushlogin" = { mode = "symlink", variants = [{ os = "macos" }] }
