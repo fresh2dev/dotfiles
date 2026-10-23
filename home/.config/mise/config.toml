@@ -299,6 +299,7 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.config/zed/tasks.json" = {}
 "~/.config/zellij/config.kdl" = {}
 "~/.config/zellij/justfile" = {}
+"~/.config/zellij/layouts/agentic.kdl" = {}
 "~/.config/zellij/layouts/default.kdl" = {}
 "~/.config/zellij/layouts/default.swap.kdl" = {}
 "~/.editorconfig" = {}
