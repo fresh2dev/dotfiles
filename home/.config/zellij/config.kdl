@@ -116,19 +116,19 @@ keybinds clear-defaults=true {
                 height "80%"
             }
         }
-        // Recipe picker for $ZELLIJ_CONFIG_DIR/justfile. `sh -c`: Run expands no env vars.
-        // `-d .`: recipes run in the focused pane's cwd, not the justfile's dir.
-        bind "Alt r" {
-            Run "sh" "-c" "exec just -f \"$ZELLIJ_CONFIG_DIR/justfile\" -d . --choose" {
-                floating true
-                close_on_exit true
-                name "just"
-                x "5%"
-                y "10%"
-                width "90%"
-                height "80%"
-            }
-        }
+        // // Recipe picker for $ZELLIJ_CONFIG_DIR/justfile. `sh -c`: Run expands no env vars.
+        // // `-d .`: recipes run in the focused pane's cwd, not the justfile's dir.
+        // bind "Alt r" {
+        //     Run "sh" "-c" "exec just -f \"$ZELLIJ_CONFIG_DIR/justfile\" -d . --choose" {
+        //         floating true
+        //         close_on_exit true
+        //         name "just"
+        //         x "5%"
+        //         y "10%"
+        //         width "90%"
+        //         height "80%"
+        //     }
+        // }
         bind "Alt /" {
             LaunchOrFocusPlugin "zextract" {
                 floating true
