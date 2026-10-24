@@ -304,6 +304,8 @@ plugins {
         tab_fullscreen_indicator " 󰊓"
         tab_floating_indicator   " 󰹙"
 
+        tab_zero_based_index     "true"  // start with 0 instead of 1 for the index
+
         // Click target for fzj: zjstatus ignores clicks on pipe widgets, so this static
         // command widget renders an icon and runs `fzj` on click.
         command_fzjbtn_command     "true"
