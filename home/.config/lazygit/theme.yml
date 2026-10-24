@@ -1,24 +1,24 @@
-# https://github.com/catppuccin/lazygit/blob/main/themes-mergable/mocha/blue.yml
+# Carbonfox, from nightfox.nvim's palette
 gui:
   theme:
-    activeBorderColor:
-      - '#89b4fa'
+    activeBorderColor: # blue
+      - '#78a9ff'
       - bold
-    inactiveBorderColor:
-      - '#a6adc8'
-    optionsTextColor:
-      - '#89b4fa'
-    selectedLineBgColor:
-      - '#313244'
-    cherryPickedCommitBgColor:
-      - '#45475a'
-    cherryPickedCommitFgColor:
-      - '#89b4fa'
-    unstagedChangesColor:
-      - '#f38ba8'
-    defaultFgColor:
-      - '#cdd6f4'
-    searchingActiveBorderColor:
-      - '#f9e2af'
+    inactiveBorderColor: # FloatBorder
+      - '#7b7c7e'
+    optionsTextColor: # blue
+      - '#78a9ff'
+    selectedLineBgColor: # CursorLine
+      - '#353535'
+    cherryPickedCommitBgColor: # PmenuSel
+      - '#525253'
+    cherryPickedCommitFgColor: # blue
+      - '#78a9ff'
+    unstagedChangesColor: # red
+      - '#ee5396'
+    defaultFgColor: # Normal
+      - '#f2f4f8'
+    searchingActiveBorderColor: # IncSearch
+      - '#3ddbd9'
     authorColors:
-      '*': '#b4befe'
+      '*': '#be95ff' # magenta
