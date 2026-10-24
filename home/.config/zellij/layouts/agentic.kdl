@@ -32,4 +32,11 @@ layout {
             }
         }
     }
+
+    // Sizes new floating panes (e.g. `Alt space`); same geometry as the fzj popup.
+    swap_floating_layout name="enlarged" {
+        floating_panes {
+            pane { x "5%"; y "5%"; width "90%"; height "90%"; }
+        }
+    }
 }
