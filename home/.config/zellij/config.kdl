@@ -252,7 +252,7 @@ plugins {
         // format_left   "{mode}#[bg=#181926] {tabs}"
         // format_left   "{session} {mode} {tabs}"
         format_left   "#[bg=#8aadf4,fg=#181926,bold]  {session}#[fg=#8aadf4] {tabs}"
-        format_center "{pipe_fzj_statusline}"
+        format_center "{pipe_fzj_statusline}{command_fzjbtn}"
         // format_right  "{notifications} #[fg=#494d64,bold]{mode}"
         format_right  "#[fg=#494d64,bold]{mode}"
         // format_space  "#[bg=#181926]"
@@ -303,6 +303,14 @@ plugins {
         tab_sync_indicator       " "
         tab_fullscreen_indicator " 󰊓"
         tab_floating_indicator   " 󰹙"
+
+        // Click target for fzj: zjstatus ignores clicks on pipe widgets, so this static
+        // command widget renders an icon and runs `fzj` on click.
+        command_fzjbtn_command     "true"
+        command_fzjbtn_format      "#[fg=#8aadf4] "
+        command_fzjbtn_interval    "0"
+        command_fzjbtn_rendermode  "static"
+        command_fzjbtn_clickaction "fzj"
 
         // command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
         // command_git_branch_format      "#[fg=blue] {stdout} "
