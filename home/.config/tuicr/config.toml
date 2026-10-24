@@ -1,0 +1,41 @@
+# tuicr: https://github.com/agavra/tuicr/blob/main/docs/CONFIG.md
+# Matches f2dvim (space leader, scrolloff 10, vim in the comment box) and lazygit
+# (`q` quits, no update check).
+
+theme = "carbonfox"  # ./themes/carbonfox.toml; the terminal background is the same
+transparent_background = true
+
+diff_view = "side-by-side"  # `:diff` toggles
+wrap = true
+scroll_offset = 10
+relative_line_numbers = false
+cursor_line = true
+compact_folders = true  # this repo's paths are deep
+
+leader = " "
+q_quits = true
+comment_vim = true
+mouse = true
+
+username = "dev"  # tells your comments from an agent's
+no_update_check = true
+
+# Rebuild the working-tree review as an agent edits; comments added by
+# `tuicr review add` already show up live (`review_watch_interval_ms`, 1000).
+diff_watch_interval_ms = 2000
+
+show_pr_checks = true
+
+comment_types = [
+  { id = "issue", color = "#ee5396", definition = "a defect or risk; fix it" },
+  { id = "suggestion", color = "#33b1ff", definition = "an improvement worth making" },
+  { id = "question", color = "#78a9ff", definition = "ask for clarification; no change implied" },
+  { id = "nit", color = "#dfdfe0", definition = "minor and optional" },
+  { id = "praise", color = "#25be6a", definition = "something done well; no change needed" },
+]
+
+[export]
+intro = "Address this code review feedback."
+scope_line = true
+legend = true
+session_header = false

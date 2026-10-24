@@ -235,6 +235,7 @@ mkcert = { version = "1.4.4", lazy = true }
 "go:github.com/yutat23/lsoff" = { version = "0.1.5", lazy = true, lazy_bins = ["lsoff"] }
 "go:github.com/ramonvermeulen/whosthere" = { version = "0.9.0", lazy = true, lazy_bins = ["whosthere"] }
 bitwarden-secrets-manager = { version = "latest", lazy = true }
+"cargo:tuicr" = "0.27.0"
 
 # --- Zellij plugins
 # Each release ships a `.wasm` asset, not a binary, so `asset_pattern` picks it and
@@ -290,6 +291,8 @@ postinstall = 'ln -sf "$MISE_TOOL_INSTALL_PATH"/*.wasm "$ZELLIJ_CONFIG_DIR/plugi
 "~/.config/ripgreprc" = {}
 "~/.config/sheets/config.toml" = {}
 "~/.config/starship.toml" = {}
+"~/.config/tuicr/config.toml" = {}
+"~/.config/tuicr/themes/carbonfox.toml" = {}
 "~/.config/vicinae/settings.json" = {}
 "~/.config/whosthere/config.yaml" = {}
 "~/.config/worktrunk/config.toml" = {}
