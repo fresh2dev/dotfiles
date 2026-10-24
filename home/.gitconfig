@@ -84,8 +84,8 @@
     co = checkout
     cob = switch --create
 
-    # Worktree recipes in ~/.git_wt.just, run in this repo: `git wt <recipe>`.
-    wt = !just -f ~/.git_wt.just -d .
+    # Worktree commands with zellij tabs to match: `git wt <command>`.
+    wt = !fzj wt
 
     ##################################################
     # Commit ops
