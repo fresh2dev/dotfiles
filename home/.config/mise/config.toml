@@ -221,7 +221,6 @@ claude = { version = "2.1.316", lazy = true }
 "github:Dicklesworthstone/beads_viewer" = { version = "0.25.2", lazy = true, lazy_bins = ["bv"] }
 "npm:ralph-tui" = { version = "0.12.0", lazy = true, lazy_bins = ["ralph-tui"] }
 "npm:skills" = { version = "1.7.4", lazy = true, lazy_bins = ["skills"] }
-hunk = { version = "0.24.0", lazy = true, lazy_bins = ["hunk"] }
 "pypi:graphifyy" = { version = "0.9.100", postinstall = "graphify install --platform claude", lazy = true, lazy_bins = ["graphify"] }
 
 # --- Cloudflare
