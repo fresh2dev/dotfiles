@@ -472,14 +472,14 @@ git:
   # to 40 to disable truncation.
   truncateCopiedCommitHashesTo: 12
 
-# Config relating to git worktrees
-worktree:
-  # Default parent directory for new worktrees. It is offered as a candidate
-  # location alongside the parent directories of any worktrees you already have.
-  # A relative path is resolved against the repository's root directory, so
-  # "../worktrees" sits beside the repo and ".worktrees" sits inside it.
-  # A leading "~" is expanded to your home directory, so "~/worktrees" works.
-  defaultPath: "../<PROJECT>.wt/"
+# # Config relating to git worktrees
+# worktree:
+#   # Default parent directory for new worktrees. It is offered as a candidate
+#   # location alongside the parent directories of any worktrees you already have.
+#   # A relative path is resolved against the repository's root directory, so
+#   # "../worktrees" sits beside the repo and ".worktrees" sits inside it.
+#   # A leading "~" is expanded to your home directory, so "~/worktrees" works.
+#   defaultPath: "../<PROJECT>.wt/"
 
 # Periodic update checks
 update:
@@ -533,7 +533,7 @@ os:
 
   # A built-in preset that sets all of the above settings. Supported presets are
   # defined in the getPreset function in editor_presets.go.
-  editPreset: "nvim-remote"
+  editPreset: "nvim"
 
   # Command for opening a file, as if the file is double-clicked. Should contain
   # "{{filename}}", but doesn't support "{{line}}".
@@ -562,6 +562,11 @@ disableStartupPopups: true
 # User-configured commands that can be invoked from within Lazygit
 # See https://github.com/jesseduffield/lazygit/blob/master/docs/Custom_Command_Keybindings.md
 customCommands:
+  - context: 'global'
+    key: 'B'
+    command: 'gh browse'
+    description: 'Open repo in browser'
+
   # `B` opens GitHub: the selected commit in the commit views, the repo
   # everywhere else (the context-specific binding wins over the global one).
   - context: 'commits, subCommits'
@@ -569,10 +574,437 @@ customCommands:
     command: 'gh browse {{.SelectedCommit.Hash}}'
     description: 'Open commit in browser'
 
-  - context: 'global'
-    key: 'B'
-    command: 'gh browse'
-    description: 'Open repo in browser'
+  # `A`: git-absorb the staged changes into the commits after the selected one (the
+  # selected commit itself is the base, so it is never a target), one fixup! per commit.
+  # Whole-file mode matches each hunk against the commits that touched the file, not
+  # just the lines it changes.
+  - context: 'commits'
+    key: 'A'
+    description: 'git-absorb staged changes'
+    prompts:
+      - type: 'menu'
+        key: 'Mode'
+        title: 'git-absorb{{ with runCommand "git diff --cached --shortstat" }}{{ . }}{{ else }}: nothing staged{{ end }}'
+        options:
+          - name: 'hunks'
+            description: 'match each hunk against the lines it changes'
+            value: ''
+            key: 'h'
+          - name: 'whole file'
+            description: 'match each hunk against the whole file'
+            value: '--whole-file'
+            key: 'w'
+    command: 'git absorb --base {{ .SelectedCommit.Hash }} --one-fixup-per-commit {{ .Form.Mode }}'
+    output: popup
+    outputTitle: 'git-absorb'
+    loadingText: 'Absorbing'
+    after:
+      checkForConflicts: true
+
+  # `r`: git-native rebase of the commits above the selected one (the selected commit is
+  # the base and stays put, like git-absorb above). Replaces lazygit's squashAboveCommits.
+  # The editor opens in the terminal, except for the autosquash-only option, which skips it.
+  - context: 'commits'
+    key: 'r'
+    description: 'git rebase -i above selected commit'
+    prompts:
+      - type: 'menu'
+        key: 'Mode'
+        title: 'git rebase above {{ .SelectedCommit.Name | quote }}'
+        options:
+          - name: 'interactive'
+            description: 'edit the todo list, fixup!/squash! commits pre-arranged'
+            value: 'rebase -i --autosquash'
+            key: 'i'
+          - name: 'above'
+            description: 'fold fixup!/squash! commits without opening an editor'
+            value: '-c sequence.editor=: rebase -i --autosquash'
+            key: 'a'
+    command: 'git {{ .Form.Mode }} {{ .SelectedCommit.Hash }}'
+    output: terminal
+    after:
+      checkForConflicts: true
+
+  # `C` in the files panel: commit with an LLM-generated message (`wt step commit`). The
+  # first menu option, what is already staged, is the default (enter).
+  - context: 'files'
+    key: 'C'
+    description: 'Commit with generated message (wt)'
+    prompts:
+      - type: 'menu'
+        key: 'Stage'
+        title: 'Commit with generated message'
+        options:
+          - name: 'staged'
+            description: 'commit what is already staged'
+            value: 'none'
+            key: 's'
+          - name: 'stage all, then commit'
+            description: 'untracked files and unstaged changes too'
+            value: 'all'
+            key: 'a'
+    command: 'wt step commit --stage {{ .Form.Stage }}'
+    output: popup
+    outputTitle: 'wt step commit'
+    loadingText: 'Generating commit message'
+
+  # fugitive in a dedicated nvim, behind two keys with a menu that fits the selection (the
+  # first option is the default; a panel with one action skips its menu):
+  # - `e` edits: fix a file in an old commit, blame, or open a commit object. In the files
+  #   panel `e` is lazygit's own (`os.editPreset`); conflicts resolve with its mergetool (`m` → `m`).
+  # - `E` diffs against a target. A single file opens as a split (older left, cursor right);
+  #   anything else as a Review: one quickfix entry per hunk (`:Git difftool`, `]q`/`[q`) in
+  #   one tab, titled `Review: A → B`, whose hunks the agent keymaps (`<leader>aa` one,
+  #   `<leader>aq` all) send to the Agent pane. `r` picks the target from local branches, then
+  #   remote branches, then tags, newest first in each (one `for-each-ref`, no shell).
+  # Each command starts its own nvim, never the one lazygit may run inside (Snacks.lazygit), so
+  # `:qa` there returns to lazygit. A split uses `difftool -y`, which leaves the startup tab
+  # empty, hence `-c 'silent! 1tabclose'`. `silent` hides fugitive's `fatal: path … not in
+  # <rev>` for each added file, which would stop at a hit-enter prompt; errors still show.
+  # fugitive's own failures (a bad ref, `X^` on a root commit, no upstream) just open nothing.
+  # shortcut: a path containing `'` breaks its `fnameescape('…')`; double the quote if one turns up.
+  - context: 'files'
+    key: 'E'
+    description: 'Diff in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'T'
+        title: 'Diff {{ .SelectedPath }} against'
+        condition: '{{ if .SelectedFile }}{{ if .SelectedFile.Tracked }}1{{ end }}{{ else }}1{{ end }}'
+        options:
+          - { name: 'index', description: 'unstaged changes', value: 'i', key: 'i' }
+          - { name: 'HEAD', description: 'all uncommitted changes', value: 'h', key: 'h' }
+          - { name: 'fork point', description: 'where this branch forked from the default branch', value: 'b', key: 'b' }
+          - { name: 'upstream', description: 'what a push would send, plus uncommitted', value: 'u', key: 'u' }
+          - { name: 'ref…', description: 'a branch or tag', value: 'r', key: 'r' }
+      - { type: 'menuFromCommand', key: 'Ref', title: 'Diff against', condition: '{{ eq .Form.T "r" }}',
+          command: 'git for-each-ref --sort=-creatordate --sort=refname:rstrip=-2 --exclude=refs/remotes/*/HEAD --format=%(refname:short) refs/heads refs/remotes refs/tags' }
+    command: |-
+      {{ if and .SelectedFile (not .SelectedFile.Tracked) -}}
+      echo 'An untracked file has no diff.'; read -r _
+      {{- else -}}
+      p={{ .SelectedPath | quote }}
+      case {{ .Form.T | quote }} in
+        i) a= ;;
+        h) a=HEAD ;;
+        b) base=$(git symbolic-ref --short -q refs/remotes/origin/HEAD) || base=main; a=$(git merge-base "$base" HEAD) ;;
+        u) a=@{u} ;;
+        r) a={{ .Form.Ref | quote }} ;;
+      esac
+      {{ if .SelectedFile -}}
+      nvim -c "exe 'silent Git difftool -y $a -- ' .. fnameescape('$p')" -c 'silent! 1tabclose'
+      {{- else -}}
+      nvim -c "exe 'silent Git difftool $a -- ' .. fnameescape('$p')" -c "call setqflist([], 'a', {'title': 'Review: ${a:-index} → working tree, $p'})" -c copen -c 'wincmd p'
+      {{- end }}
+      {{- end }}
+    output: terminal
+
+  - context: 'commits, subCommits, reflogCommits'
+    key: 'e'
+    description: 'Open commit in nvim (fugitive)'
+    command: 'nvim -c "Gedit {{ .SelectedCommit.Hash }}"'
+    output: terminal
+
+  # The selected commit(s), From (oldest) to To (newest).
+  - context: 'commits, subCommits, reflogCommits'
+    key: 'E'
+    description: 'Diff in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'T'
+        title: 'Diff {{ slice .SelectedCommitRange.From 0 8 }}..{{ slice .SelectedCommitRange.To 0 8 }} against'
+        options:
+          - { name: 'parent', description: 'what the commit(s) changed', value: 'p', key: 'p' }
+          - { name: 'working tree', description: 'the commit(s) and everything since, uncommitted too', value: 'w', key: 'w' }
+          - { name: 'HEAD', description: 'everything committed after them', value: 'h', key: 'h' }
+          - { name: 'ref…', description: 'a branch or tag', value: 'r', key: 'r' }
+      - { type: 'menuFromCommand', key: 'Ref', title: 'Diff against', condition: '{{ eq .Form.T "r" }}',
+          command: 'git for-each-ref --sort=-creatordate --sort=refname:rstrip=-2 --exclude=refs/remotes/*/HEAD --format=%(refname:short) refs/heads refs/remotes refs/tags' }
+    command: |-
+      f={{ slice .SelectedCommitRange.From 0 12 }} t={{ slice .SelectedCommitRange.To 0 12 }}
+      case {{ .Form.T | quote }} in
+        p) a="$f^" b="$t" ;;
+        w) a="$f^" b= ;;
+        h) a="$t" b=HEAD ;;
+        r) a={{ .Form.Ref | quote }} b="$t" ;;
+      esac
+      nvim -c "silent Git difftool $a $b" -c "call setqflist([], 'a', {'title': 'Review: $a → ${b:-working tree}'})" -c copen -c 'wincmd p'
+    output: terminal
+
+  # Fix the file in this commit: the working-tree file (right, editable) beside the commit's
+  # version. After you edit and quit, its changes become a `fixup!` of the commit, left for
+  # you to fold in (`r` on a commit below it). Refused when the file has uncommitted changes
+  # (they would land in the fixup) or the commit is not on the checked-out branch. Blame opens
+  # beside the file, the cursor on the file (`wincmd l`); in the blame, `~`/`P` re-blame at the
+  # parent and `o` opens the commit of a line.
+  - context: 'commitFiles'
+    key: 'e'
+    description: 'Edit file at this commit in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'Do'
+        title: 'Edit {{ .SelectedPath }} at {{ slice .SelectedCommit.Hash 0 8 }}'
+        condition: '{{ if .SelectedCommitFile }}1{{ end }}'
+        options:
+          - { name: 'fix in this commit', description: 'edit, then a fixup! commit (not folded)', value: 'f', key: 'f' }
+          - { name: 'blame', description: 'the file as it is at this commit', value: 'b', key: 'b' }
+    command: |-
+      {{ if not .SelectedCommitFile -}}
+      echo 'e works on a single file, not a folder.'; read -r _
+      {{- else -}}
+      sha={{ .SelectedCommit.Hash }} f={{ .SelectedPath | quote }}
+      case {{ .Form.Do | quote }} in
+        f)
+          s=$(git rev-parse --short "$sha")
+          git merge-base --is-ancestor "$sha" HEAD || { echo "$s is not on the checked-out branch."; read -r _; exit; }
+          git diff --quiet HEAD -- "$f" || { echo "$f has uncommitted changes; commit or stash them first."; read -r _; exit; }
+          nvim -c "exe 'edit ' .. fnameescape('$f')" -c "Gvdiffsplit! $sha"
+          git diff --quiet HEAD -- "$f" && exit
+          git commit -q --fixup="$sha" -- "$f" || read -r _ ;;
+        b) nvim -c "exe 'Gedit $sha:' .. fnameescape('$f')" -c 'Git blame' -c 'wincmd l' ;;
+      esac
+      {{- end }}
+    output: terminal
+
+  - context: 'commitFiles'
+    key: 'E'
+    description: 'Diff at this commit in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'T'
+        title: 'Diff {{ .SelectedPath }} at {{ slice .SelectedCommit.Hash 0 8 }} against'
+        options:
+          - { name: 'parent', description: 'what this commit changed', value: 'p', key: 'p' }
+          - { name: 'working tree', description: 'how it changed since, uncommitted too', value: 'w', key: 'w' }
+          - { name: 'HEAD', description: 'how it changed since, committed only', value: 'h', key: 'h' }
+          - { name: 'ref…', description: 'a branch or tag', value: 'r', key: 'r' }
+      - { type: 'menuFromCommand', key: 'Ref', title: 'Diff against', condition: '{{ eq .Form.T "r" }}',
+          command: 'git for-each-ref --sort=-creatordate --sort=refname:rstrip=-2 --exclude=refs/remotes/*/HEAD --format=%(refname:short) refs/heads refs/remotes refs/tags' }
+    command: |-
+      x={{ slice .SelectedCommit.Hash 0 12 }} p={{ .SelectedPath | quote }}
+      case {{ .Form.T | quote }} in
+        p) a="$x^" b="$x" ;;
+        w) a="$x" b= ;;
+        h) a="$x" b=HEAD ;;
+        r) a={{ .Form.Ref | quote }} b="$x" ;;
+      esac
+      {{ if .SelectedCommitFile -}}
+      nvim -c "exe 'silent Git difftool -y $a $b -- ' .. fnameescape('$p')" -c 'silent! 1tabclose'
+      {{- else -}}
+      nvim -c "exe 'silent Git difftool $a $b -- ' .. fnameescape('$p')" -c "call setqflist([], 'a', {'title': 'Review: $a → ${b:-working tree}, $p'})" -c copen -c 'wincmd p'
+      {{- end }}
+    output: terminal
+
+  # A branch, local or remote. Fork point: its merge base with the default branch (origin's
+  # HEAD, else main).
+  - context: 'localBranches'
+    key: 'E'
+    description: 'Diff in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'T'
+        title: 'Diff {{ .SelectedLocalBranch.Name }} against'
+        options:
+          - { name: 'fork point', description: 'its commits since it forked from the default branch', value: 'b', key: 'b' }
+          - { name: 'HEAD', description: 'the checked-out commit', value: 'h', key: 'h' }
+          - { name: 'working tree', description: 'the checked-out files, uncommitted too', value: 'w', key: 'w' }
+          - { name: 'upstream', description: 'what a push would send', value: 'u', key: 'u' }
+          - { name: 'ref…', description: 'a branch or tag', value: 'r', key: 'r' }
+      - { type: 'menuFromCommand', key: 'Ref', title: 'Diff against', condition: '{{ eq .Form.T "r" }}',
+          command: 'git for-each-ref --sort=-creatordate --sort=refname:rstrip=-2 --exclude=refs/remotes/*/HEAD --format=%(refname:short) refs/heads refs/remotes refs/tags' }
+    command: |-
+      x={{ .SelectedLocalBranch.Name | quote }}
+      case {{ .Form.T | quote }} in
+        b) base=$(git symbolic-ref --short -q refs/remotes/origin/HEAD) || base=main; a=$(git merge-base "$base" "$x" | cut -c1-12) b="$x" ;;
+        h) a=HEAD b="$x" ;;
+        w) a="$x" b= ;;
+        u) a="$x@{u}" b="$x" ;;
+        r) a={{ .Form.Ref | quote }} b="$x" ;;
+      esac
+      nvim -c "silent Git difftool $a $b" -c "call setqflist([], 'a', {'title': 'Review: $a → ${b:-working tree}'})" -c copen -c 'wincmd p'
+    output: terminal
+
+  - context: 'remoteBranches'
+    key: 'E'
+    description: 'Diff in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'T'
+        title: 'Diff {{ .SelectedRemoteBranch.RemoteName }}/{{ .SelectedRemoteBranch.Name }} against'
+        options:
+          - { name: 'fork point', description: 'its commits since it forked from the default branch', value: 'b', key: 'b' }
+          - { name: 'HEAD', description: 'the checked-out commit', value: 'h', key: 'h' }
+          - { name: 'working tree', description: 'the checked-out files, uncommitted too', value: 'w', key: 'w' }
+          - { name: 'ref…', description: 'a branch or tag', value: 'r', key: 'r' }
+      - { type: 'menuFromCommand', key: 'Ref', title: 'Diff against', condition: '{{ eq .Form.T "r" }}',
+          command: 'git for-each-ref --sort=-creatordate --sort=refname:rstrip=-2 --exclude=refs/remotes/*/HEAD --format=%(refname:short) refs/heads refs/remotes refs/tags' }
+    command: |-
+      x={{ printf "%s/%s" .SelectedRemoteBranch.RemoteName .SelectedRemoteBranch.Name | quote }}
+      case {{ .Form.T | quote }} in
+        b) base=$(git symbolic-ref --short -q refs/remotes/origin/HEAD) || base=main; a=$(git merge-base "$base" "$x" | cut -c1-12) b="$x" ;;
+        h) a=HEAD b="$x" ;;
+        w) a="$x" b= ;;
+        r) a={{ .Form.Ref | quote }} b="$x" ;;
+      esac
+      nvim -c "silent Git difftool $a $b" -c "call setqflist([], 'a', {'title': 'Review: $a → ${b:-working tree}'})" -c copen -c 'wincmd p'
+    output: terminal
+
+  - context: 'tags'
+    key: 'E'
+    description: 'Diff in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'T'
+        title: 'Diff {{ .SelectedTag.Name }} against'
+        options:
+          - { name: 'HEAD', description: 'the checked-out commit', value: 'h', key: 'h' }
+          - { name: 'working tree', description: 'the checked-out files, uncommitted too', value: 'w', key: 'w' }
+          - { name: 'ref…', description: 'a branch or tag', value: 'r', key: 'r' }
+      - { type: 'menuFromCommand', key: 'Ref', title: 'Diff against', condition: '{{ eq .Form.T "r" }}',
+          command: 'git for-each-ref --sort=-creatordate --sort=refname:rstrip=-2 --exclude=refs/remotes/*/HEAD --format=%(refname:short) refs/heads refs/remotes refs/tags' }
+    command: |-
+      x={{ .SelectedTag.Name | quote }}
+      case {{ .Form.T | quote }} in
+        h) a=HEAD b="$x" ;;
+        w) a="$x" b= ;;
+        r) a={{ .Form.Ref | quote }} b="$x" ;;
+      esac
+      nvim -c "silent Git difftool $a $b" -c "call setqflist([], 'a', {'title': 'Review: $a → ${b:-working tree}'})" -c copen -c 'wincmd p'
+    output: terminal
+
+  # A worktree (`git wt`): what it has not committed (nvim starts there), or its branch's
+  # commits since it forked from the default branch.
+  - context: 'worktrees'
+    key: 'E'
+    description: 'Diff in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'T'
+        title: 'Diff {{ .SelectedWorktree.Branch }} against'
+        options:
+          - { name: 'HEAD', description: 'its uncommitted changes, in that worktree', value: 'h', key: 'h' }
+          - { name: 'fork point', description: 'its commits since it forked from the default branch', value: 'b', key: 'b' }
+    command: |-
+      case {{ .Form.T | quote }} in
+        h) cd {{ .SelectedWorktree.Path | quote }} || exit; r=HEAD t='HEAD → working tree' ;;
+        b)
+          base=$(git symbolic-ref --short -q refs/remotes/origin/HEAD) || base=main
+          r="$(git merge-base "$base" {{ .SelectedWorktree.Branch | quote }} | cut -c1-12) {{ .SelectedWorktree.Branch }}" t="fork point → {{ .SelectedWorktree.Branch }}" ;;
+      esac
+      nvim -c "silent Git difftool $r" -c "call setqflist([], 'a', {'title': 'Review: {{ .SelectedWorktree.Branch }}, $t'})" -c copen -c 'wincmd p'
+    output: terminal
+
+  # A stash entry: its working-tree commit.
+  - context: 'stash'
+    key: 'E'
+    description: 'Diff in nvim (fugitive)'
+    prompts:
+      - type: 'menu'
+        key: 'T'
+        title: 'Diff {{ printf "stash@{%d}" .SelectedStashEntry.Index }} against'
+        options:
+          - { name: 'parent', description: 'what was stashed', value: 'p', key: 'p' }
+          - { name: 'working tree', description: 'the checked-out files, uncommitted too', value: 'w', key: 'w' }
+    command: |-
+      x={{ printf "stash@{%d}" .SelectedStashEntry.Index | quote }}
+      case {{ .Form.T | quote }} in
+        p) a="$x^" b="$x" ;;
+        w) a="$x" b= ;;
+      esac
+      nvim -c "silent Git difftool $a $b" -c "call setqflist([], 'a', {'title': 'Review: $a → ${b:-working tree}'})" -c copen -c 'wincmd p'
+    output: terminal
+
+  # Make worktrees with `fzj wt new`, which also opens their zellij tab,
+  # in place of lazygit's own `n` (worktrees) and `w` (branches). Only `n` offers
+  # --move-uncommitted: fzj allows it for a new branch only.
+  - context: 'worktrees'
+    key: 'n'
+    prompts:
+      - type: 'input'
+        title: 'Branch for new worktree'
+        key: 'Branch'
+      - type: 'menu'
+        title: 'Uncommitted changes'
+        key: 'Move'
+        options:
+          - name: 'leave them here'
+            description: 'new branch starts from the default base'
+            value: ''
+            key: 'l'
+          - name: 'move them to the new worktree'
+            description: 'staged, unstaged and untracked; new branch starts from this commit'
+            value: '--move-uncommitted'
+            key: 'm'
+    command: 'fzj wt new {{ .Form.Move }} {{ .Form.Branch | quote }}'
+    description: 'New worktree (fzj wt)'
+
+  - context: 'localBranches'
+    key: 'w'
+    command: 'fzj wt new {{.SelectedLocalBranch.Name | quote}}'
+    description: 'New worktree from branch (fzj wt)'
+
+  # `n` on a commit: a new branch from it, in a new worktree, in place of lazygit's
+  # plain new branch. The args after -- go to `wt switch`.
+  - context: 'commits, subCommits'
+    key: 'n'
+    prompts:
+      - type: 'input'
+        title: 'New worktree branch from {{ slice .SelectedCommit.Hash 0 8 }} {{ .SelectedCommit.Name }}'
+        key: 'Branch'
+    command: 'fzj wt new {{ .Form.Branch | quote }} -- --base {{ .SelectedCommit.Hash }}'
+    description: 'New worktree from commit (fzj wt)'
+
+  # `n` on a remote branch: a local branch from it, in a new worktree, in place of
+  # lazygit's plain checkout. Keeping the remote's name makes it track the remote
+  # branch; another name gets no upstream. A branch that has a worktree is reused.
+  - context: 'remoteBranches'
+    key: 'n'
+    prompts:
+      - type: 'input'
+        title: 'New worktree branch from {{ .SelectedRemoteBranch.RemoteName }}/{{ .SelectedRemoteBranch.Name }}'
+        key: 'Branch'
+        initialValue: '{{ .SelectedRemoteBranch.Name }}'
+    command: 'fzj wt new {{ .Form.Branch | quote }} -- --base {{ printf `%s/%s` .SelectedRemoteBranch.RemoteName .SelectedRemoteBranch.Name | quote }}'
+    description: 'New worktree from remote branch (fzj wt)'
+
+  # `w` on a tag, as on a local branch: a new branch from the tag, in a new worktree
+  # (`n` there still makes a tag).
+  - context: 'tags'
+    key: 'w'
+    prompts:
+      - type: 'input'
+        title: 'New worktree branch from tag {{ .SelectedTag.Name }}'
+        key: 'Branch'
+    command: 'fzj wt new {{ .Form.Branch | quote }} -- --base {{ .SelectedTag.Name | quote }}'
+    description: 'New worktree from tag (fzj wt)'
+
+  # `A` on a worktree or local branch: `fzj wt absorb` it into this worktree, after a
+  # confirm that shows what comes over (none on this worktree's own row, where fzj
+  # refuses). In a terminal, since fzj can prompt (uncommitted changes, wt hooks),
+  # and a failure waits there for enter.
+  - context: 'worktrees'
+    key: 'A'
+    description: 'Absorb worktree into this one (fzj wt)'
+    prompts:
+      - type: 'confirm'
+        key: 'Confirm'
+        condition: '{{ not .SelectedWorktree.IsCurrent }}'
+        title: 'Absorb {{ .SelectedWorktree.Branch }} into {{ .CheckedOutBranch.Name }}?'
+        body: "{{ runCommand (printf `git rev-list --count %s..%s` .CheckedOutBranch.Name .SelectedWorktree.Branch) }} commit(s) to bring over{{ with runCommand (printf `git diff --shortstat %s...%s` .CheckedOutBranch.Name .SelectedWorktree.Branch) }}:{{ . }}{{ end }}.\n\nBy default wt merge squashes them, rebases onto {{ .CheckedOutBranch.Name }}, fast-forwards it, and removes the worktree; fzj then closes its zellij tabs. Uncommitted changes there are offered for commit first."
+    command: 'fzj wt absorb {{ .SelectedWorktree.Branch | quote }}'
+    output: terminal
+
+  - context: 'localBranches'
+    key: 'A'
+    description: "Absorb branch's worktree into this one (fzj wt)"
+    prompts:
+      - type: 'confirm'
+        key: 'Confirm'
+        condition: '{{ not .SelectedLocalBranch.Head }}'
+        title: 'Absorb {{ .SelectedLocalBranch.Name }} into {{ .CheckedOutBranch.Name }}?'
+        body: "{{ runCommand (printf `git rev-list --count %s..%s` .CheckedOutBranch.Name .SelectedLocalBranch.Name) }} commit(s) to bring over{{ with runCommand (printf `git diff --shortstat %s...%s` .CheckedOutBranch.Name .SelectedLocalBranch.Name) }}:{{ . }}{{ end }}.\n\nBy default wt merge squashes them, rebases onto {{ .CheckedOutBranch.Name }}, fast-forwards it, and removes the worktree; fzj then closes its zellij tabs. Uncommitted changes there are offered for commit first."
+    command: 'fzj wt absorb {{ .SelectedLocalBranch.Name | quote }}'
+    output: terminal
 
 # See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#custom-pull-request-urls
 services: {}
@@ -660,7 +1092,7 @@ keybinding:
     confirmInEditor: '<disabled>'
     remove: X
     new: 'n'
-    newWorktree: w
+    newWorktree: '<disabled>' # Replaced by the `fzj wt` custom commands
     edit: 'e'
     openFile: 'o'
     scrollUpMain: 'K'
@@ -699,7 +1131,7 @@ keybinding:
     decreaseContextInDiffView: '{'
     increaseRenameSimilarityThreshold: ')'
     decreaseRenameSimilarityThreshold: '('
-    openDiffTool: 'E'
+    openDiffTool: '<disabled>' # `E` is the fugitive diff custom command (see there)
     editConfig: <disabled>
   status:
     checkForUpdate: '<disabled>'
@@ -708,7 +1140,7 @@ keybinding:
     allBranchesLogGraphReverse: A
   files:
     commitChanges: 'c'
-    commitChangesWithoutHook: 'C'
+    commitChangesWithoutHook: '<disabled>'
     amendLastCommit: 'A'
     commitChangesWithEditor: '<disabled>'
     findBaseCommitForFixup: 'f'
@@ -754,11 +1186,11 @@ keybinding:
     markCommitAsFixup: 'F'
     setFixupMessage: c
     createFixupCommit: 'f'
-    squashAboveCommits: 'r'
+    squashAboveCommits: '<disabled>' # `r` is the git rebase custom command
     moveDownCommit: '<ctrl+shift+down>'
     moveUpCommit: '<ctrl+shift+up>'
     amendToCommit: 'a'
-    resetCommitAuthor: 'A'
+    resetCommitAuthor: '<disabled>' # `A` is the git-absorb custom command
     pickCommit: 'p'
     revertCommit: 'T'
     cherryPickCopy: 'Y'
@@ -772,7 +1204,7 @@ keybinding:
     openInBrowser: '<disabled>' # Replaced by the `B` custom command
     openPullRequestInBrowser: '<disabled>'
     viewBisectOptions: '<disabled>'
-    startInteractiveRebase: '<disabled>' # This is done with `e`
+    startInteractiveRebase: '<disabled>' # `r` is the git rebase custom command
     selectCommitsOfCurrentBranch: '*'
   amendAttribute:
     resetAuthor: a
