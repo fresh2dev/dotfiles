@@ -8,18 +8,22 @@ Personal dotfiles, symlinked into `$HOME` by mise's built-in dotfiles manager
 
 Prerequisites: `git` and a `mise` recent enough to support `mise dot` variants (2026.9.17
 works), plus Homebrew on macOS, which `mise bootstrap` drives to install formulae and casks.
-mise installs everything else.
+mise installs everything else, including `just`.
 
 ```sh
 git clone https://github.com/fresh2dev/dotfiles ~/projects/github.com/fresh2dev/dotfiles
 cd ~/projects/github.com/fresh2dev/dotfiles
-MISE_CONFIG_DIR="$PWD" mise install   # the repo's own tools, from mise.toml
-MISE_CONFIG_DIR="$PWD" mise en        # a subshell with them on PATH
-just bootstrap                        # link both layers and set up the machine (see below)
+MISE_CONFIG_DIR="$PWD/bootstrap" mise dot apply                  # 1. link ~/.dotfiles and ~/.config/mise
+MISE_CONFIG_DIR=~/.config/mise mise exec just -- just bootstrap  # 2. set up the machine (see below)
 ```
 
-`MISE_CONFIG_DIR="$PWD"` makes mise read only this repo's `mise.toml`.
-`just bootstrap` applies the bootstrap layer, then runs `mise bootstrap` from `~`, which
+1. `MISE_CONFIG_DIR="$PWD/bootstrap"` makes mise read only `bootstrap/mise.toml`. Its
+   links make `home/.config/mise/config.toml` the global config.
+2. `MISE_CONFIG_DIR=~/.config/mise` points mise at that global config (your shell sets it
+   the same way once `.zshenv` is linked), so every `mise` call in the `justfile` reads it,
+   including `config.macos.toml`. `mise exec just --` installs `just` from it on first use.
+
+`just bootstrap` applies the bootstrap layer again, then runs `mise bootstrap`, which
 links the file layer and applies the rest of the global config: Homebrew taps, formulae and
 casks, user services, macOS settings, tools, and hooks. Last, it clones zsh plugins and
 installs agent skills. Its arguments reach only `mise bootstrap`, so
@@ -43,8 +47,8 @@ and `mise`:
 ```sh
 git clone https://github.com/fresh2dev/dotfiles ~/projects/github.com/fresh2dev/dotfiles
 cd ~/projects/github.com/fresh2dev/dotfiles
-MISE_CONFIG_DIR="$PWD" mise dot apply   # bootstrap layer
-cd ~ && mise dot apply                  # file layer
+MISE_CONFIG_DIR="$PWD/bootstrap" mise dot apply   # bootstrap layer
+cd ~ && mise dot apply                            # file layer
 ```
 
 Add `--dry-run` to either `mise dot apply` to preview it. The linked mise config is now
@@ -55,7 +59,7 @@ your global config, so a new shell activates mise and lazy tools install on firs
 
 | Path | Purpose |
 |---|---|
-| `mise.toml` | Bootstrap layer, plus the few tools the `justfile` needs before anything is linked |
+| `bootstrap/mise.toml` | Bootstrap layer: links `~/.dotfiles`, `~/.config/mise`, and the `justfile` |
 | `home/` | Every dotfile, each at its `$HOME`-relative path |
 | `home/.config/mise/config.toml` | File layer. mise's global config, which also pins every other tool |
 | `home/.config/mise/config.macos.toml` | macOS-only bootstrap config: Homebrew packages, services, LaunchAgents, `PATH`, `XDG_CONFIG_HOME` and `XDG_DATA_DIRS` for GUI apps, Dock and Finder settings |
@@ -67,24 +71,21 @@ Linking happens in two layers, each with its own `[dotfiles]` table.
 
 ```mermaid
 flowchart TB
-    bootstrap["just bootstrap"] --> dot["mise dot apply<br/>(MISE_CONFIG_DIR = repo root)"]
+    bootstrap["just bootstrap"] --> dot["mise dot apply<br/>(MISE_CONFIG_DIR = bootstrap/)"]
     bootstrap --> apply["mise bootstrap (from ~)"]
-    dot -->|reads| layer1["mise.toml<br/>bootstrap layer"]
+    dot -->|reads| layer1["bootstrap/mise.toml<br/>bootstrap layer"]
     apply -->|reads| layer2["~/.config/mise/config.toml<br/>file layer"]
     layer1 -->|links| links1["~/.dotfiles → home/<br/>~/.config/mise/* → home/.config/mise/*<br/>~/.config/mise/justfile → justfile"]
     links1 -.->|makes reachable| layer2
     layer2 -->|links| links2["~/path → ~/.dotfiles/path"]
 ```
 
-### The bootstrap layer: `mise.toml`
+### The bootstrap layer: `bootstrap/mise.toml`
 
 This layer only makes the file layer reachable. It links `~/.dotfiles` to `home/` in this
 checkout, links each file in `home/.config/mise` into a real `~/.config/mise` directory
 (`symlink-each`), and links the repo's `justfile` to `~/.config/mise/justfile`. Once
 applied, mise's global config holds the file layer. Don't add other dotfile entries here.
-
-Its `[tools]` table pins only what the repo's `justfile` needs, by major version, so those
-tools install before the global config exists.
 
 ### The file layer: `home/.config/mise/config.toml`
 
@@ -111,18 +112,18 @@ mise warns "no recognized operation" and ignores it:
 
 Where you run `mise dot` decides which layer it reads:
 
-- **Outside this repo**, your shell's `MISE_CONFIG_DIR` (`~/.config/mise`) applies, so
-  `mise dot` reads the global config: the file layer.
-- **With `MISE_CONFIG_DIR="$PWD"` at the repo root**, `mise dot` reads only `mise.toml`:
-  the bootstrap layer.
-
-A bare `mise dot` inside the repo reads both layers and fails with "conflicting dotfile
-declarations". Set `MISE_CONFIG_DIR="$PWD"` there, or `cd ~` first for the file layer.
+- **Anywhere, by default**, your shell's `MISE_CONFIG_DIR` (`~/.config/mise`) applies, so
+  `mise dot` reads the global config: the file layer. The repo has no `mise.toml` at its
+  root, so mise finds no project config there, and a bare `mise dot` inside the repo is safe.
+- **With `MISE_CONFIG_DIR="$PWD/bootstrap"`**, `mise dot` reads only `bootstrap/mise.toml`:
+  the bootstrap layer. `just bootstrap` does this for you. Set it per command, never
+  `export` it: every other `mise` call, in the `justfile` too, would read the bootstrap
+  layer instead of the global config.
 
 | Command | Effect |
 |---|---|
 | `mise run recipes bootstrap [args…]` | Apply both layers and the rest of `mise bootstrap` |
-| `MISE_CONFIG_DIR="$PWD" mise dot <subcommand>` | `mise dot <subcommand>` for the bootstrap layer, from the repo root, e.g. `status`, `apply`, `diff` |
+| `MISE_CONFIG_DIR="$PWD/bootstrap" mise dot <subcommand>` | `mise dot <subcommand>` for the bootstrap layer, from the repo root, e.g. `status`, `apply`, `diff` |
 | `cd ~ && mise dot <subcommand>` | The same for the file layer |
 | `mise run recipes upgrade [args…]` | Prune, then upgrade mise, tools (bumping their pins), Homebrew packages, zsh plugins, and agent skills |
 | `mise run recipes prune [args…]` | Remove unused tool versions, undeclared Homebrew formulae, and undeclared casks that mise installed |
@@ -150,8 +151,8 @@ Add an entry and run `mise run recipes bootstrap` to install it. To uninstall on
 ## Adding a file
 
 > [!IMPORTANT]
-> Run `mise dot add` **outside** this repo. Inside it, a bare `mise dot` fails (see above),
-> and `MISE_CONFIG_DIR="$PWD" mise dot add` targets the bootstrap layer, not the file layer.
+> Never run `mise dot add` with `MISE_CONFIG_DIR` pointing at `bootstrap/`: it targets the
+> bootstrap layer, not the file layer.
 
 From `$HOME` (or anywhere outside the repo), `mise dot add` moves the file into `home/`,
 adds a `"~/<path>" = {}` entry to the global config (writing through the symlink into this
