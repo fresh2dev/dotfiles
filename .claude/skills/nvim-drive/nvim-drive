@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+# Start and drive a Neovim instance over RPC. See SKILL.md for usage.
+set -euo pipefail
+
+here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+name=${NVIM_DRIVE_NAME:-main}
+dir=${TMPDIR:-/tmp}/nvim-drive
+sock=$dir/$name.sock
+session=nvim-drive-$name
+size=${NVIM_DRIVE_SIZE:-50x160}
+
+ids=$dir/$name.rex # "<session_id> <block_id>" of the --ui Rex session
+
+die() {
+  echo "nvim-drive: $*" >&2
+  exit 1
+}
+
+usage() {
+  cat <<EOF
+usage: nvim-drive start [--ui] [--cwd DIR] [-- NVIM_ARGS...]
+       nvim-drive lua FILE | -e CODE | -     run Lua, print its return value as JSON
+       nvim-drive keys KEYS                   send keys (nvim --remote-send syntax)
+       nvim-drive screen [--ansi]             print the UI instance's screen (--ansi keeps escapes)
+       nvim-drive stop
+       nvim-drive status
+env:   NVIM_DRIVE_NAME (default: main) names the instance; socket: $dir/<name>.sock
+       NVIM_DRIVE_SIZE (default: 50x160) is the --ui terminal as ROWSxCOLS
+EOF
+}
+
+running() {
+  [[ -S $sock ]] && nvim --server "$sock" --remote-expr 1 >/dev/null 2>&1
+}
+
+start() {
+  local ui=0 cwd=$PWD
+  while (($#)); do
+    case $1 in
+      --ui) ui=1 ;;
+      --cwd)
+        cwd=$(cd "$2" && pwd)
+        shift
+        ;;
+      --)
+        shift
+        break
+        ;;
+      *) break ;;
+    esac
+    shift
+  done
+  running && die "already running: $sock (stop it, or set NVIM_DRIVE_NAME)"
+  mkdir -p "$dir"
+  rm -f "$sock"
+
+  # Run with the tools and virtualenv a shell in $cwd would have, not the
+  # caller's: an inherited VIRTUAL_ENV makes Python servers resolve the wrong
+  # site-packages, and an inherited PATH can hold stale tool versions.
+  local path=$PATH
+  if [[ -n ${VIRTUAL_ENV:-} ]]; then
+    path=$(tr : '\n' <<<"$path" | grep -vxF "$VIRTUAL_ENV/bin" | paste -sd: -)
+  fi
+  if command -v mise >/dev/null; then
+    path=$(cd "$cwd" && PATH=$path mise env -q -C "$cwd" --json 2>/dev/null |
+      jq -r '.PATH // empty') || true
+    [[ -n $path ]] || path=$PATH
+  fi
+  # Also hide the caller's Rex pane: plugins that read REX_BLOCK would act on it.
+  local envv=(env -u VIRTUAL_ENV -u REX_SESSION -u REX_BLOCK "PATH=$path")
+  if [[ -x $cwd/.venv/bin/python ]]; then
+    envv=(env -u REX_SESSION -u REX_BLOCK "VIRTUAL_ENV=$cwd/.venv" "PATH=$cwd/.venv/bin:$path")
+  fi
+
+  if ((ui)); then
+    # A background Rex session: no client needs to be attached. Rex sizes it
+    # 24x80 until told otherwise, so resize the block before nvim draws much.
+    local created sid bid
+    created=$(rex new "$session" -c "$cwd" --shell=none --json -- \
+      "${envv[@]}" nvim --listen "$sock" "$@") || die "rex new failed"
+    sid=$(jq -er '.session_id' <<<"$created")
+    bid=$(jq -er '.initial_windows[0].block_ids[0]' <<<"$created")
+    echo "$sid $bid" >"$ids"
+    rex block call -s "$sid" -b "$bid" resize \
+      "{\"rows\":${size%x*},\"columns\":${size#*x}}" >/dev/null ||
+      die "could not resize $session"
+  else
+    (cd "$cwd" && nohup "${envv[@]}" nvim --headless --listen "$sock" "$@" \
+      >"$dir/$name.log" 2>&1 &)
+  fi
+  for _ in $(seq 100); do
+    running && {
+      echo "$sock"
+      return
+    }
+    sleep 0.1
+  done
+  stop
+  die "nvim did not start; see $dir/$name.log"
+}
+
+lua_cmd() {
+  running || die "not running: $sock"
+  local file
+  case ${1:--} in
+    -e)
+      file=$(mktemp "$dir/XXXXXX.lua")
+      printf '%s\n' "$2" >"$file"
+      ;;
+    -)
+      file=$(mktemp "$dir/XXXXXX.lua")
+      cat >"$file"
+      ;;
+    *) file=$(cd "$(dirname "$1")" && pwd)/$(basename "$1") ;;
+  esac
+  [[ $file == "$dir"/*.lua ]] && trap 'rm -f "$file"' RETURN
+  # Vim single-quoted strings escape ' by doubling it.
+  nvim --server "$sock" --remote-expr \
+    "luaeval('dofile(_A[1]).run(_A[2])', ['${here//\'/\'\'}/lib.lua', '${file//\'/\'\'}'])"
+  echo
+}
+
+stop() {
+  if running; then
+    nvim --server "$sock" --remote-send '<C-\><C-n>:qa!<CR>' 2>/dev/null || true
+  fi
+  if [[ -f $ids ]]; then
+    rex kill "$(cut -d' ' -f1 "$ids")" >/dev/null 2>&1 || true
+    rm -f "$ids"
+  fi
+  rm -f "$sock"
+}
+
+case ${1:-} in
+  start)
+    shift
+    start "$@"
+    ;;
+  lua)
+    shift
+    lua_cmd "$@"
+    ;;
+  keys)
+    running || die "not running: $sock"
+    [[ $# -ge 2 ]] || die "keys: missing KEYS"
+    nvim --server "$sock" --remote-send "$2"
+    ;;
+  screen)
+    [[ -f $ids ]] || die "no UI session for $name (start with --ui)"
+    read -r sid bid <"$ids"
+    rex capture -s "$sid" -b "$bid" --trim ${2:+--format=vt} ||
+      die "no UI session $session (start with --ui)"
+    ;;
+  stop) stop ;;
+  status) running && echo "running: $sock" || echo "stopped" ;;
+  *) usage ;;
+esac
