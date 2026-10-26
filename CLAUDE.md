@@ -14,10 +14,9 @@ entries restrict them to macOS.
 
 Linking happens in two layers, each with its own `[dotfiles]` table:
 
-- **Bootstrap layer**: the root `mise.toml`. It only links `~/.dotfiles` → `home/`, the
+- **Bootstrap layer**: `bootstrap/mise.toml`. It only links `~/.dotfiles` → `home/`, the
   files of `home/.config/mise` into `~/.config/mise` (`symlink-each`), which makes the file
-  layer reachable, and the root `justfile` to `~/.config/mise/justfile`. Its `[tools]` pins
-  the tools the root `justfile` needs.
+  layer reachable, and the root `justfile` to `~/.config/mise/justfile`. It has no `[tools]`.
 - **File layer**: the `[dotfiles]` table in `home/.config/mise/config.toml` (the global mise
   config). Its settings make `~/.dotfiles` the dotfiles root and `symlink` the default mode,
   so a plain entry is just its target:
@@ -32,9 +31,11 @@ to link a target to a different path under `home/`. macOS-only entries carry
 `variants = [{ os = "macos" }]` plus an explicit `mode` (with only `variants`, mise
 ignores the entry). There is no Linux-specific variant.
 
-A bare `mise dot` inside the repo loads both layers and fails with "conflicting dotfile
-declarations". Run the file layer from outside the repo (`cd ~ && mise dot …`) and the
-bootstrap layer from the repo root with `MISE_CONFIG_DIR="$PWD" mise dot …`.
+The bootstrap layer lives in `bootstrap/`, not at the repo root, so mise never finds it as
+project config: a bare `mise` anywhere in the repo reads only the global config (the file
+layer). Never put a `mise.toml` at the repo root: it would override `dotfiles.root` and
+make `mise dot add` move files to the wrong place. Run the bootstrap layer only with
+`MISE_CONFIG_DIR="$PWD/bootstrap" mise dot …`; its `source` paths are `../`-relative.
 
 ## Commands
 
@@ -52,7 +53,7 @@ root. `recipes` is a task in the global config's `[tasks]` that runs
 | `mise run recipes dir` | Print `repo_dir`, the repo checkout the justfile resolves to, e.g. `cd "$(mise run recipes dir)"` |
 | `mise run recipes edit`, `edit-mise`, `edit-mise-macos` | Open the justfile, `config.toml`, or `config.macos.toml` in `$EDITOR` |
 | `cd ~ && mise dot <subcommand>` | The file layer (`apply`, `status`, `diff`, `add`, …) |
-| `MISE_CONFIG_DIR="$PWD" mise dot <subcommand>` | The bootstrap layer, from the repo root |
+| `MISE_CONFIG_DIR="$PWD/bootstrap" mise dot <subcommand>` | The bootstrap layer, from the repo root |
 
 The recipes pass arguments with `[positional-arguments]` and `"$@"`; keep it that way so
 quoted arguments aren't re-split.
@@ -61,18 +62,19 @@ Run through `mise run recipes`, the justfile is read through a symlink, so `sour
 `~/.config/mise`, not the repo. Its `repo_dir` variable resolves the symlink with
 `canonicalize()`; use it for any path into the repo.
 
-The `mise_local` and `mise_global` variables expand to `mise` with `MISE_CONFIG_DIR` set
-for that command only. `bootstrap` uses `mise_local` (`repo_dir`) for its bootstrap-layer
-`mise dot apply`; that is what makes mise read `mise.toml` as global config (no `mise
-trust` needed) and skip the global config. Every other `mise` call uses `mise_global`,
-which runs from `~` (`mise -C`) with `MISE_CONFIG_DIR` set to `mise_config_dir`:
-`$XDG_CONFIG_HOME/mise`, else `~/.config/mise`. It deliberately ignores an inherited
-`$MISE_CONFIG_DIR`: Setup runs `just bootstrap` from a `MISE_CONFIG_DIR="$PWD" mise en`
-shell, where honoring it would point every step at the bootstrap layer. Don't change that.
+`mise_local` expands to `mise` with `MISE_CONFIG_DIR` set to `repo_dir/bootstrap` for that
+command only. `bootstrap` uses it for its bootstrap-layer `mise dot apply`; that is what
+makes mise read `bootstrap/mise.toml` as global config (no `mise trust` needed) and skip the
+global config. Every other `mise` call is plain `mise` and relies on the inherited
+`MISE_CONFIG_DIR` (`~/.config/mise`, set by `.zshenv`), which is also what loads
+`config.macos.toml`; without it mise reads only `config.toml`. The justfile deliberately
+doesn't set it: Setup passes it per command, and a shell that exports
+`MISE_CONFIG_DIR` pointing at `bootstrap/` would send every recipe to the bootstrap layer.
+Never export that.
 
-Recipes call mise-managed tools through `mise_exec` (`mise_global` + `exec --`), not bare,
-so they work before the shell activates mise and install lazy tools on first use. Tools
-not managed by mise, such as `git`, are called directly.
+Recipes call mise-managed tools through `mise exec --`, not bare, so they work before the
+shell activates mise and install lazy tools on first use. Tools not managed by mise, such as
+`git`, are called directly.
 
 `mise dot add <path>`, run from outside the repo, moves the file into `home/`, adds a
 `"~/<path>" = {}` entry to the global config (through the `~/.config/mise` symlink), and
@@ -86,11 +88,8 @@ exist and explicit backends (`cargo:`, `go:`, `pypi:`, `npm:`, `aqua:`) otherwis
 To add a tool, add a pinned entry there; do not add `cargo binstall` / `go install` /
 `uv tool install` lines to a justfile.
 
-The root `mise.toml` is the only other `[tools]` table. It pins just the tools the root
-`justfile` needs, by major version, so a fresh checkout can install them before anything is
-linked (see the README's Setup). Don't add other tools there. The global config pins the
-same tools at exact versions so they stay available outside the repo; keep a prerequisite
-in both places.
+`bootstrap/mise.toml` has no `[tools]`: Setup installs `just` from the global config
+(`mise exec just --`), so don't add tools there.
 
 `.zshenv` sets `MISE_CONFIG_DIR="$HOME/.config/mise"` and `MISE_AUTO_ENV=true` (before
 activating mise), which is how per-platform configs such as `config.macos.toml`
@@ -126,8 +125,8 @@ wrappers around `mise` commands. Its conventions:
 - Lists of things to install (plugin repos, skills) are `'''` string variables, one item
   per line, looped over in the recipe body. Don't turn them into long dependency lists
   continued with `\`: `just --fmt` joins those onto one line.
-- Recipes don't depend on the working directory: `mise` calls go through `mise_global`
-  (which `cd`s to `~`) or `mise_local`, and other paths come from `repo_dir`,
+- Recipes don't depend on the working directory: `mise` calls are plain `mise` (global
+  config via the inherited `MISE_CONFIG_DIR`) or `mise_local`, and other paths come from `repo_dir`,
   `env('HOME')`, or env vars.
 
 ## Structure notes
@@ -188,7 +187,7 @@ wrappers around `mise` commands. Its conventions:
   table of `home/.config/mise/config.toml`; without one it is never linked. Then run
   `cd ~ && mise dot apply ~/<path>` (or use `mise dot add` from outside the repo, which does
   all three steps). macOS-only entries add the `mode` and `variants` shown above.
-- Never add dotfile entries to the root `mise.toml`; it holds only the bootstrap layer.
+- Never add dotfile entries to `bootstrap/mise.toml`; it holds only the bootstrap layer.
 - Files stay in place under `home/` at their exact `$HOME`-relative path; renaming or
   moving a config file changes where it is linked, and its entry must change with it.
 - No machine-specific absolute paths (`/Users/<name>`, `/home/<name>`), in `[dotfiles]` or

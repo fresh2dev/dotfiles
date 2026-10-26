@@ -136,5 +136,6 @@ Tracker commands do not grant permission to commit or push application code. Fol
 .beads/ is gitignored on purpose.
 
 # graphify
+
 - **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
 When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.

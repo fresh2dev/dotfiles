@@ -2,18 +2,12 @@
 # is the symlink's directory, not the repo.
 repo_dir := parent_directory(canonicalize(source_file()))
 
-# `mise` that reads only this repo's `mise.toml` (the bootstrap layer)
-mise_local := "MISE_CONFIG_DIR=" + quote(repo_dir) + " mise"
+# `mise` that reads only `bootstrap/mise.toml` (the bootstrap layer)
+mise_local := "MISE_CONFIG_DIR=" + quote(repo_dir / 'bootstrap') + " mise"
 
-# The global mise config dir. An inherited $MISE_CONFIG_DIR is ignored: during setup it
-# points at this repo.
+# The global mise config dir. Plain `mise` calls rely on the inherited $MISE_CONFIG_DIR
+# (set by `.zshenv`) to read it, including `config.macos.toml`.
 mise_config_dir := env('XDG_CONFIG_HOME', env('HOME') / '.config') / 'mise'
-
-# `mise` that reads only the global config, run from ~ so no project config is picked up
-mise_global := "MISE_CONFIG_DIR=" + quote(mise_config_dir) + " mise -C " + quote(env('HOME'))
-
-# Run a tool from the global config, installing it first if needed
-mise_exec := mise_global + " exec --"
 
 # Pick a recipe interactively
 default:
@@ -36,17 +30,17 @@ edit-mise-macos:
 # Format the repo with dprint, using the repo's copy of the global dprint config, then
 # prek's whitespace fixers
 format-dotfiles:
-    {{ mise_exec }} dprint fmt -c {{ quote(repo_dir / "home/.config/dprint/dprint.jsonc") }} {{ quote(repo_dir) }}
-    {{ mise_exec }} prek -C {{ quote(repo_dir) }} run -q --all-files trailing-whitespace end-of-file-fixer
+    mise exec -- dprint fmt -c {{ quote(repo_dir / "home/.config/dprint/dprint.jsonc") }} {{ quote(repo_dir) }}
+    mise exec -- prek -C {{ quote(repo_dir) }} run -q --all-files trailing-whitespace end-of-file-fixer
 
 # Arguments reach every `mise` step except `self-update`, which has no `--dry-run`.
 # Upgrade mise, tools, packages, zsh plugins, and agent skills
 [positional-arguments]
 upgrade *args: && _update-zsh-plugins _update-skills _update-claude-plugins
     {{ just_executable() }} -f {{ quote(source_file()) }} prune "$@"
-    {{ mise_global }} self-update
-    {{ mise_global }} upgrade --bump --interactive "$@"
-    {{ mise_global }} bootstrap packages upgrade -y "$@"
+    mise self-update
+    mise upgrade --bump --interactive "$@"
+    mise bootstrap packages upgrade -y "$@"
 
 # Print the repo root (the justfile's resolved location)
 dir:
@@ -55,17 +49,17 @@ dir:
 # Remove unused tool versions and undeclared Homebrew packages
 [positional-arguments]
 prune *args:
-    {{ mise_global }} prune "$@"
-    {{ mise_global }} bootstrap packages prune -m brew "$@"
-    {{ mise_global }} bootstrap packages prune -m brew-cask "$@"
-    {{ mise_global }} x -- uv cache clean
-    {{ mise_global }} x -- go clean -cache -testcache -modcache
+    mise prune "$@"
+    mise bootstrap packages prune -m brew "$@"
+    mise bootstrap packages prune -m brew-cask "$@"
+    mise exec -- uv cache clean
+    mise exec -- go clean -cache -testcache -modcache
 
 # Link the dotfiles and set up the machine; arguments go to `mise bootstrap`
 [positional-arguments]
 bootstrap *args: && _install-zsh-plugins _install-skills _install-claude-plugins
     {{ mise_local }} dot apply
-    {{ mise_global }} bootstrap "$@"
+    mise bootstrap "$@"
 
 zsh_config_dir := quote(env('ZDOTDIR', env('HOME')) / '.zsh')
 
@@ -136,15 +130,15 @@ agent_skills := '''
 _install-skills:
     for entry in {{ replace(agent_skills, "\n", " ") }}; do \
         repo="${entry%%:*}" skill="${entry#*:}"; \
-        {{ mise_exec }} jq -e --arg skill "$skill" '.skills | has($skill)' ~/.agents/.skill-lock.json >/dev/null 2>&1 \
-            || {{ mise_exec }} skills add "$repo" -g -a claude-code -a zed -y --skill "$skill" \
+        mise exec -- jq -e --arg skill "$skill" '.skills | has($skill)' ~/.agents/.skill-lock.json >/dev/null 2>&1 \
+            || mise exec -- skills add "$repo" -g -a claude-code -a zed -y --skill "$skill" \
             || exit; \
     done
 
 # Update the named skills, or every installed skill
 [positional-arguments]
 _update-skills *skills:
-    {{ mise_exec }} skills update -g "$@"
+    mise exec -- skills update -g "$@"
 
 ##################################################
 # Claude Code plugins
@@ -162,15 +156,15 @@ claude_plugins := '''
 _install-claude-plugins:
     for entry in {{ replace(claude_plugins, "\n", " ") }}; do \
         repo="${entry%%:*}" plugin="${entry#*:}"; \
-        {{ mise_exec }} claude plugin list --json | {{ mise_exec }} jq -e --arg id "$plugin" 'any(.[]; .id == $id)' >/dev/null \
-            || { {{ mise_exec }} claude plugin marketplace add "$repo" \
-                && {{ mise_exec }} claude plugin install "$plugin"; } \
+        mise exec -- claude plugin list --json | mise exec -- jq -e --arg id "$plugin" 'any(.[]; .id == $id)' >/dev/null \
+            || { mise exec -- claude plugin marketplace add "$repo" \
+                && mise exec -- claude plugin install "$plugin"; } \
             || exit; \
     done
 
 # Update every marketplace, then the listed plugins
 _update-claude-plugins: _install-claude-plugins
-    {{ mise_exec }} claude plugin marketplace update
+    mise exec -- claude plugin marketplace update
     for entry in {{ replace(claude_plugins, "\n", " ") }}; do \
-        {{ mise_exec }} claude plugin update "${entry#*:}" || exit; \
+        mise exec -- claude plugin update "${entry#*:}" || exit; \
     done
