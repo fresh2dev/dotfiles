@@ -4,4 +4,5 @@ home/.bash_history
 
 /.beads/
 /.ralph-tui/
-/home/.claude/plugins/claude-hud/statusline.mjs
+/home/.claude/plugins/claude-hud/**/*
+!/home/.claude/plugins/claude-hud/config.json

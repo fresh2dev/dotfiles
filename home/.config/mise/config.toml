@@ -43,7 +43,7 @@ GH_CONFIG_DIR = "$XDG_CONFIG_HOME/gh"
 STARSHIP_CONFIG = "$XDG_CONFIG_HOME/starship.toml"
 RIPGREP_CONFIG_PATH = "$XDG_CONFIG_HOME/ripgreprc"
 YAMLFIX_CONFIG_PATH = "$XDG_CONFIG_HOME/yamlfix"
-LG_CONFIG_FILE = "$XDG_CONFIG_HOME/lazygit/config.yml,$XDG_CONFIG_HOME/lazygit/theme.yml"
+LG_CONFIG_FILE = "$XDG_CONFIG_HOME/lazygit/config.yml"
 FZF_DEFAULT_OPTS_FILE = "$XDG_CONFIG_HOME/fzf/fzfrc"
 FZF_DEFAULT_COMMAND = "rg --files"
 # Added to FZF_DEFAULT_OPTS_FILE.
@@ -239,7 +239,7 @@ bitwarden-secrets-manager = { version = "latest", lazy = true }
 "~/.config/AGENTS.md" = { source = "~/.dotfiles/.claude/CLAUDE.md" }
 "~/.config/alacritty/alacritty.toml" = {}
 "~/.config/atuin/config.toml" = {}
-"~/.config/bat/config" = {}
+"~/.config/bat" = {}
 "~/.config/colima/default/colima.yaml" = { mode = "symlink", variants = [{ os = "macos" }] }
 "~/.config/direnv/direnv.toml" = {}
 "~/.config/direnv/direnvrc" = {}
@@ -248,14 +248,11 @@ bitwarden-secrets-manager = { version = "latest", lazy = true }
 "~/.config/fd/ignore" = {}
 "~/.config/fzf/fzfrc" = {}
 "~/.config/gh/config.yml" = {}
-"~/.config/ghostty/config" = {}
-"~/.config/git/ignore" = {}
-"~/.config/k9s/aliases.yaml" = {}
-"~/.config/k9s/config.yaml" = {}
-"~/.config/k9s/plugins.yaml" = {}
-"~/.config/k9s/skins/transparent.yaml" = {}
+"~/.config/ghostty" = {}
+"~/.config/git" = {}
+"~/.config/k9s" = {}
 "~/.config/lazygit/config.yml" = {}
-"~/.config/lazygit/theme.yml" = {}
+"~/Library/Application Support/lazygit/config.yml" = { source = "~/.dotfiles/.config/lazygit/config.yml", mode = "symlink", variants = [{ os = "macos" }] }
 "~/.config/moxide/settings.toml" = {}
 "~/.config/myke/project.myke" = {}
 "~/.config/neovide/config.toml" = {}

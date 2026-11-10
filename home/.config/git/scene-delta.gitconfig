@@ -1,0 +1,10 @@
+# Managed by Scene: Teletext 1.0.0 (dark). Scene overwrites this file.
+[delta]
+	syntax-theme = scene-dark
+	minus-style = syntax "#351210"
+	minus-emph-style = syntax "#661c17"
+	plus-style = syntax "#142f12"
+	plus-emph-style = syntax "#205a1b"
+	line-numbers-minus-style = "#fd3b2e"
+	line-numbers-plus-style = "#4df83f"
+	line-numbers-zero-style = "#877d80"

@@ -129,3 +129,8 @@
     gav = log --graph --decorate --oneline --all --pretty=oneline --no-abbrev
     l = log --graph --decorate --abbrev-commit --format=format:'%C(bold yellow)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
     la = log --graph --decorate --abbrev-commit --format=format:'%C(bold yellow)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+
+# >>> Scene: managed include. Remove this block to detach Scene. >>>
+[include]
+	path = "/Users/donald/.config/git/scene-delta.gitconfig"
+# <<< Scene <<<

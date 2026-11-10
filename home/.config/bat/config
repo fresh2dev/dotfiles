@@ -8,3 +8,7 @@
 
 # Uncomment the following line to disable automatic paging:
 --paging=never
+
+# >>> Scene: managed include. Remove this block to detach Scene. >>>
+--theme=scene-dark
+# <<< Scene <<<

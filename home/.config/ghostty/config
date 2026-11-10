@@ -160,3 +160,7 @@ macos-icon = retro
 
 confirm-close-surface = true
 quit-after-last-window-closed = true
+
+# >>> Scene: managed include. Remove this block to detach Scene. >>>
+config-file = ?"/Users/donald/.config/ghostty/scene.conf"
+# <<< Scene <<<

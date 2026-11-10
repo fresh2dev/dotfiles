@@ -1,0 +1,89 @@
+# Scene theme for k9s. Scene rewrites this file on every apply.
+k9s:
+  body:
+    fgColor: "#d7d7d7"
+    bgColor: default
+    logoColor: "#22fcfd"
+  prompt:
+    fgColor: "#d7d7d7"
+    bgColor: "#090909"
+    suggestColor: "#f8f929"
+  info:
+    fgColor: "#22fcfd"
+    sectionColor: "#d7d7d7"
+  dialog:
+    fgColor: "#d7d7d7"
+    bgColor: default
+    buttonFgColor: "#d7d7d7"
+    buttonBgColor: "#528dff"
+    buttonFocusFgColor: "#090909"
+    buttonFocusBgColor: "#22fcfd"
+    labelFgColor: "#877d80"
+    fieldFgColor: "#d7d7d7"
+  frame:
+    border:
+      fgColor: "#3c3638"
+      focusColor: "#22fcfd"
+    menu:
+      fgColor: "#d7d7d7"
+      keyColor: "#4df83f"
+      numKeyColor: "#4df83f"
+    crumbs:
+      fgColor: "#090909"
+      bgColor: "#22fcfd"
+      activeColor: "#4df83f"
+    status:
+      newColor: "#22fcfd"
+      modifyColor: "#528dff"
+      addColor: "#4df83f"
+      errorColor: "#fd3b2e"
+      highlightColor: "#f8f929"
+      killColor: "#877d80"
+      completedColor: "#877d80"
+    title:
+      fgColor: "#d7d7d7"
+      bgColor: default
+      highlightColor: "#22fcfd"
+      counterColor: "#4df83f"
+      filterColor: "#4df83f"
+  views:
+    charts:
+      bgColor: default
+      defaultDialColors:
+        - "#22fcfd"
+        - "#4df83f"
+      defaultChartColors:
+        - "#22fcfd"
+        - "#4df83f"
+    table:
+      fgColor: "#d7d7d7"
+      bgColor: default
+      cursorFgColor: "#d7d7d7"
+      cursorBgColor: "#0e0e0e"
+      markColor: "#f8f929"
+      header:
+        fgColor: "#d7d7d7"
+        bgColor: default
+        sorterColor: "#22fcfd"
+    xray:
+      fgColor: "#d7d7d7"
+      bgColor: default
+      cursorColor: "#0e0e0e"
+      graphicColor: "#22fcfd"
+      showIcons: false
+    yaml:
+      keyColor: "#22fcfd"
+      colonColor: "#528dff"
+      valueColor: "#d7d7d7"
+    logs:
+      fgColor: "#d7d7d7"
+      bgColor: default
+      indicator:
+        fgColor: "#d7d7d7"
+        bgColor: "#002a2b"
+    help:
+      fgColor: "#d7d7d7"
+      bgColor: default
+      indicator:
+        fgColor: "#4df83f"
+        bgColor: "#002a2b"

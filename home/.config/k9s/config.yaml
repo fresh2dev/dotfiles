@@ -6,7 +6,7 @@ k9s:
   readOnly: false
   noExitOnCtrlC: true
   ui:
-    skin: 'transparent'
+    skin: scene
     enableMouse: false
     headless: false
     logoless: false
