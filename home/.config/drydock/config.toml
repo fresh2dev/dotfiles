@@ -1,10 +1,7 @@
 roots = ["$GHQ_ROOT/github.com", "$GHQ_ROOT/local"]  # each immediate subdirectory becomes a "group"
-# <root>/<owner>/<project>.wt/<feat/foobar>
-# 0/1/2/3/4
 max_depth = 4
-follow_nested_repos = false  # keeps submodules and vendored checkouts out
-# (bare repos always descend — see "Worktrees")
-follow_symlinks = false  # so a symlinked tree can't be counted twice
+follow_nested_repos = false
+follow_symlinks = false
 # exclude = ["fixtures/**"]  # globs, relative to a root
 # prune = []  # extra directory names to skip
 
@@ -15,13 +12,15 @@ debounce = "1s"
 
 [status]
 untracked = "normal"  # normal | all | no
-concurrency = 8  # omit to size from your core count
+# concurrency = 8  # omit to size from your core count
 max_files = 200
+max_age = "1h"
 
 [release]
-# Requires a digit, so marker tags like `latest` aren't mistaken for releases.
 tag_pattern = "*[0-9]*"
+max_subjects = 30
 read_changelog = true
+changelog_files = ["CHANGELOG.md"]
 
 [remote]
 fetch = true  # see "Ahead, behind, and the network"
@@ -32,13 +31,36 @@ timeout = "20s"  # per repo, then it's given up on
 [visibility]
 enabled = true  # see "Visibility"; requires `gh`
 interval = "24h"
+concurrency = 4
+timeout = "10s"
 
 [ui]
 # columns = [...]            # unset = the defaults; the `C` key writes this
+# column_widths = { branch = 30, group = 10 }
 default_filters = []  # e.g. ["dirty", "unpushed"]
 default_sort = "activity"
 default_since = ""  # e.g. "1w"
-editor_command = ["nvim", "{path}"]  # O
-file_manager_command = ["zed", "{path}"]  # o — `open -R` reveals instead
-git_client_command = ["lazygit", "--path", "{path}"]  # t
-terminal_command = ["open", "-a", "Terminal", "{path}"]  # T and ctrl-o
+# shift+o
+editor_command = [
+  "nvim",
+  "{path}",
+]
+# t
+git_client_command = [
+  "lazygit",
+  "--path",
+  "{path}",
+]
+# shift+t and ctrl-o
+terminal_command = [
+  "open",
+  "-a",
+  "Terminal",
+  "{path}",
+]
+# o
+file_manager_command = [
+  "echo",
+  "{path}",
+]
+history_wrap = false
