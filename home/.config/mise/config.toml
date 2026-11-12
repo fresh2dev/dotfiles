@@ -64,9 +64,9 @@ G = "git"
 gg = "lazygit"
 j = "just"
 so = "source"
-v = "$VISUAL"
-vq = "nvim - -c 'autocmd UIEnter * ++once silent! %s/\\e\\[[0-9;]*m//ge | cbuffer | bdelete! | cc | copen | wincmd p'"
-ff = "nvim -c 'autocmd UIEnter * ++once normal 1 ff'"
+v = "${${REX_SESSION:+neorex}:-$VISUAL}"  # neorex in a Rex terminal, else $VISUAL (zsh nested expansion)
+vq = "v - -c 'autocmd UIEnter * ++once silent! %s/\\e\\[[0-9;]*m//ge | cbuffer | bdelete! | cc | copen | wincmd p'"
+ff = "v -c 'autocmd UIEnter * ++once normal 1 ff'"
 kc = "kubectl"
 cdt = "cd $(mktemp -d)"
 currentmillis = "echo $(($(date +%s) * 1000))"
@@ -152,6 +152,7 @@ github-cli = { version = "2.105.0", lazy = true, lazy_bins = ["gh"] }
 # --- Editors / LSP / formatters / linters
 # `nightly` is a moving tag: mise never refreshes it, so `upgrade` reinstalls it with --force.
 neovim = "nightly"
+"github:alexrlocke/neorex" = { version = "0.2.0", lazy = true, lazy_bins = ["neorex"] }
 luajit = "2.1.1744318430"
 "pypi:neovim-remote" = "2.5.1"
 # Force tree-sitter-cli to install without `cargo-binstall` so it compiles against the current glibc version.
@@ -250,6 +251,7 @@ bitwarden-secrets-manager = { version = "2.1.0", lazy = true }
 "~/.config/moxide/settings.toml" = {}
 "~/.config/myke/project.myke" = {}
 "~/.config/neovide/config.toml" = {}
+"~/.config/rex" = {}
 "~/.config/ripgreprc" = {}
 "~/.config/sheets/config.toml" = {}
 "~/.config/starship.toml" = {}

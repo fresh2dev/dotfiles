@@ -2,6 +2,12 @@
 
 Always follow the rules in the `i-have-adhd` skill: action-first, numbered steps, no preamble, no closers, state restated each turn.
 
+## Rex
+
+When `REX_BLOCK` is set, name your pane after the task once you know it, and
+again if the task changes: `rex block rename -s "$REX_SESSION" "$REX_BLOCK" '<short-task-name>'`.
+Don't rename the tab (window) or the session unless I ask.
+
 ## graphify
 
 - **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`

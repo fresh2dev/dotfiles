@@ -36,7 +36,7 @@ format-dotfiles:
 # Arguments reach every `mise` step except `self-update`, which has no `--dry-run`.
 # Upgrade mise, tools, packages, zsh plugins, and agent skills
 [positional-arguments]
-upgrade *args: && _update-zsh-plugins _update-skills _update-claude-plugins
+upgrade *args: && _update-zsh-plugins _update-rex-plugins _update-skills _update-claude-plugins
     {{ just_executable() }} -f {{ quote(source_file()) }} prune "$@"
     mise self-update
     mise upgrade --bump --interactive "$@"
@@ -58,7 +58,7 @@ prune *args:
 
 # Link the dotfiles and set up the machine; arguments go to `mise bootstrap`
 [positional-arguments]
-bootstrap *args: && _install-zsh-plugins _install-skills _install-claude-plugins
+bootstrap *args: && _install-zsh-plugins _install-rex-plugins _install-skills _install-claude-plugins
     {{ mise_local }} dot apply
     mise bootstrap "$@"
 
@@ -81,6 +81,25 @@ _install-zsh-plugins:
 # Pull every cloned plugin, including ones no longer listed
 _update-zsh-plugins: _install-zsh-plugins
     find {{ zsh_config_dir }} -type d -mindepth 1 -maxdepth 1 -exec sh -c 'cd "{}" && git pull' \;
+
+rex_plugins_dir := quote(env('HOME') / '.local/share/rex')
+
+# GitHub repos, each cloned into ~/.local/share/rex/<repo name> and loaded by a module in ~/.config/rex
+rex_plugins := '''
+    chaosteil/rex-thumbs
+    haxybaxy/rex-worktrunk
+'''
+
+# Clone Rex plugins that aren't present yet
+_install-rex-plugins:
+    for repo in {{ replace(rex_plugins, "\n", " ") }}; do \
+        dest={{ rex_plugins_dir }}/"${repo#*/}"; \
+        [ -d "$dest" ] || git clone "https://github.com/$repo.git" "$dest"; \
+    done
+
+# Pull every cloned Rex plugin, including ones no longer listed
+_update-rex-plugins: _install-rex-plugins
+    find {{ rex_plugins_dir }} -type d -mindepth 1 -maxdepth 1 -exec sh -c 'cd "{}" && git pull' \;
 
 ##################################################
 # agent skills (installed from upstream by the `skills` CLI)
@@ -110,7 +129,6 @@ agent_skills := '''
     softaworks/agent-toolkit:writing-clearly-and-concisely
     dashed/claude-marketplace:ai-friendly-cli
     dashed/claude-marketplace:comment-slop
-    dashed/claude-marketplace:fd
     dashed/claude-marketplace:fzf
     dashed/claude-marketplace:git
     dashed/claude-marketplace:git-absorb
@@ -160,6 +178,7 @@ _install-claude-plugins:
                 && mise exec -- claude plugin install "$plugin"; } \
             || exit; \
     done
+    rex skill setup --agent claude --force
 
 # Update every marketplace, then the listed plugins
 _update-claude-plugins: _install-claude-plugins
