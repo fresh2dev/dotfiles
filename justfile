@@ -40,6 +40,7 @@ upgrade *args: && _update-zsh-plugins _update-skills _update-claude-plugins
     {{ just_executable() }} -f {{ quote(source_file()) }} prune "$@"
     mise self-update
     mise upgrade --bump --interactive "$@"
+    mise install --force neovim@nightly "$@"
     mise bootstrap packages upgrade -y "$@"
 
 # Print the repo root (the justfile's resolved location)

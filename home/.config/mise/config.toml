@@ -150,7 +150,8 @@ github-cli = { version = "2.104.0", lazy = true, lazy_bins = ["gh"] }
 "cargo:worktrunk" = { version = "0.82.0", bin = "wt", lazy = true, lazy_bins = ["wt"] }
 
 # --- Editors / LSP / formatters / linters
-neovim = "0.12.6"
+# `nightly` is a moving tag: mise never refreshes it, so `upgrade` reinstalls it with --force.
+neovim = "nightly"
 luajit = "2.1.1744318430"
 "pypi:neovim-remote" = "2.5.1"
 # Force tree-sitter-cli to install without `cargo-binstall` so it compiles against the current glibc version.
