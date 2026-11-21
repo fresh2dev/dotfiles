@@ -403,5 +403,11 @@ new = "wt switch --create --no-cd {{ args }}"
 # See `wt hook` (https://worktrunk.dev/hook/) for hook types, execution order, template variables, and examples. User hooks apply to all projects; project hooks (https://worktrunk.dev/config/#project-hooks) apply only to that repository.
 
 [post-remove]
+# Drop the removed worktree from drydock's cache (drydock 1.4.1+ accepts a just-removed path)
+drydock = "drydock scan {{ worktree_path }} >/dev/null"
 # In Rex, close the worktree's session that rex-worktrunk opened, returning to the session it came from
 rex-session = "command -v rex >/dev/null 2>&1 && rex --autostart=false do worktree_close path={{ worktree_path }} main={{ primary_worktree_path }} >/dev/null 2>&1 || true"
+
+[post-start]
+# Add the new worktree to drydock's cache without walking every root
+drydock = "drydock scan {{ worktree_path }} >/dev/null"
