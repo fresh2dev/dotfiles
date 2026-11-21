@@ -1,89 +1,89 @@
 # Scene theme for k9s. Scene rewrites this file on every apply.
 k9s:
   body:
-    fgColor: "#d7d7d7"
+    fgColor: "#dad3e9"
     bgColor: default
-    logoColor: "#22fcfd"
+    logoColor: "#f252d8"
   prompt:
-    fgColor: "#d7d7d7"
-    bgColor: "#090909"
-    suggestColor: "#f8f929"
+    fgColor: "#dad3e9"
+    bgColor: "#10091a"
+    suggestColor: "#ebbf0d"
   info:
-    fgColor: "#22fcfd"
-    sectionColor: "#d7d7d7"
+    fgColor: "#f252d8"
+    sectionColor: "#dad3e9"
   dialog:
-    fgColor: "#d7d7d7"
+    fgColor: "#dad3e9"
     bgColor: default
-    buttonFgColor: "#d7d7d7"
-    buttonBgColor: "#528dff"
-    buttonFocusFgColor: "#090909"
-    buttonFocusBgColor: "#22fcfd"
-    labelFgColor: "#877d80"
-    fieldFgColor: "#d7d7d7"
+    buttonFgColor: "#dad3e9"
+    buttonBgColor: "#67aaff"
+    buttonFocusFgColor: "#10091a"
+    buttonFocusBgColor: "#f252d8"
+    labelFgColor: "#85799e"
+    fieldFgColor: "#dad3e9"
   frame:
     border:
-      fgColor: "#3c3638"
-      focusColor: "#22fcfd"
+      fgColor: "#413755"
+      focusColor: "#f252d8"
     menu:
-      fgColor: "#d7d7d7"
-      keyColor: "#4df83f"
-      numKeyColor: "#4df83f"
+      fgColor: "#dad3e9"
+      keyColor: "#65d86d"
+      numKeyColor: "#65d86d"
     crumbs:
-      fgColor: "#090909"
-      bgColor: "#22fcfd"
-      activeColor: "#4df83f"
+      fgColor: "#10091a"
+      bgColor: "#f252d8"
+      activeColor: "#65d86d"
     status:
-      newColor: "#22fcfd"
-      modifyColor: "#528dff"
-      addColor: "#4df83f"
-      errorColor: "#fd3b2e"
-      highlightColor: "#f8f929"
-      killColor: "#877d80"
-      completedColor: "#877d80"
+      newColor: "#f252d8"
+      modifyColor: "#67aaff"
+      addColor: "#65d86d"
+      errorColor: "#ff796d"
+      highlightColor: "#ebbf0d"
+      killColor: "#85799e"
+      completedColor: "#85799e"
     title:
-      fgColor: "#d7d7d7"
+      fgColor: "#dad3e9"
       bgColor: default
-      highlightColor: "#22fcfd"
-      counterColor: "#4df83f"
-      filterColor: "#4df83f"
+      highlightColor: "#f252d8"
+      counterColor: "#65d86d"
+      filterColor: "#65d86d"
   views:
     charts:
       bgColor: default
       defaultDialColors:
-        - "#22fcfd"
-        - "#4df83f"
+        - "#f252d8"
+        - "#65d86d"
       defaultChartColors:
-        - "#22fcfd"
-        - "#4df83f"
+        - "#f252d8"
+        - "#65d86d"
     table:
-      fgColor: "#d7d7d7"
+      fgColor: "#dad3e9"
       bgColor: default
-      cursorFgColor: "#d7d7d7"
-      cursorBgColor: "#0e0e0e"
-      markColor: "#f8f929"
+      cursorFgColor: "#dad3e9"
+      cursorBgColor: "#150e21"
+      markColor: "#ebbf0d"
       header:
-        fgColor: "#d7d7d7"
+        fgColor: "#dad3e9"
         bgColor: default
-        sorterColor: "#22fcfd"
+        sorterColor: "#f252d8"
     xray:
-      fgColor: "#d7d7d7"
+      fgColor: "#dad3e9"
       bgColor: default
-      cursorColor: "#0e0e0e"
-      graphicColor: "#22fcfd"
+      cursorColor: "#150e21"
+      graphicColor: "#f252d8"
       showIcons: false
     yaml:
-      keyColor: "#22fcfd"
-      colonColor: "#528dff"
-      valueColor: "#d7d7d7"
+      keyColor: "#f252d8"
+      colonColor: "#67aaff"
+      valueColor: "#dad3e9"
     logs:
-      fgColor: "#d7d7d7"
+      fgColor: "#dad3e9"
       bgColor: default
       indicator:
-        fgColor: "#d7d7d7"
-        bgColor: "#002a2b"
+        fgColor: "#dad3e9"
+        bgColor: "#3c1b35"
     help:
-      fgColor: "#d7d7d7"
+      fgColor: "#dad3e9"
       bgColor: default
       indicator:
-        fgColor: "#4df83f"
-        bgColor: "#002a2b"
+        fgColor: "#65d86d"
+        bgColor: "#3c1b35"
