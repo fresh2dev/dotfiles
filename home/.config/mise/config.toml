@@ -251,6 +251,7 @@ bitwarden-secrets-manager = { version = "2.1.0", lazy = true }
 "~/.config/moxide/settings.toml" = {}
 "~/.config/myke/project.myke" = {}
 "~/.config/neovide/config.toml" = {}
+"~/.config/project-jump/config.toml" = {}
 "~/.config/rex" = {}
 "~/.config/ripgreprc" = {}
 "~/.config/sheets/config.toml" = {}

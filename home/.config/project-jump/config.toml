@@ -1,0 +1,8 @@
+[picker]
+refresh = 5  # seconds between cache-only reloads; 0 turns it off
+
+[bind]
+# Switch to the project's own Rex session (rex-worktrunk), creating it if needed
+ctrl-e = { become = "nvim {1}", label = "nvim" }
+ctrl-g = { execute = "lazygit -p {1}", label = "lazygit" }
+ctrl-a = { fzf = "select-all+accept" }
