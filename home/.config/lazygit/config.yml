@@ -752,8 +752,8 @@ customCommands:
         title: 'Edit {{ .SelectedPath }} at {{ slice .SelectedCommit.Hash 0 8 }}'
         condition: '{{ if .SelectedCommitFile }}1{{ end }}'
         options:
-          - { name: 'fix in this commit', description: 'edit, then a fixup! commit (not folded)', value: 'f', key: 'f' }
           - { name: 'blame', description: 'the file as it is at this commit', value: 'b', key: 'b' }
+          - { name: 'fix in this commit', description: 'edit, then a fixup! commit (not folded)', value: 'f', key: 'f' }
     command: |-
       {{ if not .SelectedCommitFile -}}
       echo 'e works on a single file, not a folder.'; read -r _
@@ -1100,7 +1100,7 @@ keybinding:
     new: 'n'
     newWorktree: '<disabled>' # Replaced by the `fzj wt` custom commands
     edit: 'e'
-    openFile: 'o'
+    openFile: '<disabled>'
     scrollUpMain: ['K', '<shift+up>']
     scrollDownMain: ['J', '<shift+down>']
     scrollUpMain-alt1: '<disabled>'
