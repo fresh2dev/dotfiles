@@ -208,7 +208,12 @@ ff = true  # Fast-forward merge (--no-ff to create a merge commit instead)
 #
 [aliases]
 ls = "wt list"
-greet = "echo Hello from {{ branch }}"
+# `wt absorb <branch>`: merge another branch into this one, then remove its worktree and branch.
+absorb = "wt merge --branch {{ args[0] }} {{ branch }}"
+# `wt new <branch>`: new worktree without cd. In Rex, alt+s creates one and opens its session.
+new = "wt switch --create --no-cd {{ args }}"
+# `wt claude` is a zsh function in ~/.zshrc, so this shell cds into the worktree before claude starts.
+
 # url = "echo http://localhost:{{ branch | hash_port }}"
 #
 # Aliases defined here apply to all projects. For project-specific aliases, use the project config (https://worktrunk.dev/config/#project-aliases) `[aliases]` section instead.
@@ -396,3 +401,7 @@ greet = "echo Hello from {{ branch }}"
 # ## User hooks
 #
 # See `wt hook` (https://worktrunk.dev/hook/) for hook types, execution order, template variables, and examples. User hooks apply to all projects; project hooks (https://worktrunk.dev/config/#project-hooks) apply only to that repository.
+
+[post-remove]
+# In Rex, close the worktree's session that rex-worktrunk opened, returning to the session it came from
+rex-session = "command -v rex >/dev/null 2>&1 && rex --autostart=false do worktree_close path={{ worktree_path }} main={{ primary_worktree_path }} >/dev/null 2>&1 || true"
