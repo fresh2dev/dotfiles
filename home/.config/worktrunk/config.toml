@@ -207,7 +207,8 @@ ff = true  # Fast-forward merge (--no-ff to create a merge commit instead)
 # Command templates that run as `wt <name>`. See the Extending Worktrunk guide (https://worktrunk.dev/extending/#aliases) for usage and flags.
 #
 [aliases]
-ls = "wt list"
+ls = "wt list {{ args }}"
+rm = "wt remove {{ args }}"
 # `wt absorb <branch>`: merge another branch into this one, then remove its worktree and branch.
 absorb = "wt merge --branch {{ args[0] }} {{ branch }}"
 # `wt new <branch>`: new worktree without cd. In Rex, alt+s creates one and opens its session.
