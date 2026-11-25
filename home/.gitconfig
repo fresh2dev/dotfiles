@@ -10,16 +10,108 @@
     pager = delta
     sshCommand = ssh -i ~/.ssh/id_ed25519
 [interactive]
-    diffFilter = delta
+    diffFilter = delta --color-only
+[pager]
+    diff = delta --tui
+    show = delta --tui
+    log = delta --tui --quit-if-one-screen
+[pretty]
+    commit-format = tformat:%n%n▸ %h %C(blue)%an %C(blue)%ar%C(auto)%d%C(reset)%n%n    %C(green)%s%C(auto)
+    commit-format-full = tformat:%n%n▸ %h %C(blue)%an %C(blue)%ar%C(auto)%d%C(reset)%n%n%w(0,4,4)%C(green)%s%C(reset)%n%+b
 [delta]
-    features = decorations
+    features = decorations tui difftastic
     light = false
     dark = true
     navigate = true
     line-numbers = true
     side-by-side = false
-    color-only = true
     syntax-theme = DarkNeon
+; delta --tui (keys follow vim-fugitive, then lazygit). A bind replaces the action's defaults.
+[delta "tui"]
+    ; Must match the first line of the [pretty] formats, so each commit is one cursor stop.
+    commit-regex = ^(▸|commit )
+    log-args = --stat
+    log-args = --date=relative
+    log-args = --pretty=commit-format
+    show-args = --pretty=commit-format-full
+    file-header = stat
+    start-folded = true
+    mouse-support = true
+    ; fugitive's X discards; K is freed for scrolling.
+    bind = root.discard X
+    bind = branch-menu.delete X
+    bind = remote-menu.remove-remote X
+    bind = stash-menu.stash-drop X
+    bind = root.reset-menu _
+    ; h/l fold and unfold like a tree; so help is ? only and the log menu is g l.
+    bind = root.fold-or-back h
+    bind = root.fold-or-back left
+    bind = root.show-or-unfold l
+    bind = root.show-or-unfold right
+    bind = root.help-menu ?
+    bind = root.log-menu g+l
+    ; fugitive's ) ( ]c [c
+    bind = root.move-down ctrl+j
+    bind = root.move-down ctrl+down
+    bind = root.move-down )
+    bind = root.move-down ]+c
+    bind = root.move-up ctrl+k
+    bind = root.move-up ctrl+up
+    bind = root.move-up (
+    bind = root.move-up [+c
+    ; lazygit's { }; a stray fugitive - no longer narrows the context.
+    bind = root.wider-diff-context }
+    bind = root.narrower-diff-context {
+    ; d d, so fugitive's dv / dt cannot hide a file and then reverse it.
+    bind = root.hide-file d+d
+    ; fugitive's = and R
+    bind = root.toggle-section tab
+    bind = root.toggle-section =
+    bind = root.refresh g+r
+    bind = root.refresh R
+    ; alt+keys are the multiplexer's. fugitive's [[ ]] jump sections; g p goes to the parent.
+    bind = root.move-prev-section [+[
+    bind = root.move-next-section ]+]
+    bind = root.move-parent-section g+p
+    bind = commit-picker.move-prev-section [+[
+    bind = commit-picker.move-next-section ]+]
+    ; lazygit's e, ctrl+n/p and J/K
+    bind = root.show enter
+    bind = root.show e
+    bind = root.move-down-line j
+    bind = root.move-down-line down
+    bind = root.move-down-line ctrl+n
+    bind = root.move-up-line k
+    bind = root.move-up-line up
+    bind = root.move-up-line ctrl+p
+    bind = root.scroll-view-down ctrl+e
+    bind = root.scroll-view-down J
+    bind = root.scroll-view-up ctrl+y
+    bind = root.scroll-view-up K
+    ; The rebase list has its own keymap: lazygit's reordering, and the extra keys above.
+    bind = rebase-todo.rebase-todo-move-down ctrl+shift+down
+    bind = rebase-todo.rebase-todo-move-up ctrl+shift+up
+    bind = rebase-todo.move-down j
+    bind = rebase-todo.move-down down
+    bind = rebase-todo.move-down ctrl+n
+    bind = rebase-todo.move-up k
+    bind = rebase-todo.move-up up
+    bind = rebase-todo.move-up ctrl+p
+    bind = rebase-todo.scroll-view-down ctrl+e
+    bind = rebase-todo.scroll-view-down J
+    bind = rebase-todo.scroll-view-up ctrl+y
+    bind = rebase-todo.scroll-view-up K
+    ; So does the commit picker that c f / c F open.
+    bind = commit-picker.move-down j
+    bind = commit-picker.move-down down
+    bind = commit-picker.move-down ctrl+n
+    bind = commit-picker.move-up k
+    bind = commit-picker.move-up up
+    bind = commit-picker.move-up ctrl+p
+    bind = commit-picker.scroll-view-down ctrl+e
+    bind = commit-picker.scroll-view-down J
+    bind = commit-picker.scroll-view-up ctrl+y
+    bind = commit-picker.scroll-view-up K
 [absorb]
     oneFixupPerCommit = true
 [color]

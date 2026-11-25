@@ -136,7 +136,8 @@ tokei = { version = "15.0.0", lazy = true, lazy_bins = ["tokei"] }
 "go:github.com/maaslalani/sheets" = { version = "0.3.0", lazy = true, lazy_bins = ["sheets"] }
 
 # --- Git
-delta = "0.20.1"
+delta = "0.22.0"
+difftastic = { version = "0.72.0", lazy = true, lazy_bins = ["difft"] }
 lazygit = "0.66.3"
 "cargo:git-graph" = "0.8.3"
 "cargo:git-absorb" = "0.9.0"

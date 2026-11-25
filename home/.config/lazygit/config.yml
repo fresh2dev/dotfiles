@@ -333,8 +333,10 @@ git:
     - colorArg: 'always'
       command: 'delta --paging=never'
       useConfig: false
-      # # e.g. 'difft --color=always'
-      # externalDiffCommand: ''
+    # Cycled to with `cycleDiffRenderers` (D).
+    - type: extDiff
+      name: difftastic
+      command: 'difft --color=always --background={{colorScheme}} --context={{diffContext}} --width={{width}} --display=inline'
   # Config relating to committing
   commit:
     # If true, pass '--signoff' flag when committing
@@ -1121,7 +1123,7 @@ keybinding:
     prevTab: '<backtab>'
     nextScreenMode: '<right>'
     prevScreenMode: '<left>'
-    cycleDiffRenderers: '<disabled>'
+    cycleDiffRenderers: 'D'
     cycleDiffRenderersReverse: <disabled>
     undo: '<disabled>'
     redo: '<disabled>'
